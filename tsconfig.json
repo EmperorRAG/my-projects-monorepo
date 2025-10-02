@@ -1,13 +1,16 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compileOnSave": false,
-  "files": [],
-  "references": [
-    {
-      "path": "./apps/my-programs-app-e2e"
-    },
-    {
-      "path": "./apps/my-programs-app"
-    }
-  ]
+	"extends": "./tsconfig.base.json",
+	"compileOnSave": false,
+	"files": [],
+	"references": [
+		{
+			"path": "./apps/my-programs-app-e2e"
+		},
+		{
+			"path": "./apps/my-programs-app"
+		},
+		{
+			"path": "./libs/utilities"
+		}
+	]
 }
