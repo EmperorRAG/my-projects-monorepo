@@ -1,0 +1,10 @@
+{
+  "name": "@my-projects-monorepo/my-programs-app-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@my-projects-monorepo/my-programs-app"
+    ]
+  }
+}
