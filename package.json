@@ -15,6 +15,7 @@
 		"@eslint/compat": "^1.1.1",
 		"@eslint/eslintrc": "^2.1.1",
 		"@eslint/js": "^9.8.0",
+		"@jest/globals": "^30.2.0",
 		"@next/eslint-plugin-next": "^15.2.4",
 		"@nx/devkit": "21.6.3",
 		"@nx/eslint": "21.6.3",

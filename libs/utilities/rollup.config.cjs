@@ -8,16 +8,18 @@ module.exports = withNx(
 		compiler: 'swc',
 		format: ['esm'],
 		buildLibsFromSource: true,
-		useLegacyTypescriptPlugin: false,
+		useLegacyTypescriptPlugin: true,
 		allowJs: true,
 		deleteOutputPath: true,
 		generatePackageJson: false,
 		generateExportsField: false,
-		sourceMap: true,
+		sourceMap: false,
 	},
 	{
 		// Provide additional rollup configuration here. See: https://rollupjs.org/configuration-options
-		// e.g.
-		// output: { sourcemap: true },
+		output: {
+			sourcemap: false,
+			//sourcemapBaseUrl: path.resolve(__dirname, '../../').replace(/\\/g, '/') + '/',
+		},
 	}
 );

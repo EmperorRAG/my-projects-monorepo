@@ -36,7 +36,6 @@ export function toString(value: Stringable | Stringable[]): string | string[] {
 	if (isValueArrayOfStringable(value)) {
 		return value.map((v) => {
 			if (isValueObject(v) && typeof v.toString === 'function' && v.toString !== Object.prototype.toString) {
-				// eslint-disable-next-line @typescript-eslint/no-base-to-string
 				return String(v);
 			}
 			if (isValueObject(v)) {
@@ -46,7 +45,6 @@ export function toString(value: Stringable | Stringable[]): string | string[] {
 		});
 	}
 	if (isValueObject(value) && typeof value.toString === 'function' && value.toString !== Object.prototype.toString) {
-		// eslint-disable-next-line @typescript-eslint/no-base-to-string
 		return String(value);
 	}
 	if (isValueObject(value)) {
