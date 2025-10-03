@@ -60,7 +60,10 @@ runExpectToBeTableTestIsPrimitiveValueStringable('IsValuePrimitiveStringable ret
  */
 runExpectToBeTableTestIsPrimitiveValueStringable(
 	'IsValuePrimitiveStringable returns false for objects',
-	getAllObjectInputLabelExpectedObjects().map((obj) => ({ ...obj, expected: false }))
+	getAllObjectInputLabelExpectedObjects().map((obj) => ({
+		...obj,
+		expected: false,
+	}))
 );
 
 /**
@@ -73,5 +76,8 @@ runExpectToBeTableTestIsPrimitiveValueStringable(
  */
 runExpectToBeTableTestIsPrimitiveValueStringable(
 	'IsValuePrimitiveStringable returns false for functions',
-	getAllFunctionInputLabelExpectedObjects().map((obj) => ({ ...obj, expected: false }))
+	getAllFunctionInputLabelExpectedObjects().map((obj) => ({
+		...obj,
+		expected: false,
+	}))
 );

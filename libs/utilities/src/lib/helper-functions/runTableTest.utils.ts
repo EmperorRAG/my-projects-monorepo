@@ -1,14 +1,14 @@
-import { expect, test } from 'vitest';
+import { test, expect } from '@jest/globals';
 
 /**
- * Table-driven test runner for evaluating any function with a customizable matcher.
+ * Jest table-driven test runner for evaluating any function with a customizable matcher.
  *
  * @param fn - The function to test.
  * @returns Curried function accepting matcher, then description and cases.
  *
  * @example
- * const runTableTest = runTableTestWithMatcher(IsValueStringable);
- * runTableTest((result, expected) => expect(result).toBe(expected))('Test primitives', [
+ * const runJestTableTest = runJestTableTestWithMatcher(IsValueStringable);
+ * runJestTableTest((result, expected) => jestExpect(result).toBe(expected))('Test primitives', [
  *   { input: 'foo', expected: true, label: 'string' },
  *   { input: 123, expected: true, label: 'number' },
  * ]);
@@ -25,14 +25,14 @@ export const runTableTestWithMatcher =
 	};
 
 /**
- * Table-driven test runner for evaluating a function using Vitest's `toBe` matcher.
+ * Jest table-driven test runner for evaluating a function using Jest's `toBe` matcher.
  *
  * @param fn - The function to test.
  * @returns Curried function accepting description and cases.
  *
  * @example
- * const runTableTest = runExpectToBeTableTest(IsValueStringable);
- * runTableTest('Test primitives', [
+ * const runJestTableTest = runJestExpectToBeTableTest(IsValueStringable);
+ * runJestTableTest('Test primitives', [
  *   { input: 'foo', expected: true, label: 'string' },
  *   { input: 123, expected: true, label: 'number' },
  * ]);

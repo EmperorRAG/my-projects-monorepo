@@ -1,3 +1,20 @@
 {
-  "singleQuote": true
+	"singleQuote": true,
+	"trailingComma": "es5",
+	"tabWidth": 4,
+	"semi": true,
+	"useTabs": true,
+	"endOfLine": "lf",
+	"printWidth": 160,
+	"insertFinalNewline": true,
+	"trimTrailingWhitespace": true,
+	"overrides": [
+		{
+			"files": "*.md",
+			"options": {
+				"printWidth": 0,
+				"trimTrailingWhitespace": false
+			}
+		}
+	]
 }

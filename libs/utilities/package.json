@@ -18,5 +18,9 @@
 		"dist",
 		"!**/*.tsbuildinfo"
 	],
+	"scripts": {
+		"docs": "typedoc",
+		"docs:md": "typedoc --options ../../typedoc.md.json"
+	},
 	"dependencies": {}
 }
