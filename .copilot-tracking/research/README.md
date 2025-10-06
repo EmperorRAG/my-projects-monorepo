@@ -81,7 +81,7 @@ This research covers the conversion of TypeScript code to use ES6 nameless arrow
 → See `20250126-fp-implementation-summary.md` - "Implementation Roadmap" section
 
 ### For AI Documentation
-→ See `20250126-ai-documentation-fp-patterns.md` - All sections
+→ See `20250126-ai-documentation-fp-patterns.md` - "Enhanced JSDoc Standards" and "FP Paradigm Instructions" sections
 
 ### For Code Examples
 → See `20250126-fp-implementation-summary.md` - "Conversion Examples" section
