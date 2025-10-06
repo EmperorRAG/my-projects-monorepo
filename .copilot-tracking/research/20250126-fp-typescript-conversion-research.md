@@ -379,12 +379,44 @@ Implement custom pipe and compose functions tailored to the project's needs:
 **Example:**
 ```typescript
 // In libs/utilities/src/lib/fp/pipe.ts
-export const pipe = <T>(value: T, ...fns: Array<(arg: any) => any>): any =>
-  fns.reduce((acc, fn) => fn(acc), value);
+export function pipe<T, Fns extends [(arg: any) => any, ...( (arg: any) => any )[] ]>(
+  value: T,
+  ...fns: Fns
+): PipeResult<T, Fns> {
+  return fns.reduce((acc, fn) => fn(acc), value) as PipeResult<T, Fns>;
+}
 
-export const compose = <T>(...fns: Array<(arg: any) => any>) =>
-  (value: T): any => fns.reduceRight((acc, fn) => fn(acc), value);
+type PipeResult<T, Fns extends Array<(arg: any) => any>> =
+  Fns extends [infer F, ...infer Rest]
+    ? F extends (arg: infer A) => infer R
+      ? Rest extends Array<(arg: any) => any>
+        ? PipeResult<R, Rest>
+        : R
+      : never
+    : T;
 
+export function compose<Fns extends Array<(arg: any) => any>>(
+  ...fns: Fns
+): (arg: FirstArg<Fns>) => ComposeResult<Fns> {
+  return (value: FirstArg<Fns>) =>
+    fns.reduceRight((acc, fn) => fn(acc), value) as ComposeResult<Fns>;
+}
+
+type FirstArg<Fns extends Array<(arg: any) => any>> =
+  Fns extends [infer F, ...any[]]
+    ? F extends (arg: infer A) => any
+      ? A
+      : never
+    : never;
+
+type ComposeResult<Fns extends Array<(arg: any) => any>> =
+  Fns extends [...infer Rest, infer L]
+    ? L extends (arg: any) => infer R
+      ? Rest extends Array<(arg: any) => any>
+        ? ComposeResult<Rest>
+        : R
+      : never
+    : never;
 // Usage
 const getAllFunctionLabelValues = (): string[] => 
   pipe(
