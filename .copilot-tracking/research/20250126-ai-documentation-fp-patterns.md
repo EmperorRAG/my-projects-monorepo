@@ -495,12 +495,27 @@ export type Curried<A, B, C> = (a: A) => (b: B) => C;
  * Pipe function signature (left-to-right composition).
  * @fp-pattern Function composition (left to right)
  */
-export type Pipe = {
-  <A>(a: A): A;
-  <A, B>(a: A, ab: (a: A) => B): B;
-  <A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C;
-  <A, B, C, D>(a: A, ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D): D;
-};
+/**
+ * Pipe function signature (left-to-right composition) supporting any number of functions.
+ * Uses variadic tuple types for flexible composition.
+ * @fp-pattern Function composition (left to right, variadic)
+ */
+export type Pipe = <A, Fns extends Array<(arg: any) => any>>(
+  a: A,
+  ...fns: Fns
+) => PipeResult<A, Fns>;
+
+/**
+ * Helper type to infer the result type of a pipe composition.
+ */
+type PipeResult<A, Fns extends Array<(arg: any) => any>> =
+  Fns extends [infer F, ...infer Rest]
+    ? F extends (arg: infer Arg) => infer Ret
+      ? Rest extends Array<(arg: any) => any>
+        ? PipeResult<Ret, Rest>
+        : Ret
+      : never
+    : A;
 
 /**
  * Compose function signature (right-to-left composition).
