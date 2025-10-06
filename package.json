@@ -4,6 +4,7 @@
 	"license": "MIT",
 	"scripts": {},
 	"private": false,
+	"packageManager": "pnpm@10.18.0",
 	"dependencies": {
 		"next": "~15.2.4",
 		"react": "19.0.0",
