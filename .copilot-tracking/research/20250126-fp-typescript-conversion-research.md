@@ -89,7 +89,7 @@ Current gaps:
 **Current Code Example:**
 ```typescript
 // Current pattern - method chaining
-export const getAllFunctionLabelValues = (): string[] => 
+export const getAllFunctionLabelValues = (): string[] =>
   getAllFunctionValues().map(getFunctionLabelValue);
 
 // Current pattern - if-else chains
@@ -112,7 +112,7 @@ import { pipe } from 'fp-ts/function';
 import { map } from 'fp-ts/Array';
 
 // Converted to pipe
-export const getAllFunctionLabelValues = (): string[] => 
+export const getAllFunctionLabelValues = (): string[] =>
   pipe(
     getAllFunctionValues(),
     map(getFunctionLabelValue)
@@ -125,7 +125,7 @@ export const getPrimitiveLabelValue = (value: unknown): string =>
   pipe(
     value,
     match(
-      () => isNull(value) ? 'null' : 
+      () => isNull(value) ? 'null' :
             isBigInt(value) ? 'bigint' :
             isSymbol(value) ? 'symbol' :
             // ... pattern continues
@@ -139,7 +139,7 @@ export const getPrimitiveLabelValue = (value: unknown): string =>
 import { pipe, map, cond, always, T } from 'ramda';
 
 // Converted to Ramda pipe
-export const getAllFunctionLabelValues = (): string[] => 
+export const getAllFunctionLabelValues = (): string[] =>
   pipe(
     getAllFunctionValues,
     map(getFunctionLabelValue)
@@ -180,7 +180,7 @@ export function compose(...fns: Array<(arg: any) => any>) {
 }
 
 // Usage
-export const getAllFunctionLabelValues = (): string[] => 
+export const getAllFunctionLabelValues = (): string[] =>
   pipe(
     getAllFunctionValues(),
     (vals) => vals.map(getFunctionLabelValue)
@@ -267,202 +267,101 @@ compose<T1, T2, R>(fn1: (x: T2) => R, fn0: (x0: T1) => T2): (x0: T1) => R;
 - Simpler types
 - Best for basic composition needs
 
-## Alternative Approaches
+## Recommended Approach: Effect-TS
 
-### Approach 1: fp-ts (Type-Safe FP Library)
+Based on the research and your selection, the recommended approach is to adopt **Effect-TS** for implementing functional programming patterns. This modern library aligns well with the project's existing use of TypeScript and pure functions while introducing powerful, type-safe tools for composition and error handling.
 
-**Description:**
-fp-ts is a comprehensive functional programming library for TypeScript that brings Haskell/Scala-like patterns. It provides:
-- pipe and flow for function composition
-- Option and Either for error handling
-- Task for async operations
-- Strong type inference and type safety
-- Extensive ecosystem of FP utilities
+### Key Features to Adopt
+- **`pipe` function**: For creating readable, left-to-right data transformation pipelines. This will replace existing method chaining (`.map()`).
+- **`Match` module**: For declarative, type-safe pattern matching. This will replace `if-else` and `switch` statements.
 
-**Advantages:**
-- Superior type safety with full TypeScript integration
-- Comprehensive FP ecosystem (monads, functors, etc.)
-- Active community and well-maintained
-- Excellent for complex domain logic
-- Built specifically for TypeScript
+### Implementation Patterns
 
-**Limitations:**
-- Steeper learning curve for developers new to FP
-- More verbose syntax
-- Larger bundle size
-- May be overkill for simple transformations
-- Documentation can be academic/theoretical
+**Pipe for Composition:**
+The `pipe` function will be the primary way to compose functions. It takes an initial value and a series of functions, passing the output of one as the input to the next.
 
-**Project Alignment:**
-- ✅ Pure functions (already emphasized in codebase)
-- ✅ Type safety (TypeScript 5.x / ES2022 standards)
-- ✅ Immutability (favored in instructions)
-- ⚠️ Adds significant dependency (not currently used)
-
-**Example:**
 ```typescript
-import { pipe } from 'fp-ts/function';
-import { map } from 'fp-ts/Array';
-import { getOrElse } from 'fp-ts/Option';
+import { pipe } from 'effect';
+import { map } from 'effect/Array'; // Assuming Array module for map
 
-const getAllFunctionLabelValues = (): string[] => 
+// Current pattern
+// export const getAllFunctionLabelValues = (): string[] =>
+//   getAllFunctionValues().map(getFunctionLabelValue);
+
+// Converted to Effect-TS pipe
+export const getAllFunctionLabelValues = (): string[] =>
   pipe(
     getAllFunctionValues(),
-    map(getFunctionLabelValue),
-    map(label => label.toUpperCase())
+    map(getFunctionLabelValue)
   );
 ```
 
-### Approach 2: Ramda (Practical FP Library)
+**Pattern Matching with `Match`:**
+The `Match` module provides a powerful and readable way to handle conditional logic, replacing complex `if-else` chains.
 
-**Description:**
-Ramda is a practical functional JavaScript library that emphasizes:
-- Data-last, functions-first philosophy
-- Automatic currying of all functions
-- pipe and compose utilities
-- Extensive utility functions for data manipulation
-- JavaScript-friendly FP patterns
-
-**Advantages:**
-- More JavaScript-friendly and practical
-- Excellent for data transformations
-- Automatic currying makes composition natural
-- Well-documented with many examples
-- Large ecosystem and community
-- Smaller learning curve than fp-ts
-
-**Limitations:**
-- TypeScript support via @types (not native)
-- Some type inference limitations
-- Less strict type checking than fp-ts
-- Bundle size considerations
-- Not designed specifically for TypeScript
-
-**Project Alignment:**
-- ✅ Pure functions and immutability
-- ✅ Practical FP patterns (currying already used)
-- ✅ Data transformations (main use case)
-- ⚠️ TypeScript types via DefinitelyTyped
-
-**Example:**
 ```typescript
-import { pipe, map, filter, compose } from 'ramda';
+import { Match } from 'effect';
+import { isNull, isBigInt, isSymbol, isString, isNumber, isBoolean, isUndefined } from './primitive.utils'; // Assuming these are the predicate functions
+import { getTypeOf } from './primitive.utils'; // Fallback function
 
-const getAllFunctionLabelValues = pipe(
-  getAllFunctionValues,
-  map(getFunctionLabelValue),
-  filter(label => label !== 'function')
-);
-```
+// Current pattern - if-else chain
+// export const getPrimitiveLabelValue = (value: unknown): string => {
+//   if (isNull(value)) return 'null';
+//   if (isBigInt(value)) return 'bigint';
+//   // ... more conditions
+//   return getTypeOf(value);
+// };
 
-### Approach 3: Custom Pipe/Compose Utilities
-
-**Description:**
-Implement custom pipe and compose functions tailored to the project's needs:
-- Lightweight pipe/compose implementations
-- No external dependencies
-- Full control over behavior and types
-- Can be extended as needed
-- Project-specific optimizations
-
-**Advantages:**
-- Zero dependencies (aligns with minimal approach)
-- Full control over implementation
-- Simpler type signatures for team
-- Can evolve with project needs
-- Minimal bundle impact
-- Easy to understand and maintain
-
-**Limitations:**
-- Limited functionality (only basic composition)
-- Need to implement additional FP utilities yourself
-- Less battle-tested than established libraries
-- May reinvent the wheel for common patterns
-- Team needs to maintain and extend
-
-**Project Alignment:**
-- ✅ No external dependencies (keeps bundle lean)
-- ✅ Project-specific needs (utilities library focus)
-- ✅ Team control over evolution
-- ✅ TypeScript-first design
-
-**Example:**
-```typescript
-// In libs/utilities/src/lib/fp/pipe.ts
-export function pipe<T, Fns extends [(arg: any) => any, ...( (arg: any) => any )[] ]>(
-  value: T,
-  ...fns: Fns
-): PipeResult<T, Fns> {
-  return fns.reduce((acc, fn) => fn(acc), value) as PipeResult<T, Fns>;
-}
-
-type PipeResult<T, Fns extends Array<(arg: any) => any>> =
-  Fns extends [infer F, ...infer Rest]
-    ? F extends (arg: infer A) => infer R
-      ? Rest extends Array<(arg: any) => any>
-        ? PipeResult<R, Rest>
-        : R
-      : never
-    : T;
-
-export function compose<Fns extends Array<(arg: any) => any>>(
-  ...fns: Fns
-): (arg: FirstArg<Fns>) => ComposeResult<Fns> {
-  return (value: FirstArg<Fns>) =>
-    fns.reduceRight((acc, fn) => fn(acc), value) as ComposeResult<Fns>;
-}
-
-type FirstArg<Fns extends Array<(arg: any) => any>> =
-  Fns extends [infer F, ...any[]]
-    ? F extends (arg: infer A) => any
-      ? A
-      : never
-    : never;
-
-type ComposeResult<Fns extends Array<(arg: any) => any>> =
-  Fns extends [...infer Rest, infer L]
-    ? L extends (arg: any) => infer R
-      ? Rest extends Array<(arg: any) => any>
-        ? ComposeResult<Rest>
-        : R
-      : never
-    : never;
-// Usage
-const getAllFunctionLabelValues = (): string[] => 
-  pipe(
-    getAllFunctionValues(),
-    (vals) => vals.map(getFunctionLabelValue)
+// Converted to Effect-TS Match
+export const getPrimitiveLabelValue = (value: unknown): string =>
+  Match.value(value).pipe(
+    Match.when(isNull, () => 'null'),
+    Match.when(isBigInt, () => 'bigint'),
+    Match.when(isSymbol, () => 'symbol'),
+    Match.when(isString, () => 'string'),
+    Match.when(isNumber, () => 'number'),
+    Match.when(isBoolean, () => 'boolean'),
+    Match.when(isUndefined, () => 'undefined'),
+    Match.orElse(getTypeOf)
   );
 ```
 
-### Approach 4: Effect-TS (Modern FP with Effects)
+### API and Schema Documentation
 
-**Description:**
-Effect-TS is a modern FP library focusing on:
-- Effect system for managing side effects
-- pipe and flow utilities
-- Modern TypeScript features
-- Performance-focused
-- Growing ecosystem
+**Effect-TS `pipe` Signature:**
+```typescript
+// pipe: applies functions left-to-right
+import { pipe } from "effect"
+const result = pipe(input, func1, func2, ..., funcN)
+```
 
-**Advantages:**
-- Modern approach to FP in TypeScript
-- Excellent effect management
-- Strong type inference
-- Good performance
-- Growing community
+**Effect-TS `Match` Signature:**
+```typescript
+import { Match } from "effect"
 
-**Limitations:**
-- Newer library (less mature than fp-ts/Ramda)
-- Smaller ecosystem
-- Learning curve for effect system
-- May be overkill for pure utilities
-- Still evolving
+const match = Match.type<InputType>().pipe(
+  Match.when(condition1, result1),
+  Match.when(condition2, result2),
+  Match.exhaustive | Match.orElse(fallback)
+)
+```
 
-**Project Alignment:**
-- ✅ Modern TypeScript patterns
-- ⚠️ Effect system may be unnecessary for utilities
-- ⚠️ Younger ecosystem
+### Configuration Examples
+
+**Package.json additions for Effect-TS:**
+```json
+{
+  "dependencies": {
+    "effect": "^2.0.0"
+  }
+}
+```
+
+### Technical Requirements
+- Install the `effect` package.
+- Refactor existing method chains (`.map`) to use `pipe`.
+- Refactor `if-else` and `switch` statements to use the `Match` module.
+- Update JSDoc comments to reflect the use of `Effect-TS` patterns.
 
 ## AI Documentation for FP Adherence
 
@@ -529,13 +428,13 @@ applyTo: '**/*.ts'
 ```typescript
 /**
  * Maps all function values to their string labels.
- * 
+ *
  * @pure This function has no side effects
  * @composition Composes getAllFunctionValues with map(getFunctionLabelValue)
  * @pattern Pure function composition using pipe
- * 
+ *
  * @returns {string[]} Array of string labels
- * 
+ *
  * @example
  * // Using pipe for clarity
  * pipe(
@@ -543,7 +442,7 @@ applyTo: '**/*.ts'
  *   map(getFunctionLabelValue)
  * )
  */
-export const getAllFunctionLabelValues = (): string[] => 
+export const getAllFunctionLabelValues = (): string[] =>
   pipe(getAllFunctionValues(), map(getFunctionLabelValue));
 ```
 
@@ -558,7 +457,7 @@ export const getAllFunctionLabelValues = (): string[] =>
 
 **Type-Level Documentation:**
 ```typescript
-/** 
+/**
  * @fp-pattern Curried function for partial application
  * @data-last Parameters ordered for composition (data last)
  */
@@ -566,26 +465,3 @@ export const toObjects = <K extends string, T>(propertyName: K) =>
   (values: T[]): Record<K, T>[] =>
     values.map((value) => ({ [propertyName]: value }) as Record<K, T>);
 ```
-
-## Which approach aligns better with your objectives?
-
-Based on the analysis, I recommend **Approach 2 (Ramda)** or **Approach 3 (Custom Utilities)** for the following reasons:
-
-**Ramda** is ideal if you want:
-- Comprehensive FP utilities immediately available
-- Auto-currying for all functions
-- Extensive community examples
-- Practical, JavaScript-friendly FP
-
-**Custom Utilities** is ideal if you want:
-- No external dependencies
-- Minimal bundle size
-- Full control and customization
-- Simple, project-specific FP patterns
-
-**Would you prefer:**
-1. Ramda for comprehensive FP toolkit with auto-currying?
-2. Custom utilities for lightweight, project-specific solution?
-3. fp-ts for maximum type safety (if complex domain logic is priority)?
-
-**Should I focus the research on your selected approach and remove the others from this document?**

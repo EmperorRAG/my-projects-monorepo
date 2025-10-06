@@ -72,7 +72,8 @@
 		"typedoc-plugin-markdown": "^4.9.0",
 		"typescript": "~5.9.2",
 		"typescript-eslint": "^8.40.0",
-		"verdaccio": "^6.0.5"
+		"verdaccio": "^6.0.5",
+		"effect": "^3.5.4"
 	},
 	"nx": {
 		"includedScripts": [
