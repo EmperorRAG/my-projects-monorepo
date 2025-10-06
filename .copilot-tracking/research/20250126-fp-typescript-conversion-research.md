@@ -161,13 +161,23 @@ export const getPrimitiveLabelValue = (value: unknown): string =>
 
 **Option 3: Custom pipe/compose utilities (No external dependencies)**
 ```typescript
-// Custom pipe utility
-export const pipe = <T>(...fns: Array<(arg: T) => T>) => 
-  (value: T): T => fns.reduce((acc, fn) => fn(acc), value);
+// Custom pipe utility supporting heterogeneous function chains
+export function pipe<A, B>(fn1: (a: A) => B): (a: A) => B;
+export function pipe<A, B, C>(fn1: (a: A) => B, fn2: (b: B) => C): (a: A) => C;
+export function pipe<A, B, C, D>(fn1: (a: A) => B, fn2: (b: B) => C, fn3: (c: C) => D): (a: A) => D;
+export function pipe<A, B, C, D, E>(fn1: (a: A) => B, fn2: (b: B) => C, fn3: (c: C) => D, fn4: (d: D) => E): (a: A) => E;
+export function pipe(...fns: Array<(arg: any) => any>) {
+  return (input: any) => fns.reduce((acc, fn) => fn(acc), input);
+}
 
-// Custom compose utility (right-to-left)
-export const compose = <T>(...fns: Array<(arg: T) => T>) =>
-  (value: T): T => fns.reduceRight((acc, fn) => fn(acc), value);
+// Custom compose utility (right-to-left) supporting heterogeneous function chains
+export function compose<A, B>(fn1: (a: A) => B): (a: A) => B;
+export function compose<A, B, C>(fn1: (b: B) => C, fn2: (a: A) => B): (a: A) => C;
+export function compose<A, B, C, D>(fn1: (c: C) => D, fn2: (b: B) => C, fn3: (a: A) => B): (a: A) => D;
+export function compose<A, B, C, D, E>(fn1: (d: D) => E, fn2: (c: C) => D, fn3: (b: B) => C, fn4: (a: A) => B): (a: A) => E;
+export function compose(...fns: Array<(arg: any) => any>) {
+  return (input: any) => fns.reduceRight((acc, fn) => fn(acc), input);
+}
 
 // Usage
 export const getAllFunctionLabelValues = (): string[] => 
