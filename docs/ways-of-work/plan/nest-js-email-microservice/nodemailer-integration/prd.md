@@ -46,7 +46,7 @@ Nodemailer Integration
 
 ### Scenario 1: Module Initialization
 
-- **Given** the `email-service` application is starting up.
+- **Given** the `my-nest-js-email-microservice` application is starting up.
 - **When** the `SmtpModule` is initialized.
 - **Then** it must successfully create a Nodemailer transport instance configured with credentials from the environment.
 - **And** the application should fail to start if the required SMTP environment variables are not set.

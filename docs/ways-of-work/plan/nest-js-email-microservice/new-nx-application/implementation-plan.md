@@ -6,11 +6,11 @@ The primary goal of this technical enabler is to establish a dedicated, isolated
 
 ## Requirements
 
-- A new Nest.js application named `email-service` must be generated within the `apps` directory.
+- A new Nest.js application named `email-service` must be generated within the `services` directory.
 - The application must be configured with its own project configuration (`project.json` or in `package.json`), defining targets for `build`, `serve`, `test`, and `lint`.
 - The generated application must include the default Nest.js boilerplate files (`main.ts`, `app.module.ts`, etc.).
-- The application must be immediately runnable in a development environment using the `nx serve email-service` command.
-- The default test suite must pass when run with `nx test email-service`.
+- The application must be immediately runnable in a development environment using the `nx serve my-nest-js-email-microservice` command.
+- The default test suite must pass when run with `nx test my-nest-js-email-microservice`.
 
 ## Technical Considerations
 
@@ -22,7 +22,7 @@ This enabler is a foundational step that occurs at the development tooling and f
 graph TD
     subgraph Developer Workflow
         A[Developer] -->|1. Run command| B{Nx CLI};
-        B -->|2. Generate Files| C[apps/email-service];
+        B -->|2. Generate Files| C[services/my-nest-js-email-microservice];
     end
 
     subgraph Monorepo Structure
@@ -41,8 +41,8 @@ graph TD
 - **Integration Points**:
   - **Nx Workspace**: The new `email-service` application will be registered in the Nx project graph, making it discoverable by other projects and enabling commands like `nx affected`.
   - **TypeScript Configuration**: The application will extend the base `tsconfig.base.json` from the monorepo root, ensuring consistent compiler options.
-- **Deployment Architecture**: While this enabler does not deploy the application, it creates the necessary build artifacts (`dist/apps/email-service`) that a deployment script or Dockerfile will consume.
-- **Scalability Considerations**: Using Nx to structure the application from the start allows for clear separation of concerns. As the service grows, new libraries (`libs`) can be generated and cleanly imported into the `email-service` app, promoting code reuse and maintainability.
+- **Deployment Architecture**: While this enabler does not deploy the application, it creates the necessary build artifacts (`dist/services/my-nest-js-email-microservice`) that a deployment script or Dockerfile will consume.
+- **Scalability Considerations**: Using Nx to structure the application from the start allows for clear separation of concerns. As the service grows, new libraries (`libs`) can be generated and cleanly imported into the `my-nest-js-email-microservice` app, promoting code reuse and maintainability.
 
 ### Database Schema Design
 
@@ -66,5 +66,5 @@ Not applicable. This is a backend-only enabler.
 The following command will be executed from the root of the monorepo to generate the application:
 
 ```sh
-npx nx g @nx/nest:app email-service
+nx g @nx/nest:app my-nest-js-email-microservice
 ```

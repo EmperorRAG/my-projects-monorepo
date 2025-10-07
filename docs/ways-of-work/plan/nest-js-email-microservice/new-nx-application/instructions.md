@@ -18,7 +18,7 @@ This document provides a step-by-step guide to generating a new, dedicated Nest.
 Execute the following command from the **root of the monorepo**. This command uses the `@nx/nest` generator to scaffold a new Nest.js application.
 
 ```sh
-pnpm exec nx g @nx/nest:app services/my-nest-js-email-microservice
+nx g @nx/nest:app services/my-nest-js-email-microservice
 ```
 
 When prompted by the generator, you may be asked for additional configuration options. For the purpose of this initial setup, you can accept the defaults.
@@ -42,7 +42,7 @@ You can list the contents to ensure the boilerplate files are present.
 To confirm that the application is runnable, start the development server using the Nx `serve` command.
 
 ```sh
-pnpm exec nx serve my-nest-js-email-microservice
+nx serve my-nest-js-email-microservice
 ```
 
 - **What to Expect:** The server will start, and you will see output indicating that the Nest.js application is listening on a specific port (usually `3000` by default).
@@ -64,7 +64,7 @@ curl http://localhost:3000/
 Execute the unit tests for the new application to ensure they pass.
 
 ```sh
-pnpm exec nx test my-nest-js-email-microservice
+nx test my-nest-js-email-microservice
 ```
 
 - **Expected Outcome:** The test suite should run and report that all default tests have passed successfully.
@@ -74,7 +74,7 @@ pnpm exec nx test my-nest-js-email-microservice
 Perform a production build to ensure the build process is correctly configured.
 
 ```sh
-pnpm exec nx build my-nest-js-email-microservice
+nx build my-nest-js-email-microservice
 ```
 
-- **Expected Outcome:** The build should complete without errors, creating a `dist/apps/services/my-nest-js-email-microservice` directory containing the compiled JavaScript code.
+- **Expected Outcome:** The build should complete without errors, creating a `dist/services/my-nest-js-email-microservice` directory containing the compiled JavaScript code.

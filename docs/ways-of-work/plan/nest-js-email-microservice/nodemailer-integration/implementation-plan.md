@@ -2,12 +2,12 @@
 
 ## Goal
 
-The goal is to integrate the `Nodemailer` library into the `email-service` application. This involves creating a dedicated `SmtpModule` to abstract away the complexities of SMTP communication. This module will provide a simple, injectable service (`SmtpService`) that other parts of the application can use to send emails, with configuration driven by environment variables for security and flexibility.
+The goal is to integrate the `Nodemailer` library into the `my-nest-js-email-microservice` application. This involves creating a dedicated `SmtpModule` to abstract away the complexities of SMTP communication. This module will provide a simple, injectable service (`SmtpService`) that other parts of the application can use to send emails, with configuration driven by environment variables for security and flexibility.
 
 ## Requirements
 
 - Add `nodemailer` and its TypeScript definitions (`@types/nodemailer`) as dependencies.
-- Create a new `SmtpModule` within the `email-service` application.
+- Create a new `SmtpModule` within the `my-nest-js-email-microservice` application.
 - Implement an `SmtpService` with a public `sendEmail` method.
 - Configure the Nodemailer transport using environment variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`).
 - Ensure the `SmtpService` can be mocked for unit testing.
@@ -20,7 +20,7 @@ This integration introduces a new module, `SmtpModule`, which acts as a wrapper 
 
 ```mermaid
 graph TD
-    subgraph email-service
+    subgraph my-nest-js-email-microservice
         A[Email Sending Endpoint] -->|Calls| B(EmailService);
         B -->|Injects & Calls| C(SmtpService);
         C -->|Uses| D{Nodemailer Transport};
@@ -49,7 +49,7 @@ graph TD
 
 ### File Structure
 
-The following files will be created within `apps/email-service/src/`:
+The following files will be created within `services/my-nest-js-email-microservice/src/`:
 
 ```sh
 smtp/
