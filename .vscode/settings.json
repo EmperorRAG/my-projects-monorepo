@@ -3,5 +3,7 @@
 	"chat.agentSessionsViewLocation": "view",
 	"chat.editor.fontFamily": "Fira Code, monospace",
 	"chat.edits2.enabled": true,
-	"chat.fontFamily": "Fira Code, monospace"
+	"chat.fontFamily": "Fira Code, monospace",
+	"powershell.powerShellDefaultVersion": "PowerShell (x64)",
+	"jest.jestCommandLine": "npx nx test"
 }
