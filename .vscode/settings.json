@@ -39,7 +39,7 @@
 	"editor.defaultFormatter": "EditorConfig.EditorConfig",
 	"editor.definitionLinkOpensInPeek": true,
 	"editor.detectIndentation": false,
-	"editor.experimentalGpuAcceleration": "on",
+	"editor.experimentalGpuAcceleration": "off",
 	"editor.folding": true,
 	"editor.foldingHighlight": true,
 	"editor.foldingImportsByDefault": false,

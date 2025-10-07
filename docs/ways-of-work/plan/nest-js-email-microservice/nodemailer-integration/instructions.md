@@ -19,8 +19,8 @@ This document provides a step-by-step guide to integrating the `Nodemailer` libr
 Install `nodemailer` and its TypeScript type definitions.
 
 ```sh
-pnpm add nodemailer
-pnpm add -D @types/nodemailer
+pnpm add -w nodemailer
+pnpm add -w -D @types/nodemailer
 ```
 
 ### Step 2: Create the SMTP Module and Service
@@ -166,7 +166,7 @@ Create a `.env` file in the root of the `my-nest-js-email-microservice` project.
 - **File:** `services/my-nest-js-email-microservice/.env`
 - **Content:**
 
-    ```
+    ```plaintext
     SMTP_HOST=your_smtp_host
     SMTP_PORT=587
     SMTP_USER=your_smtp_username
@@ -180,11 +180,11 @@ Create a `.env` file in the root of the `my-nest-js-email-microservice` project.
 1. **Start the application:**
 
     ```sh
-    pnpm exec nx serve my-nest-js-email-microservice
+    nx serve my-nest-js-email-microservice
     ```
 
 2. **Trigger the email:**
-    Make a `GET` request to `http://localhost:3000/`.
+    Make a `GET` request to `http://localhost:3001/`.
 
 3. **Check the console logs:**
     - You should see a "Message sent: <message-id>" log if the email was sent successfully.
