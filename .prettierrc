@@ -13,7 +13,13 @@
 			"files": "*.md",
 			"options": {
 				"printWidth": 0,
-				"trimTrailingWhitespace": false
+				"trimTrailingWhitespace": true,
+				"insertFinalNewline": true,
+				"tabWidth": 4,
+				"semi": true,
+				"useTabs": true,
+				"endOfLine": "lf",
+				"singleQuote": true
 			}
 		}
 	]
