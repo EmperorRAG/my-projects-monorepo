@@ -1,0 +1,20 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug @my-projects-monorepo/my-nest-js-email-microservice with Nx",
+			"runtimeExecutable": "pnpm exec",
+			"runtimeArgs": ["nx", "serve", "@my-projects-monorepo/my-nest-js-email-microservice"],
+			"env": {
+				"NODE_OPTIONS": "--inspect=9229"
+			},
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"skipFiles": ["<node_internals>/**"],
+			"sourceMaps": true,
+			"outFiles": ["${workspaceFolder}/services/my-nest-js-email-microservice/dist/**/*.(m|c|)js", "!**/node_modules/**"]
+		}
+	]
+}

@@ -5,5 +5,8 @@
 	"chat.edits2.enabled": true,
 	"chat.fontFamily": "Fira Code, monospace",
 	"powershell.powerShellDefaultVersion": "PowerShell (x64)",
-	"jest.jestCommandLine": "npx nx test"
+	"jest.runMode": "watch",
+	"jest.rootPath": ".",
+	"jest.jestCommandLine": "npx nx test",
+	"wallaby.codeLensFeature.runTest": true
 }

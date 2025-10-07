@@ -6,9 +6,15 @@
 	"private": false,
 	"packageManager": "pnpm@10.18.0",
 	"dependencies": {
+		"@nestjs/common": "^11.0.0",
+		"@nestjs/core": "^11.0.0",
+		"@nestjs/platform-express": "^11.0.0",
+		"axios": "^1.6.0",
 		"next": "~15.2.4",
 		"react": "19.0.0",
-		"react-dom": "19.0.0"
+		"react-dom": "19.0.0",
+		"reflect-metadata": "^0.1.13",
+		"rxjs": "^7.8.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.14.5",
@@ -17,17 +23,22 @@
 		"@eslint/eslintrc": "^2.1.1",
 		"@eslint/js": "^9.8.0",
 		"@jest/globals": "^30.2.0",
+		"@nestjs/schematics": "^11.0.0",
+		"@nestjs/testing": "^11.0.0",
 		"@next/eslint-plugin-next": "^15.2.4",
 		"@nx/devkit": "21.6.3",
 		"@nx/eslint": "21.6.3",
 		"@nx/eslint-plugin": "21.6.3",
 		"@nx/jest": "21.6.3",
 		"@nx/js": "21.6.3",
+		"@nx/nest": "21.6.3",
 		"@nx/next": "21.6.3",
+		"@nx/node": "21.6.3",
 		"@nx/playwright": "21.6.3",
 		"@nx/react": "21.6.3",
 		"@nx/rollup": "21.6.3",
 		"@nx/web": "21.6.3",
+		"@nx/webpack": "21.6.3",
 		"@nx/workspace": "21.6.3",
 		"@playwright/test": "^1.36.0",
 		"@swc-node/register": "~1.9.1",
@@ -44,6 +55,7 @@
 		"ajv": "^8.0.0",
 		"autoprefixer": "10.4.13",
 		"babel-jest": "^30.0.2",
+		"effect": "^3.5.4",
 		"eslint": "^9.8.0",
 		"eslint-config-next": "^15.2.4",
 		"eslint-config-prettier": "^10.0.0",
@@ -73,7 +85,7 @@
 		"typescript": "~5.9.2",
 		"typescript-eslint": "^8.40.0",
 		"verdaccio": "^6.0.5",
-		"effect": "^3.5.4"
+		"webpack-cli": "^5.1.4"
 	},
 	"nx": {
 		"includedScripts": [
@@ -87,6 +99,11 @@
 					"port": 4873,
 					"config": ".verdaccio/config.yml",
 					"storage": "tmp/local-registry/storage"
+				}
+			},
+			"test": {
+				"options": {
+					"passWithNoTests": true
 				}
 			}
 		}

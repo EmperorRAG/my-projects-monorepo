@@ -1,0 +1,26 @@
+{
+	"name": "@my-projects-monorepo/my-nest-js-email-microservice-e2e",
+	"version": "0.0.1",
+	"private": true,
+	"nx": {
+		"implicitDependencies": [
+			"@my-projects-monorepo/my-nest-js-email-microservice"
+		],
+		"targets": {
+			"e2e": {
+				"executor": "@nx/jest:jest",
+				"outputs": [
+					"{projectRoot}/test-output/jest/coverage"
+				],
+				"options": {
+					"jestConfig": "services/my-nest-js-email-microservice-e2e/jest.config.ts",
+					"passWithNoTests": true
+				},
+				"dependsOn": [
+					"@my-projects-monorepo/my-nest-js-email-microservice:build",
+					"@my-projects-monorepo/my-nest-js-email-microservice:serve"
+				]
+			}
+		}
+	}
+}

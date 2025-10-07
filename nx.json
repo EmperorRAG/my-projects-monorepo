@@ -58,7 +58,8 @@
 			"plugin": "@nx/jest/plugin",
 			"options": {
 				"targetName": "test"
-			}
+			},
+			"exclude": ["services/my-nest-js-email-microservice-e2e/**/*"]
 		},
 		{
 			"plugin": "@nx/rollup/plugin",
@@ -66,6 +67,17 @@
 				"buildTargetName": "build",
 				"buildDepsTargetName": "build-deps",
 				"watchDepsTargetName": "watch-deps"
+			}
+		},
+		{
+			"plugin": "@nx/webpack/plugin",
+			"options": {
+				"buildTargetName": "build",
+				"serveTargetName": "serve",
+				"previewTargetName": "preview",
+				"buildDepsTargetName": "build-deps",
+				"watchDepsTargetName": "watch-deps",
+				"serveStaticTargetName": "serve-static"
 			}
 		}
 	],
@@ -86,7 +98,6 @@
 				"unitTestRunner": "jest"
 			}
 		}
-		
 	},
 	"release": {
 		"version": {

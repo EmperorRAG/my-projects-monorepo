@@ -11,6 +11,12 @@
 		},
 		{
 			"path": "./libs/utilities"
+		},
+		{
+			"path": "./services/my-nest-js-email-microservice-e2e"
+		},
+		{
+			"path": "./services/my-nest-js-email-microservice"
 		}
 	]
 }
