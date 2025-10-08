@@ -6,10 +6,14 @@ export class AppService {
 	constructor(private readonly smtpService: SmtpService) {}
 
 	async sendTestEmail(): Promise<void> {
-		await this.smtpService.sendEmail({
-			to: 'test@example.com',
-			subject: 'Test Email',
-			text: 'This is a test email.',
-		});
+		try {
+			await this.smtpService.sendEmail({
+				to: 'test@example.com',
+				subject: 'Test Email',
+				text: 'This is a test email.',
+			});
+		} catch (error) {
+			console.error('Failed to send email:', error);
+		}
 	}
 }
