@@ -15,14 +15,14 @@ This document provides a step-by-step guide to creating a production-ready, mult
 
 ### Step 1: Create the `Dockerfile`
 
-Create a new file named `Dockerfile` at the following location: `apps/my-programs-app/Dockerfile`.
+Create a new file named `Dockerfile` at the following location: `services/my-nest-js-email-microservice/Dockerfile`.
 
 Populate the file with the following content. This Dockerfile is optimized for an Nx monorepo and creates a small, secure production image.
 
 ```dockerfile
 # ---- Base Stage ----
 # Use a specific Node.js version for consistency.
-FROM node:18-alpine AS base
+FROM node:22-alpine AS base
 WORKDIR /usr/src/app
 
 # Install pnpm
@@ -42,7 +42,7 @@ COPY . .
 
 # Build the specific 'email-service' application.
 # This command will be defined in the project's package.json scripts.
-RUN pnpm exec nx build my-programs-app
+RUN pnpm exec nx build my-nest-js-email-microservice
 
 # ---- Production Stage ----
 # This stage creates the final, lightweight image.
@@ -52,8 +52,8 @@ FROM base AS production
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Copy only the necessary production build artifacts from the builder stage.
-# The path 'dist/apps/my-programs-app' is the standard output for an Nx build.
-COPY --from=builder /usr/src/app/dist/apps/my-programs-app .
+# The path 'dist/services/my-nest-js-email-microservice' is the standard output for an Nx build.
+COPY --from=builder /usr/src/app/dist/services/my-nest-js-email-microservice .
 # Copy production node_modules.
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package.json .
@@ -72,16 +72,16 @@ CMD ["node", "main.js"]
 
 To enable the `docker build` command to work, you need a build script in the `email-service`'s `package.json` file.
 
-**File to Edit:** `apps/my-programs-app/package.json`
+**File to Edit:** `services/my-nest-js-email-microservice/package.json`
 
 Add the following script to the `scripts` section:
 
 ```json
 {
-  "name": "my-programs-app",
+  "name": "my-nest-js-email-microservice",
   "version": "0.0.1",
   "scripts": {
-    "build": "nx build my-programs-app"
+    "build": "nx build my-nest-js-email-microservice"
   },
   // ... other properties
 }
@@ -94,12 +94,12 @@ Add the following script to the `scripts` section:
 Execute the following command from the **root of the monorepo** to build the Docker image.
 
 ```sh
-docker build -t email-service:latest -f apps/my-programs-app/Dockerfile .
+docker build -t email-service:latest -f services/my-nest-js-email-microservice/Dockerfile .
 ```
 
 - **`docker build`**: The command to build an image.
 - **`-t email-service:latest`**: Tags the image with the name `email-service` and tag `latest`.
-- **`-f apps/my-programs-app/Dockerfile`**: Specifies the path to the `Dockerfile`.
+- **`-f services/my-nest-js-email-microservice/Dockerfile`**: Specifies the path to the `Dockerfile`.
 - **`.`**: Sets the build context to the current directory (the monorepo root).
 
 ### Step 4: Run the Container

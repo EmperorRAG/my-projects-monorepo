@@ -11,7 +11,7 @@ This technical enabler is focused on creating a standardized, multi-stage `Docke
 - The `builder` stage will install all necessary dependencies (including `devDependencies`) and compile the Nest.js application.
 - The final `production` stage will copy only the necessary build artifacts (e.g., `dist` folder, `node_modules`, `package.json`) from the `builder` stage.
 - The final stage must install only production dependencies to keep the image lean.
-- The final image must be based on a minimal and secure Node.js image, such as `node:18-alpine`.
+- The final image must be based on a minimal and secure Node.js image, such as `node:22-alpine`.
 - The container must run as a dedicated, non-root user to enhance security.
 - The `CMD` instruction must be correctly configured to start the Nest.js application.
 - The build process should leverage Docker's layer caching to ensure fast subsequent builds.
@@ -70,7 +70,7 @@ Not applicable. This is a backend-only enabler.
   - **Image Size**: A multi-stage build is critical. The final image will not contain `devDependencies` or the TypeScript source code, only the compiled JavaScript and production dependencies. Using an Alpine-based Node.js image will further reduce the size.
 - **Security**:
   - **Non-Root User**: A dedicated user and group will be created within the Docker image, and the `USER` instruction will be used to switch to this user before the application starts. This prevents processes within the container from running with root privileges.
-  - **Minimal Base Image**: Using `node:18-alpine` reduces the attack surface by excluding unnecessary system libraries and tools.
+  - **Minimal Base Image**: Using `node:22-alpine` reduces the attack surface by excluding unnecessary system libraries and tools.
   - **Dependency Scanning**: The CI/CD pipeline should be configured to scan the final image for known vulnerabilities in its dependencies.
 - **Caching**: Docker layer caching will be used to speed up build times.
 
@@ -78,7 +78,7 @@ Not applicable. This is a backend-only enabler.
 
 ```dockerfile
 # ---- Builder Stage ----
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -93,7 +93,7 @@ COPY . .
 RUN npm run build email-service
 
 # ---- Production Stage ----
-FROM node:18-alpine AS production
+FROM node:22-alpine AS production
 
 # Create a non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
@@ -112,5 +112,5 @@ COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3000
 
 # Command to start the application
-CMD ["node", "dist/apps/email-service/main.js"]
+CMD ["node", "dist/services/email-service/main.js"]
 ```
