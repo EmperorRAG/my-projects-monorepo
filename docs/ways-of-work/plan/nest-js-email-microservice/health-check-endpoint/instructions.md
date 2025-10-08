@@ -11,7 +11,7 @@ First, install the required NestJS Terminus package.
 - Run the following command in your terminal:
 
 ```sh
-pnpm add @nestjs/terminus
+pnpm add -w @nestjs/terminus
 ```
 
 ## 2. Create the Health Controller
@@ -98,7 +98,7 @@ After making the changes, start the service and test the new endpoint.
 - **Start the Service:**
 
     ```sh
-    pnpm exec nx serve @my-projects-monorepo/my-nest-js-email-microservice
+    nx serve @my-projects-monorepo/my-nest-js-email-microservice
     ```
 
 - **Check the Endpoint:**

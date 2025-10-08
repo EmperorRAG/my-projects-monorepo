@@ -7,7 +7,7 @@ This document provides step-by-step instructions to implement secure credential 
 First, add the necessary packages to the project.
 
 ```sh
-pnpm add @nestjs/config joi
+pnpm add -w @nestjs/config joi
 ```
 
 ## 2. Create Environment Variable Schema
@@ -130,7 +130,7 @@ API_KEY=your-secret-api-key
 
 ## 6. Verification
 
-- **Start the service:** `pnpm exec nx serve @my-projects-monorepo/my-nest-js-email-microservice`
+- **Start the service:** `nx serve @my-projects-monorepo/my-nest-js-email-microservice`
 - **Test with all variables:** The app should start successfully.
 - **Test with missing variables:** Remove a required variable from `.env` (e.g., `SMTP_HOST`). The app should fail to start and log an error like: `"Config validation error: "SMTP_HOST" is required"`.
 - **Send an email:** Use the API to send an email and confirm the `SmtpService` uses the credentials from the `.env` file.

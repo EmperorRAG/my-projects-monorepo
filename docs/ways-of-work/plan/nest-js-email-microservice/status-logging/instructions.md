@@ -56,7 +56,7 @@ After making the changes, start the service and send a request to see the logs.
 - **Start the Service:**
 
   ```sh
-  pnpm exec nx serve @my-projects-monorepo/my-nest-js-email-microservice
+  nx serve @my-projects-monorepo/my-nest-js-email-microservice
   ```
 
 - **Send a Request:**

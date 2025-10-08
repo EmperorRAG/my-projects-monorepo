@@ -45,7 +45,7 @@ graph TD
 
 ### File Structure
 
-The following files will be created/modified within `apps/email-service/src/`:
+The following files will be created/modified within `services/my-nest-js-email-microservice/src/`:
 
 ```sh
 health/
@@ -58,7 +58,7 @@ app.module.ts // Modified to import HealthController
 1. **Install Dependency**:
 
    ```sh
-   npm install @nestjs/terminus
+   pnpm -w install @nestjs/terminus
    ```
 
 2. **`health.controller.ts`**:

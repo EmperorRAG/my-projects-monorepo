@@ -47,7 +47,7 @@ graph TD
 The implementation primarily involves two files:
 
 ```sh
-apps/email-service/src/
+services/email-service/src/
 ├── email/
 │   └── dto/
 │       └── send-email.dto.ts  // Defines the validation rules
@@ -60,7 +60,7 @@ apps/email-service/src/
    - `class-validator` and `class-transformer` are typically included when generating a new Nest.js project. If not, they must be installed.
 
    ```sh
-   npm install class-validator class-transformer
+   pnpm -w install class-validator class-transformer
    ```
 
 2. **`send-email.dto.ts`**:

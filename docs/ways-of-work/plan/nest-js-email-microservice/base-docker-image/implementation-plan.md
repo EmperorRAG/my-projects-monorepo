@@ -6,7 +6,7 @@ This technical enabler is focused on creating a standardized, multi-stage `Docke
 
 ## Requirements
 
-- A `Dockerfile` must be created in the root of the `email-service` application directory.
+- A `Dockerfile` must be created in the root of the `my-nest-js-email-microservice` application directory.
 - The build process must use a multi-stage approach to separate build-time dependencies from runtime dependencies.
 - The `builder` stage will install all necessary dependencies (including `devDependencies`) and compile the Nest.js application.
 - The final `production` stage will copy only the necessary build artifacts (e.g., `dist` folder, `node_modules`, `package.json`) from the `builder` stage.
@@ -20,21 +20,21 @@ This technical enabler is focused on creating a standardized, multi-stage `Docke
 
 ### System Architecture Overview
 
-This enabler resides entirely within the Infrastructure Layer. The `Dockerfile` is a blueprint that defines how the `email-service` application is packaged. It will be consumed by a CI/CD pipeline, which builds the image and pushes it to a container registry. The container orchestration system then pulls this image to run the service.
+This enabler resides entirely within the Infrastructure Layer. The `Dockerfile` is a blueprint that defines how the `my-nest-js-email-microservice` application is packaged. It will be consumed by a CI/CD pipeline, which builds the image and pushes it to a container registry. The container orchestration system then pulls this image to run the service.
 
 ```mermaid
 graph TD
     subgraph CI/CD Pipeline
         A[Source Code] -->|1. git push| B(CI/CD System);
-        B -->|2. docker build -f ./email-service/Dockerfile| C(Docker Daemon);
-        C -->|3. Build Image| D[email-service:latest];
+        B -->|2. docker build -f ./my-nest-js-email-microservice/Dockerfile| C(Docker Daemon);
+        C -->|3. Build Image| D[my-nest-js-email-microservice:latest];
         B -->|4. docker push| E[Container Registry];
         D --> E;
     end
 
     subgraph Runtime Environment
         F(Orchestrator) -->|5. Pull Image| E;
-        F -->|6. Run Container| G((email-service container));
+        F -->|6. Run Container| G((my-nest-js-email-microservice container));
     end
 
     style C fill:#f9f,stroke:#333,stroke-width:2px
@@ -90,7 +90,7 @@ RUN npm install
 COPY . .
 
 # Build the application
-RUN npm run build email-service
+RUN npm run build my-nest-js-email-microservice
 
 # ---- Production Stage ----
 FROM node:22-alpine AS production
@@ -112,5 +112,5 @@ COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3000
 
 # Command to start the application
-CMD ["node", "dist/services/email-service/main.js"]
+CMD ["node", "dist/services/my-nest-js-email-microservice/main.js"]
 ```

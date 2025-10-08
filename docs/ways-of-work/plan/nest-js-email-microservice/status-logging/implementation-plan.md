@@ -2,7 +2,7 @@
 
 ## Goal
 
-To implement comprehensive, structured logging for the `email-service`. This will provide clear visibility into the outcome of every email-sending attempt, enabling effective monitoring, debugging, and alerting. The implementation will use a standard logging library (like Winston or Pino) and ensure all log entries are in a machine-readable JSON format.
+To implement comprehensive, structured logging for the `my-nest-js-email-microservice`. This will provide clear visibility into the outcome of every email-sending attempt, enabling effective monitoring, debugging, and alerting. The implementation will use a standard logging library (like Winston or Pino) and ensure all log entries are in a machine-readable JSON format.
 
 ## Requirements
 
@@ -52,7 +52,7 @@ graph TD
 ### File Structure
 
 ```plaintext
-apps/email-service/src/
+services/my-nest-js-email-microservice/src/
 ├── common/
 │   └── logging/
 │       ├── custom-logger.service.ts # Custom logger implementation

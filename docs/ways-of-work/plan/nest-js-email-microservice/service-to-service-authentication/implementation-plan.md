@@ -47,7 +47,7 @@ graph TD
 
 ### File Structure
 
-The following files will be created/modified within `apps/email-service/src/`:
+The following files will be created/modified within `services/my-nest-js-email-microservice/src/`:
 
 ```sh
 auth/
@@ -61,7 +61,7 @@ email/
 1. **Install Dependency**:
 
    ```sh
-   npm install @my-org/better-auth
+   pnpm -w install @my-org/better-auth
    ```
 
 2. **`s2s-auth.guard.ts`**:

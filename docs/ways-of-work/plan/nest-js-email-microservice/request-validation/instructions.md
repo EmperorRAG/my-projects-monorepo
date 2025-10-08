@@ -11,7 +11,7 @@ Ensure that `class-validator` and `class-transformer` are installed. They are ty
 - Run the following command in your terminal if these packages are missing:
 
 ```sh
-pnpm add class-validator class-transformer
+pnpm add -w class-validator class-transformer
 ```
 
 ## 2. Create the Data Transfer Object (DTO)
@@ -149,7 +149,7 @@ bootstrap();
 - **Start the Service:**
 
     ```sh
-    pnpm exec nx serve @my-projects-monorepo/my-nest-js-email-microservice
+    nx serve @my-projects-monorepo/my-nest-js-email-microservice
     ```
 
 - **Test Scenarios:**

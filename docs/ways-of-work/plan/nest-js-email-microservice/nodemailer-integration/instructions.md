@@ -184,7 +184,7 @@ Create a `.env` file in the root of the `my-nest-js-email-microservice` project.
     ```
 
 2. **Trigger the email:**
-    Make a `GET` request to `http://localhost:3001/`.
+    Make a `GET` request to `http://localhost:3000/`.
 
 3. **Check the console logs:**
     - You should see a "Message sent: <message-id>" log if the email was sent successfully.

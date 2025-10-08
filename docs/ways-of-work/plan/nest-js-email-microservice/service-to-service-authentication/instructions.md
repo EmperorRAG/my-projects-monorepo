@@ -11,7 +11,7 @@ First, install the in-house authentication library.
 - Run the following command in your terminal:
 
 ```sh
-pnpm add @my-org/better-auth
+pnpm -w add @my-org/better-auth
 ```
 
 *Note: Since this is a fictional package, this command will fail. We will proceed by creating a mock implementation.*
@@ -119,7 +119,7 @@ export class AppModule {}
 - **Start the Service:**
 
     ```sh
-    pnpm exec nx serve @my-projects-monorepo/my-nest-js-email-microservice
+    nx serve @my-projects-monorepo/my-nest-js-email-microservice
     ```
 
 - **Test Scenarios:**
