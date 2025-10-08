@@ -29,6 +29,7 @@
 		"@nestjs/testing": "^11.0.0",
 		"@next/eslint-plugin-next": "^15.2.4",
 		"@nx/devkit": "21.6.3",
+		"@nx/docker": "21.6.3",
 		"@nx/eslint": "21.6.3",
 		"@nx/eslint-plugin": "21.6.3",
 		"@nx/jest": "21.6.3",

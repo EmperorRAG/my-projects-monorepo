@@ -1,0 +1,23 @@
+# My Projects Monorepo
+
+> A monorepo for managing my personal projects, including a Next.js application, a NestJS microservice, and shared utility libraries.
+
+This file provides a map of the repository for Large Language Models (LLMs).
+
+## Documentation
+
+- [README.md](README.md): The main entry point for understanding the project, its structure, and how to get started.
+- [AGENTS.md](AGENTS.md): High-level instructions for AI agents on how to interact with this repository.
+- [CONTRIBUTING.md](.github/CONTRIBUTING.md): Guidelines for contributing to the project, including the pull request process and TSDoc standards.
+- [Architectural Decision Records](docs/adr/): Contains documents that record key architectural decisions made in the project.
+
+## Key Projects
+
+- [my-programs-app](apps/my-programs-app/README.md): The main Next.js application.
+- [my-nest-js-email-microservice](services/my-nest-js-email-microservice/README.md): A NestJS microservice for handling email-related functionalities.
+- [utilities](libs/utilities/README.md): A shared library for common functions and types.
+
+## Configuration
+
+- [nx.json](nx.json): The main Nx workspace configuration file.
+- [package.json](package.json): The root package.json file, defining workspace-level dependencies and scripts.
