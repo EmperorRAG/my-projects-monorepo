@@ -2,6 +2,10 @@
 	"name": "@my-projects-monorepo/my-nest-js-email-microservice",
 	"version": "0.0.1",
 	"private": false,
+	"scripts": {
+		"build": "nx build my-nest-js-email-microservice",
+		"docker:build": "docker build -t my-nest-js-email-microservice-image -f ./services/my-nest-js-email-microservice/Dockerfile ."
+	},
 	"nx": {
 		"targets": {
 			"build": {
