@@ -2,7 +2,7 @@
 
 ## 1. Objective
 
-This document provides a step-by-step guide to creating a production-ready, multi-stage `Dockerfile` for the `email-service` application, as specified in the PRD and implementation plan.
+This document provides a step-by-step guide to creating a production-ready, multi-stage `Dockerfile` for the `my-nest-js-email-microservice` application, as specified in the PRD and implementation plan.
 
 ## 2. Prerequisites
 
@@ -42,7 +42,7 @@ COPY . .
 
 # Build the specific 'email-service' application.
 # This command will be defined in the project's package.json scripts.
-RUN pnpm exec nx build my-nest-js-email-microservice
+RUN nx build my-nest-js-email-microservice
 
 # ---- Production Stage ----
 # This stage creates the final, lightweight image.
@@ -70,7 +70,7 @@ CMD ["node", "main.js"]
 
 ### Step 2: Add Build Script to `package.json`
 
-To enable the `docker build` command to work, you need a build script in the `email-service`'s `package.json` file.
+To enable the `docker build` command to work, you need a build script in the `my-nest-js-email-microservice`'s `package.json` file.
 
 **File to Edit:** `services/my-nest-js-email-microservice/package.json`
 
@@ -94,11 +94,11 @@ Add the following script to the `scripts` section:
 Execute the following command from the **root of the monorepo** to build the Docker image.
 
 ```sh
-docker build -t email-service:latest -f services/my-nest-js-email-microservice/Dockerfile .
+docker build -t my-nest-js-email-microservice:latest -f services/my-nest-js-email-microservice/Dockerfile .
 ```
 
 - **`docker build`**: The command to build an image.
-- **`-t email-service:latest`**: Tags the image with the name `email-service` and tag `latest`.
+- **`-t my-nest-js-email-microservice:latest`**: Tags the image with the name `my-nest-js-email-microservice` and tag `latest`.
 - **`-f services/my-nest-js-email-microservice/Dockerfile`**: Specifies the path to the `Dockerfile`.
 - **`.`**: Sets the build context to the current directory (the monorepo root).
 
@@ -107,14 +107,14 @@ docker build -t email-service:latest -f services/my-nest-js-email-microservice/D
 Once the image is built successfully, run it as a container with this command:
 
 ```sh
-docker run -d -p 3000:3000 --name email-service-container -e SMTP_HOST="your_smtp_host" -e SMTP_USER="your_user" -e SMTP_PASS="your_password" email-service:latest
+docker run -d -p 3000:3000 --name my-nest-js-email-microservice-container -e SMTP_HOST="your_smtp_host" -e SMTP_USER="your_user" -e SMTP_PASS="your_password" my-nest-js-email-microservice:latest
 ```
 
 - **`-d`**: Runs the container in detached mode (in the background).
 - **`-p 3000:3000`**: Maps port 3000 on your local machine to port 3000 inside the container.
-- **`--name email-service-container`**: Assigns a name to the running container.
+- **`--name my-nest-js-email-microservice-container`**: Assigns a name to the running container.
 - **`-e "KEY=VALUE"`**: Sets environment variables required by the application (e.g., SMTP credentials). **Replace the placeholder values.**
-- **`email-service:latest`**: The image to run.
+- **`my-nest-js-email-microservice:latest`**: The image to run.
 
 ## 4. Verification
 
@@ -126,14 +126,14 @@ Check that the container has started successfully:
 docker ps
 ```
 
-You should see `email-service-container` in the list of running containers.
+You should see `my-nest-js-email-microservice-container` in the list of running containers.
 
 ### Verify Application Logs
 
 Check the logs to ensure the Nest.js application started without errors:
 
 ```sh
-docker logs email-service-container
+docker logs my-nest-js-email-microservice-container
 ```
 
 ### Verify Security (Non-Root User)
@@ -141,7 +141,7 @@ docker logs email-service-container
 Exec into the running container and check the current user:
 
 ```sh
-docker exec -it email-service-container whoami
+docker exec -it my-nest-js-email-microservice-container whoami
 ```
 
 The command should output `appuser`, confirming the application is not running as root.
