@@ -4,7 +4,7 @@
 	"private": false,
 	"scripts": {
 		"build": "nx build my-nest-js-email-microservice",
-		"docker:build": "docker build -t my-nest-js-email-microservice-image -f ./services/my-nest-js-email-microservice/Dockerfile ."
+		"docker:build": "docker build -t my-nest-js-email-microservice-image -f Dockerfile ../../"
 	},
 	"nx": {
 		"targets": {
