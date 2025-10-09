@@ -7,15 +7,16 @@ describe('SmtpService', () => {
 	let mockTransport: jest.Mocked<Transporter>;
 
 	beforeEach(async () => {
+		const sendMail = jest.fn();
 		mockTransport = {
-			sendMail: jest.fn(),
-		} as any;
+			sendMail,
+		} as unknown as jest.Mocked<Transporter>;
 
 		const module = await Test.createTestingModule({
 			providers: [
 				SmtpService,
 				{
-					provide: 'NODEMAILER_TRANSPORT',
+					provide: 'SMTP_TRANSPORT',
 					useValue: mockTransport,
 				},
 			],
