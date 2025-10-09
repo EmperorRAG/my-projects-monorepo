@@ -73,5 +73,8 @@
 	},
 	"github.copilot.nextEditSuggestions.enabled": true,
 	"chat.mcp.gallery.enabled": true,
-	"chat.useNestedAgentsMdFiles": true
+	"chat.useNestedAgentsMdFiles": true,
+	"markdownlint.config": {
+		"ol-prefix": false
+	}
 }
