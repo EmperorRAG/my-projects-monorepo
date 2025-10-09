@@ -36,7 +36,7 @@
 	"editor.codeLensFontFamily": "Fira Code, monospace",
 	"editor.colorDecorators": true,
 	"editor.comments.insertSpace": true,
-	"editor.defaultFormatter": "EditorConfig.EditorConfig",
+	"editor.defaultFormatter": null,
 	"editor.definitionLinkOpensInPeek": true,
 	"editor.detectIndentation": false,
 	"editor.experimentalGpuAcceleration": "off",
@@ -58,5 +58,20 @@
 	"editor.wrapOnEscapedLineFeeds": true,
 	"editor.formatOnType": true,
 	"diffEditor.codeLens": true,
-	"terminal.integrated.suggest.enabled": true
+	"terminal.integrated.suggest.enabled": true,
+	"[instructions]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+		"editor.unicodeHighlight.ambiguousCharacters": false,
+		"editor.unicodeHighlight.invisibleCharacters": false,
+		"diffEditor.ignoreTrimWhitespace": false,
+		"editor.wordWrap": "on",
+		"editor.quickSuggestions": {
+			"comments": "off",
+			"strings": "off",
+			"other": "off"
+		}
+	},
+	"github.copilot.nextEditSuggestions.enabled": true,
+	"chat.mcp.gallery.enabled": true,
+	"chat.useNestedAgentsMdFiles": true
 }
