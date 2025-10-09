@@ -4,7 +4,7 @@ import { type Transporter, SendMailOptions } from 'nodemailer';
 @Injectable()
 export class SmtpService {
   constructor(
-    @Inject('NODEMAILER_TRANSPORT') private readonly transport: Transporter,
+    @Inject('SMTP_TRANSPORT') private readonly transport: Transporter,
   ) {}
 
   async sendEmail(options: SendMailOptions) {
