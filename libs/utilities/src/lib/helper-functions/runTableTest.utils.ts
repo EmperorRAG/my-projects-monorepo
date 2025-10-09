@@ -1,41 +1,62 @@
 import { test, expect } from '@jest/globals';
+import { pipe } from 'effect';
+import { forEach } from 'effect/Array';
+
+type TestCase<Input, Expected> = {
+	input: Input;
+	expected: Expected;
+	label?: string;
+};
 
 /**
- * Jest table-driven test runner for evaluating any function with a customizable matcher.
+ * A higher-order function that creates a table-driven test runner with a custom matcher.
  *
- * @param fn - The function to test.
- * @returns Curried function accepting matcher, then description and cases.
+ * @impure This function is impure as it interacts with the Jest test runner.
+ * @description Creates a curried function to run a series of test cases for a given function `fn`.
+ * It first takes a `matcher` function, then a `description`, and finally the `cases`.
+ *
+ * @fp-pattern Higher-order function, Curried function
+ *
+ * @param fn - The function to be tested.
+ * @returns A curried function for running table-driven tests.
  *
  * @example
- * const runJestTableTest = runJestTableTestWithMatcher(IsValueStringable);
- * runJestTableTest((result, expected) => jestExpect(result).toBe(expected))('Test primitives', [
- *   { input: 'foo', expected: true, label: 'string' },
- *   { input: 123, expected: true, label: 'number' },
- * ]);
+ * const add = (a: number) => (b: number) => a + b;
+ * const testAdd = runTableTestWithMatcher(add(1));
+ * testAdd((result, expected) => expect(result).toBe(expected))(
+ *   'should add numbers',
+ *   [{ input: 2, expected: 3 }]
+ * );
  */
 export const runTableTestWithMatcher =
 	<Input, Expected>(fn: (input: Input) => Expected) =>
 	(matcher: (result: Expected, expected: Expected) => void) =>
-	(description: string, cases: { input: Input; expected: Expected; label?: string }[]) => {
+	(description: string, cases: ReadonlyArray<TestCase<Input, Expected>>) => {
 		test(description, () => {
-			cases.forEach(({ input, expected }) => {
-				matcher(fn(input), expected);
-			});
+			pipe(
+				cases,
+				forEach(({ input, expected }) => {
+					matcher(fn(input), expected);
+				})
+			);
 		});
 	};
 
 /**
- * Jest table-driven test runner for evaluating a function using Jest's `toBe` matcher.
+ * A higher-order function that creates a table-driven test runner using Jest's `toBe` matcher.
  *
- * @param fn - The function to test.
- * @returns Curried function accepting description and cases.
+ * @impure This function is impure as it delegates to `runTableTestWithMatcher`.
+ * @description A specialized version of `runTableTestWithMatcher` that defaults to using `expect(result).toBe(expected)`.
+ *
+ * @fp-pattern Higher-order function, Curried function
+ *
+ * @param fn - The function to be tested.
+ * @returns A curried function for running table-driven tests with the `toBe` matcher.
  *
  * @example
- * const runJestTableTest = runJestExpectToBeTableTest(IsValueStringable);
- * runJestTableTest('Test primitives', [
- *   { input: 'foo', expected: true, label: 'string' },
- *   { input: 123, expected: true, label: 'number' },
- * ]);
+ * const add = (a: number) => (b: number) => a + b;
+ * const testAdd = runExpectToBeTableTest(add(1));
+ * testAdd('should add numbers', [{ input: 2, expected: 3 }]);
  */
 export const runExpectToBeTableTest = <Input, Expected>(fn: (input: Input) => Expected) =>
 	runTableTestWithMatcher(fn)((result, expected) => {

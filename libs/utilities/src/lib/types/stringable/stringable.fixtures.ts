@@ -16,9 +16,10 @@ import type { InputLabelExpected } from '../test.types';
  */
 export const getAllPrimitiveInputLabelExpectedObjects = () =>
 	mergeObjects(
-		mergeObjects(toInputObjects(getAllPrimitiveValues()), toLabelObjects(getAllPrimitiveLabelValues())),
-		toExpectedObjects(getAllPrimitiveExpectedValues())
-	) satisfies InputLabelExpected[];
+		mergeObjects(toInputObjects(getAllPrimitiveValues()))(
+			toLabelObjects(getAllPrimitiveLabelValues())
+		)
+	)(toExpectedObjects(getAllPrimitiveExpectedValues())) satisfies InputLabelExpected[];
 
 /**
  * Generates an array of objects that combine input, label, and expected value representations
@@ -30,9 +31,10 @@ export const getAllPrimitiveInputLabelExpectedObjects = () =>
  */
 export const getAllFunctionInputLabelExpectedObjects = () =>
 	mergeObjects(
-		mergeObjects(toInputObjects(getAllFunctionValues()), toLabelObjects(getAllFunctionLabelValues())),
-		toExpectedObjects(getAllFunctionExpectedValues())
-	) satisfies InputLabelExpected[];
+		mergeObjects(toInputObjects(getAllFunctionValues()))(
+			toLabelObjects(getAllFunctionLabelValues())
+		)
+	)(toExpectedObjects(getAllFunctionExpectedValues())) satisfies InputLabelExpected[];
 
 /**
  * Generates an array of objects that combine input values, label values, and expected values
@@ -44,6 +46,7 @@ export const getAllFunctionInputLabelExpectedObjects = () =>
  */
 export const getAllObjectInputLabelExpectedObjects = () =>
 	mergeObjects(
-		mergeObjects(toInputObjects(getAllObjectValues()), toLabelObjects(getAllObjectLabelValues())),
-		toExpectedObjects(getAllObjectExpectedValues())
-	) satisfies InputLabelExpected[];
+		mergeObjects(toInputObjects(getAllObjectValues()))(
+			toLabelObjects(getAllObjectLabelValues())
+		)
+	)(toExpectedObjects(getAllObjectExpectedValues())) satisfies InputLabelExpected[];

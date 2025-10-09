@@ -1,220 +1,314 @@
+import { pipe } from 'effect';
+import { map } from 'effect/Array';
+
 /**
- * Converts an array of values into an array of objects, where each object has one property
- * with the property name provided as input and its value being the corresponding value from the array.
- * This function is pure and does not mutate any external state.
+ * @pure
+ * @description Converts an array of values into an array of objects, where each object has a specified property name.
+ * This is a higher-order function that takes a property name and returns a new function that processes the values.
+ *
+ * @fp-pattern Higher-order function, Curried function
  *
  * @param propertyName - The property name to use for each object.
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the specified property name and values.
+ * @returns A function that takes an array of values and returns an array of objects.
  *
- * Example usage:
- *   toObjects('input', [1, 2, 3]);
- *   // [ { input: 1 }, { input: 2 }, { input: 3 } ]
+ * @example
+ * const toIdObjects = toObjects('id');
+ * const result = toIdObjects([1, 2, 3]);
+ * // => [ { id: 1 }, { id: 2 }, { id: 3 } ]
  */
-export const toObjects = <K extends string, T>(propertyName: K, values: T[]): Record<K, T>[] =>
-	values.map((value) => ({ [propertyName]: value }) as Record<K, T>);
+export const toObjects =
+	<K extends string>(propertyName: K) =>
+	<T>(values: T[]): Record<K, T>[] =>
+		pipe(
+			values,
+			map((value) => ({ [propertyName]: value }) as Record<K, T>)
+		);
 
 /**
- * Converts an array of values into an array of objects with the property name 'input'.
- * This is a curried version of toObjects with propertyName preset to 'input'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'input'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'input' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('input')`
  *
- * Example usage:
- *   toInputObjects([1, 2, 3]);
- *   // [ { input: 1 }, { input: 2 }, { input: 3 } ]
+ * @returns A function that takes an array of values and returns an array of objects with the 'input' property.
+ *
+ * @example
+ * const result = toInputObjects([1, 2, 3]);
+ * // => [ { input: 1 }, { input: 2 }, { input: 3 } ]
  */
-export const toInputObjects = <T>(values: T[]): { input: T }[] => toObjects<'input', T>('input', values);
+export const toInputObjects = toObjects('input');
 
 /**
- * Converts an array of values into an array of objects with the property name 'label'.
- * This is a curried version of toObjects with propertyName preset to 'label'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'label'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'label' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('label')`
  *
- * Example usage:
- *   toLabelObjects(['foo', 'bar']);
- *   // [ { label: 'foo' }, { label: 'bar' } ]
+ * @returns A function that takes an array of values and returns an array of objects with the 'label' property.
+ *
+ * @example
+ * const result = toLabelObjects(['foo', 'bar']);
+ * // => [ { label: 'foo' }, { label: 'bar' } ]
  */
-export const toLabelObjects = <T>(values: T[]): { label: T }[] => toObjects<'label', T>('label', values);
+export const toLabelObjects = toObjects('label');
 
 /**
- * Converts an array of values into an array of objects with the property name 'expected'.
- * This is a curried version of toObjects with propertyName preset to 'expected'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'expected'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'expected' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('expected')`
  *
- * Example usage:
- *   toExpectedObjects([true, false]);
- *   // [ { expected: true }, { expected: false } ]
+ * @returns A function that takes an array of values and returns an array of objects with the 'expected' property.
+ *
+ * @example
+ * const result = toExpectedObjects([true, false]);
+ * // => [ { expected: true }, { expected: false } ]
  */
-export const toExpectedObjects = <T>(values: T[]): { expected: T }[] => toObjects<'expected', T>('expected', values);
+export const toExpectedObjects = toObjects('expected');
 
 /**
- * Converts an array of values into an array of objects with the property name 'name'.
- * This is a curried version of toObjects with propertyName preset to 'name'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'name'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'name' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('name')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'name' property.
  */
-export const toNameObjects = <T>(values: T[]): { name: T }[] => toObjects<'name', T>('name', values);
+export const toNameObjects = toObjects('name');
 
 /**
- * Converts an array of values into an array of objects with the property name 'value'.
- * This is a curried version of toObjects with propertyName preset to 'value'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'value'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'value' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('value')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'value' property.
  */
-export const toValueObjects = <T>(values: T[]): { value: T }[] => toObjects<'value', T>('value', values);
+export const toValueObjects = toObjects('value');
 
 /**
- * Converts an array of values into an array of objects with the property name 'key'.
- * This is a curried version of toObjects with propertyName preset to 'key'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'key'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'key' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('key')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'key' property.
  */
-export const toKeyObjects = <T>(values: T[]): { key: T }[] => toObjects<'key', T>('key', values);
+export const toKeyObjects = toObjects('key');
 
 /**
- * Converts an array of values into an array of objects with the property name 'options'.
- * This is a curried version of toObjects with propertyName preset to 'options'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'options'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'options' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('options')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'options' property.
  */
-export const toOptionsObjects = <T>(values: T[]): { options: T }[] => toObjects<'options', T>('options', values);
+export const toOptionsObjects = toObjects('options');
 
 /**
- * Converts an array of values into an array of objects with the property name 'defaultValue'.
- * This is a curried version of toObjects with propertyName preset to 'defaultValue'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'defaultValue'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'defaultValue' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('defaultValue')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'defaultValue' property.
  */
-export const toDefaultValueObjects = <T>(values: T[]): { defaultValue: T }[] => toObjects<'defaultValue', T>('defaultValue', values);
+export const toDefaultValueObjects = toObjects('defaultValue');
 
 /**
- * Converts an array of values into an array of objects with the property name 'placeholder'.
- * This is a curried version of toObjects with propertyName preset to 'placeholder'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'placeholder'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'placeholder' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('placeholder')`
  *
- * Example usage:
- *   toPlaceholderObjects(['foo', 'bar']);
- *   // [ { placeholder: 'foo' }, { placeholder: 'bar' } ]
+ * @returns A function that takes an array of values and returns an array of objects with the 'placeholder' property.
+ *
+ * @example
+ * const result = toPlaceholderObjects(['foo', 'bar']);
+ * // => [ { placeholder: 'foo' }, { placeholder: 'bar' } ]
  */
-export const toPlaceholderObjects = <T>(values: T[]): { placeholder: T }[] => toObjects<'placeholder', T>('placeholder', values);
+export const toPlaceholderObjects = toObjects('placeholder');
 
 /**
- * Converts an array of values into an array of objects with the property name 'min'.
- * This is a curried version of toObjects with propertyName preset to 'min'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'min'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'min' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('min')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'min' property.
  */
-export const toMinObjects = <T>(values: T[]): { min: T }[] => toObjects<'min', T>('min', values);
+export const toMinObjects = toObjects('min');
 
 /**
- * Converts an array of values into an array of objects with the property name 'max'.
- * This is a curried version of toObjects with propertyName preset to 'max'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'max'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'max' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('max')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'max' property.
  */
-export const toMaxObjects = <T>(values: T[]): { max: T }[] => toObjects<'max', T>('max', values);
+export const toMaxObjects = toObjects('max');
 
 /**
- * Converts an array of values into an array of objects with the property name 'required'.
- * This is a curried version of toObjects with propertyName preset to 'required'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'required'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'required' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('required')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'required' property.
  */
-export const toRequiredObjects = <T>(values: T[]): { required: T }[] => toObjects<'required', T>('required', values);
+export const toRequiredObjects = toObjects('required');
 
 /**
- * Converts an array of values into an array of objects with the property name 'columns'.
- * This is a curried version of toObjects with propertyName preset to 'columns'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'columns'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'columns' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('columns')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'columns' property.
  */
-export const toColumnsObjects = <T>(values: T[]): { columns: T }[] => toObjects<'columns', T>('columns', values);
+export const toColumnsObjects = toObjects('columns');
 
 /**
- * Converts an array of values into an array of objects with the property name 'description'.
- * This is a curried version of toObjects with propertyName preset to 'description'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'description'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'description' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('description')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'description' property.
  */
-export const toDescriptionObjects = <T>(values: T[]): { description: T }[] => toObjects<'description', T>('description', values);
+export const toDescriptionObjects = toObjects('description');
 
 /**
- * Converts an array of values into an array of objects with the property name 'styles'.
- * This is a curried version of toObjects with propertyName preset to 'styles'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'styles'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'styles' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('styles')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'styles' property.
  */
-export const toStylesObjects = <T>(values: T[]): { styles: T }[] => toObjects<'styles', T>('styles', values);
+export const toStylesObjects = toObjects('styles');
 
 /**
- * Converts an array of values into an array of objects with the property name 'id'.
- * This is a curried version of toObjects with propertyName preset to 'id'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'id'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'id' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('id')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'id' property.
  */
-export const toIdObjects = <T>(values: T[]): { id: T }[] => toObjects<'id', T>('id', values);
+export const toIdObjects = toObjects('id');
 
 /**
- * Converts an array of values into an array of objects with the property name 'formId'.
- * This is a curried version of toObjects with propertyName preset to 'formId'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'formId'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'formId' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('formId')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'formId' property.
  */
-export const toFormIdObjects = <T>(values: T[]): { formId: T }[] => toObjects<'formId', T>('formId', values);
+export const toFormIdObjects = toObjects('formId');
 
 /**
- * Converts an array of values into an array of objects with the property name 'errorId'.
- * This is a curried version of toObjects with propertyName preset to 'errorId'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'errorId'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'errorId' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('errorId')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'errorId' property.
  */
-export const toErrorIdObjects = <T>(values: T[]): { errorId: T }[] => toObjects<'errorId', T>('errorId', values);
+export const toErrorIdObjects = toObjects('errorId');
 
 /**
- * Converts an array of values into an array of objects with the property name 'valid'.
- * This is a curried version of toObjects with propertyName preset to 'valid'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'valid'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'valid' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('valid')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'valid' property.
  */
-export const toValidObjects = <T>(values: T[]): { valid: T }[] => toObjects<'valid', T>('valid', values);
+export const toValidObjects = toObjects('valid');
 
 /**
- * Converts an array of values into an array of objects with the property name 'defaultChecked'.
- * This is a curried version of toObjects with propertyName preset to 'defaultChecked'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'defaultChecked'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'defaultChecked' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('defaultChecked')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'defaultChecked' property.
  */
-export const toDefaultCheckedObjects = <T>(values: T[]): { defaultChecked: T }[] => toObjects<'defaultChecked', T>('defaultChecked', values);
+export const toDefaultCheckedObjects = toObjects('defaultChecked');
 
 /**
- * Converts an array of values into an array of objects with the property name 'multiple'.
- * This is a curried version of toObjects with propertyName preset to 'multiple'.
+ * @pure
+ * @description Converts an array of values into an array of objects with the property name 'multiple'.
+ * This is a specialized version of `toObjects`.
  *
- * @param values - The array of values to convert.
- * @returns {object[]} An array of objects with the property 'multiple' and corresponding values.
+ * @fp-pattern Curried function
+ * @composition
+ * - `toObjects('multiple')`
+ *
+ * @returns A function that takes an array of values and returns an array of objects with the 'multiple' property.
  */
-export const toMultipleObjects = <T>(values: T[]): { multiple: T }[] => toObjects<'multiple', T>('multiple', values);
+export const toMultipleObjects = toObjects('multiple');

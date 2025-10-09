@@ -1,62 +1,74 @@
+import { pipe, Match } from 'effect';
+import { map } from 'effect/Array';
 import { hasCustomToStringTag, isArray, isDate, isPlainObject, isRegExp, throwsOnToString } from '../types/object.types';
 
 /**
  * Returns a string label describing the object value's type.
- * This function is pure and does not mutate any external state.
+ *
+ * @pure This function is pure and does not mutate any external state.
+ * @description Uses pattern matching to determine the type of an object.
+ *
+ * @fp-pattern Pattern Matching
+ * @composition Uses `Match.value` to match against object type predicates.
  *
  * @param obj - The object value to label.
  * @returns {string} The label for the object value.
  *
- * Example usage:
- *   getObjectLabelValue({}); // 'plain object'
- *   getObjectLabelValue([]); // 'array'
- *   getObjectLabelValue(new Date()); // 'Date'
- *   getObjectLabelValue(/abc/); // 'RegExp'
- *   getObjectLabelValue({ [Symbol.toStringTag]: 'Custom' }); // 'custom Symbol.toStringTag'
- *   getObjectLabelValue({ toString() { throw new Error('fail'); } }); // 'throws on toString'
+ * @example
+ * getObjectLabelValue({}); // 'plain object'
+ * getObjectLabelValue([]); // 'array'
  */
-export const getObjectLabelValue = (obj: object): string => {
-	if (isArray(obj)) return 'array';
-	if (isDate(obj)) return 'Date';
-	if (isRegExp(obj)) return 'RegExp';
-	if (hasCustomToStringTag(obj)) return 'custom Symbol.toStringTag';
-	if (throwsOnToString(obj)) return 'throws on toString';
-	if (isPlainObject(obj)) return 'plain object';
-	return 'object';
-};
+export const getObjectLabelValue = (obj: object): string =>
+	pipe(
+		Match.value(obj),
+		Match.when(isArray, () => 'array'),
+		Match.when(isDate, () => 'Date'),
+		Match.when(isRegExp, () => 'RegExp'),
+		Match.when(hasCustomToStringTag, () => 'custom Symbol.toStringTag'),
+		Match.when(throwsOnToString, () => 'throws on toString'),
+		Match.when(isPlainObject, () => 'plain object'),
+		Match.orElse(() => 'object')
+	);
 
 /**
  * Returns the expected value (boolean) for a given object value for stringability tests.
- * This function is pure and always returns true for any object, including arrays, dates, regexps, etc.
+ *
+ * @pure This function is pure and does not have side effects.
+ * @description Determines if an object is considered "stringable" in the context of tests.
+ *
+ * @fp-pattern Pattern Matching
+ * @composition Uses `Match.value` to check object types.
  *
  * @param obj - The object value to check.
- * @returns {boolean} Always true for objects.
+ * @returns {boolean} True for most object types, false for unhandled cases.
  *
- * Example usage:
- *   getObjectExpectedValue({}); // true
- *   getObjectExpectedValue([]); // true
- *   getObjectExpectedValue(new Date()); // true
- *   getObjectExpectedValue(/abc/); // true
+ * @example
+ * getObjectExpectedValue({}); // true
+ * getObjectExpectedValue([]); // true
  */
-export const getObjectExpectedValue = (obj: object): boolean => {
-	if (isArray(obj)) return true;
-	if (isDate(obj)) return true;
-	if (isRegExp(obj)) return true;
-	if (hasCustomToStringTag(obj)) return true;
-	if (throwsOnToString(obj)) return true;
-	if (isPlainObject(obj)) return true;
-	return false;
-};
+export const getObjectExpectedValue = (obj: object): boolean =>
+	pipe(
+		Match.value(obj),
+		Match.when(isArray, () => true),
+		Match.when(isDate, () => true),
+		Match.when(isRegExp, () => true),
+		Match.when(hasCustomToStringTag, () => true),
+		Match.when(throwsOnToString, () => true),
+		Match.when(isPlainObject, () => true),
+		Match.orElse(() => false)
+	);
 
 /**
- * Returns an array of representative object values (plain object, array, Date, RegExp, custom object).
- * This function is pure and does not mutate any external state.
+ * Returns an array of representative object values.
+ *
+ * @pure This function is pure and does not mutate any external state.
+ * @description Provides a consistent set of object values for testing purposes.
  *
  * @returns {object[]} An array containing representative object values.
  *
- * Example usage:
- *   const objects = getAllObjectValues();
- *   // [ {}, [], new Date(), /abc/, { [Symbol.toStringTag]: 'Custom' }, { toString() { throw new Error('fail'); } } ]
+ * @example
+ * const objects = getAllObjectValues();
+ * // => [{}, [], new Date(), /abc/, ...]
  */
 export const getAllObjectValues = (): object[] => [
 	{}, // plain object
@@ -72,25 +84,35 @@ export const getAllObjectValues = (): object[] => [
 ];
 
 /**
- * Maps all object values to their string labels using getObjectLabelValue.
- * This function is pure and composes getAllObjectValues and getObjectLabelValue.
+ * Maps all object values to their string labels.
+ *
+ * @pure This function is pure and composes pure functions.
+ * @description Creates a pipeline to get all object values and then map them to their labels.
+ *
+ * @fp-pattern Composition
+ * @composition `pipe(getAllObjectValues, map(getObjectLabelValue))`
  *
  * @returns {string[]} An array of string labels for each object value.
  *
- * Example usage:
- *   getAllObjectLabelValues();
- *   // ['plain object', 'array', 'Date', 'RegExp', 'custom Symbol.toStringTag', 'throws on toString']
+ * @example
+ * getAllObjectLabelValues();
+ * // => ['plain object', 'array', 'Date', 'RegExp', 'custom Symbol.toStringTag', 'throws on toString']
  */
-export const getAllObjectLabelValues = (): string[] => getAllObjectValues().map(getObjectLabelValue);
+export const getAllObjectLabelValues = (): string[] => pipe(getAllObjectValues(), map(getObjectLabelValue));
 
 /**
- * Maps all object values to their expected boolean values using getObjectExpectedValue.
- * This function is pure and composes getAllObjectValues and getObjectExpectedValue.
+ * Maps all object values to their expected boolean values for stringability tests.
+ *
+ * @pure This function is pure and composes pure functions.
+ * @description Creates a pipeline to get all object values and then map them to their expected boolean values.
+ *
+ * @fp-pattern Composition
+ * @composition `pipe(getAllObjectValues, map(getObjectExpectedValue))`
  *
  * @returns {boolean[]} An array of expected boolean values for each object value.
  *
- * Example usage:
- *   getObjectExpectedValues();
- *   // [true, true, ...]
+ * @example
+ * getObjectExpectedValues();
+ * // => [true, true, true, true, true, true]
  */
-export const getAllObjectExpectedValues = (): boolean[] => getAllObjectValues().map(getObjectExpectedValue);
+export const getAllObjectExpectedValues = (): boolean[] => pipe(getAllObjectValues(), map(getObjectExpectedValue));

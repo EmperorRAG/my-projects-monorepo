@@ -9,11 +9,11 @@ You are an expert in functional programming (FP) in TypeScript, specifically usi
 
 ## Core Principles
 
-### Purity
-- All exported functions MUST be pure. They must not have any observable side effects.
-- A function is pure if, given the same input, it always returns the same output and does not modify any external state.
+### Purity and Effects
+- All functions that perform side effects (e.g., logging, network requests, file I/O) MUST return an `Effect`.
+- An `Effect` is a data structure that describes a computation, including its potential success value, error type, and required context.
+- Pure functions (no side effects) SHOULD return raw values unless they are part of a larger `Effect` pipeline.
 - You MUST explicitly mark pure functions with a `@pure` tag in their JSDoc block.
-- If a function is impure (e.g., logging, network requests), it MUST be wrapped in an `Effect`.
 
 ### Immutability
 - You MUST NEVER mutate input parameters or global state.
@@ -27,6 +27,15 @@ You are an expert in functional programming (FP) in TypeScript, specifically usi
 
 ### Conditional Logic
 - You MUST use the `Match` module from `effect` for conditional logic instead of `if/else` or `switch` statements. This provides type-safe, declarative pattern matching.
+
+### Handling Optional Values
+- You MUST use the `Option` type from `effect` to represent values that may or may not exist.
+- AVOID using `null` or `undefined` directly in your application logic. `Option` provides a safe, composable API for handling optionality.
+
+### Error Handling
+- You MUST use the `Either` type for synchronous functions that can fail, or `Effect` for asynchronous/effectful functions that can fail.
+- `Either<E, A>` represents a value that is either a `Left<E>` (error) or a `Right<A>` (success).
+- AVOID throwing exceptions. `Either` and `Effect` make error paths explicit and type-safe.
 
 ### Currying & Partial Application
 - You MUST order parameters to support partial application (data-last).
@@ -95,6 +104,87 @@ export const getPrimitiveLabelValue = (value: unknown): string =>
   );
 ```
 
+### `Effect` for Side Effects
+Wrap impure operations in an `Effect` to make them declarative and composable.
+
+```typescript
+import { Effect } from 'effect';
+
+// Impure function
+const log = (message: string): void => {
+  console.log(message);
+};
+
+// Wrapped in an Effect
+const logEffect = (message: string): Effect.Effect<void> =>
+  Effect.sync(() => log(message));
+
+// Usage in a pipeline
+const program = pipe(
+  logEffect('Starting...'),
+  Effect.flatMap(() => Effect.succeed(42)),
+  Effect.flatMap((n) => logEffect(`The answer is ${n}.`))
+);
+```
+
+### `Option` for Optional Values
+Use `Option` to safely handle potentially missing values.
+
+```typescript
+import { Option } from 'effect';
+
+const findUser = (id: number): Option.Option<{ id: number; name: string }> => {
+  if (id === 1) {
+    return Option.some({ id: 1, name: 'Alice' });
+  }
+  return Option.none();
+};
+
+const userName = pipe(
+  findUser(1),
+  Option.map((user) => user.name),
+  Option.getOrElse(() => 'User not found')
+);
+// => 'Alice'
+```
+
+### `Either` for Error Handling
+Use `Either` for synchronous functions that can fail.
+
+```typescript
+import { Either } from 'effect';
+
+const parseNumber = (s: string): Either.Either<Error, number> => {
+  const n = parseFloat(s);
+  return isNaN(n) ? Either.left(new Error('Invalid number')) : Either.right(n);
+};
+
+const result = pipe(
+  parseNumber('123'),
+  Either.map((n) => n * 2),
+  Either.getOrElse((e) => e.message)
+);
+// => 246
+```
+
+### `Schema` for Data Validation
+Use `Schema` to parse and validate data structures.
+
+```typescript
+import { Schema } from '@effect/schema';
+
+const User = Schema.struct({
+  id: Schema.number,
+  name: Schema.string,
+});
+
+const result = Schema.decode(User)({ id: 1, name: 'Bob' });
+// => Effect.succeed({ id: 1, name: 'Bob' })
+
+const errorResult = Schema.decode(User)({ id: '1', name: 'Bob' });
+// => Effect.fail(...)
+```
+
 ## Documentation Standards
 
 ### JSDoc Template for Pure Functions
@@ -121,6 +211,29 @@ You MUST use this JSDoc template for all exported pure functions.
  */
 ```
 
+### JSDoc Template for Effectful Functions
+You MUST use this JSDoc template for functions returning an `Effect`.
+
+```typescript
+/**
+ * A brief, imperative description of what the effectful function does.
+ *
+ * @description A more detailed explanation if necessary.
+ *
+ * @param name - Description of the parameter.
+ * @returns {Effect.Effect<A, E, R>} Description of the returned Effect, including:
+ *   - `A`: The success type.
+ *   - `E`: The error type.
+ *   - `R`: The required context/services.
+ *
+ * @example
+ * // A clear, simple example of how to use the function.
+ * const program = functionName(input);
+ * const result = Effect.runSync(program);
+ * // => expected output
+ */
+```
+
 ## Anti-Patterns to Avoid
 
 ### ❌ Mutation
@@ -132,7 +245,7 @@ const addItem = (arr: T[], item: T) => {
 };
 
 // GOOD: Returns a new array, preserving immutability.
-const addItem = (arr: T[], item: T): T[] => [...arr, item];
+const addItem = <T>(arr: T[], item: T): T[] => [...arr, item];
 ```
 
 ### ❌ If-Else / Switch Statements
@@ -166,17 +279,51 @@ for (let i = 0; i < values.length; i++) {
 }
 
 // GOOD: Declarative `map` operation, preferably within a `pipe`.
+import { map } from 'effect/Array';
 const labels = pipe(values, map(getLabel));
+```
+
+### ❌ `null` or `undefined`
+```typescript
+// BAD: Returning null for missing values.
+const findUser = (id: number): User | null => {
+  // ...
+};
+
+// GOOD: Returning an Option.
+import { Option } from 'effect';
+const findUser = (id: number): Option.Option<User> => {
+  // ...
+};
+```
+
+### ❌ Throwing Exceptions
+```typescript
+// BAD: Throwing an error.
+const parse = (json: string): MyType => {
+  if (!isValid(json)) {
+    throw new Error('Invalid JSON');
+  }
+  return JSON.parse(json);
+};
+
+// GOOD: Returning an Either or Effect.
+import { Either } from 'effect';
+const parse = (json: string): Either.Either<Error, MyType> => {
+  // ...
+};
 ```
 
 ## Code Review & Generation Checklist
 
 When generating or reviewing code, you MUST ensure the following:
-- [ ] All functions are pure and marked with `@pure`.
+- [ ] All functions are pure and marked with `@pure`, or they return an `Effect`.
 - [ ] All exported functions are `const` arrow functions.
 - [ ] Immutability is strictly maintained.
 - [ ] `pipe()` is used for multi-step transformations.
 - [ ] `Match` is used for conditional logic.
-- [ ] JSDoc is complete and follows the template.
+- [ ] `Option` is used for optional values instead of `null` or `undefined`.
+- [ ] `Either` or `Effect` is used for error handling instead of throwing exceptions.
+- [ ] JSDoc is complete and follows the appropriate template.
 - [ ] Curried functions use a data-last parameter order.
 - [ ] All documented anti-patterns are avoided.

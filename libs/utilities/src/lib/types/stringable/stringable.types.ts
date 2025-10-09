@@ -1,103 +1,69 @@
+import { pipe, Match } from 'effect';
+import { isFunction } from '../function.types';
+import { isValueObject } from '../object/object.types';
+import { isPrimitive } from '../primitive.types';
+
 /**
- * Type that represents any value that can be safely passed to String() constructor
- * Includes: string, number, boolean, bigint, symbol, undefined, null, object, function
+ * A type representing any value that can be safely passed to the `String()` constructor.
+ * This includes all primitive types, objects, and functions.
  */
 export type Stringable = string | number | boolean | bigint | symbol | undefined | null | object | ((...args: unknown[]) => unknown);
 
 /**
- * Type that represents any primitive value that can be safely passed to String() constructor
- * Includes: string, number, boolean, bigint, symbol, undefined, null
+ * A type representing any primitive value that can be safely passed to the `String()` constructor.
+ * This includes all primitive types except for objects and functions.
  */
 export type PrimitiveStringable = string | number | boolean | bigint | symbol | undefined | null;
 
 /**
- * Determines if a value can be safely passed to String() without throwing.
+ * Checks if a value can be safely converted to a string.
  *
- * ## Acceptance Criteria
- * - Returns true for all primitive types: string, number, boolean, bigint, symbol, undefined, and null.
- * - Returns true for objects (including arrays, plain objects, Date, RegExp, etc.).
- * - Returns true for functions.
- * - Returns true for values with custom Symbol.toStringTag (unless they throw on String conversion).
- * - Returns false only if the value throws when passed to String().
+ * @pure This function is pure.
+ * @description A type guard that determines if a value is `Stringable`. It returns `true` for all
+ * primitives, objects, and functions, as they can all be passed to `String()`.
  *
- * @param defaultValue - The value to check
- * @returns True if the value can be safely converted to a string
+ * @fp-pattern Pattern Matching
+ * @composition Uses `pipe` and `Match` to check against various type guards.
+ *
+ * @param value - The value to check.
+ * @returns {boolean} `true` if the value is `Stringable`, otherwise `false`.
  *
  * @example
- * // Primitives
- * isValueStringable("test"); // true
- * isValueStringable(42); // true
- * isValueStringable(true); // true
- * isValueStringable(undefined); // true
- * isValueStringable(null); // true
- * isValueStringable(Symbol("sym")); // true
- * isValueStringable(123n); // true
- *
- * // Objects
- * isValueStringable({}); // true
- * isValueStringable([]); // true
- * isValueStringable(new Date()); // true
- * isValueStringable(/abc/); // true
- *
- * // Functions
- * isValueStringable(() => {}); // true
- *
- * // Custom object with Symbol.toStringTag
- * const obj = { [Symbol.toStringTag]: "Custom" };
- * isValueStringable(obj); // true
- *
- * // Value that throws on String conversion (rare)
- * // const throwingObj = { toString() { throw new Error("fail"); } };
- * // isValueStringable(throwingObj); // true (but String(throwingObj) would throw)
+ * isValueStringable('test'); // => true
+ * isValueStringable({}); // => true
+ * isValueStringable(() => {}); // => true
  */
-export function isValueStringable(value: unknown): value is Stringable {
-	switch (typeof value) {
-		case 'string':
-		case 'number':
-		case 'boolean':
-		case 'bigint':
-		case 'symbol':
-		case 'undefined':
-		case 'object':
-		case 'function':
-			return true;
-		default:
-			return value === null;
-	}
-}
+export const isValueStringable = (value: unknown): value is Stringable =>
+	pipe(
+		Match.value(value),
+		Match.when(isPrimitive, () => true),
+		Match.when(isValueObject, () => true),
+
+		Match.when(isFunction, () => true),
+		Match.orElse(() => false)
+	);
 
 /**
- * Determines if a value is a primitive that can be safely passed to String().
+ * Checks if a value is a primitive that can be safely converted to a string.
  *
- * ## Acceptance Criteria
- * - Returns true for all primitive types: string, number, boolean, bigint, symbol, undefined, and null.
- * - Returns false for objects and functions.
+ * @pure This function is pure.
+ * @description A type guard that determines if a value is a `PrimitiveStringable`.
+ * It returns `true` only for primitive types.
  *
- * @param value - The value to check
- * @returns True if the value is a primitive that can be safely converted to a string
+ * @fp-pattern Pattern Matching
+ * @composition Uses `pipe` and `Match` with the `isPrimitive` type guard.
+ *
+ * @param value - The value to check.
+ * @returns {boolean} `true` if the value is a `PrimitiveStringable`, otherwise `false`.
  *
  * @example
- * isValuePrimitiveStringable("test"); // true
- * isValuePrimitiveStringable(42); // true
- * isValuePrimitiveStringable(true); // true
- * isValuePrimitiveStringable(undefined); // true
- * isValuePrimitiveStringable(null); // true
- * isValuePrimitiveStringable(Symbol("sym")); // true
- * isValuePrimitiveStringable(123n); // true
- * isValuePrimitiveStringable({}); // false
- * isValuePrimitiveStringable([]); // false
- * isValuePrimitiveStringable(() => {}); // false
+ * isValuePrimitiveStringable('test'); // => true
+ * isValuePrimitiveStringable({}); // => false
+ * isValuePrimitiveStringable(() => {}); // => false
  */
-export function isValuePrimitiveStringable(value: unknown): value is PrimitiveStringable {
-	switch (typeof value) {
-		case 'string':
-		case 'number':
-		case 'boolean':
-		case 'bigint':
-		case 'symbol':
-		case 'undefined':
-			return true;
-		default:
-			return value === null;
-	}
-}
+export const isValuePrimitiveStringable = (value: unknown): value is PrimitiveStringable =>
+	pipe(
+		Match.value(value),
+		Match.when(isPrimitive, () => true),
+		Match.orElse(() => false)
+	);
