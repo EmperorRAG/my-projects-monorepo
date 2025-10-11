@@ -246,6 +246,25 @@ Each service has development and production overlays:
 - `README.md`: 554 lines
 - `RUNBOOK.md`: 523 lines
 - `validate.sh`: 247 lines
+- `scripts/validate-nginx-config.sh`: 290 lines (Bash - cross-platform)
+- `scripts/validate-nginx-config.ps1`: 117 lines (PowerShell - deprecated)
+
+### 🔄 Script Migration (October 2025)
+
+All PowerShell scripts have been converted to Bash for better cross-platform compatibility:
+
+#### New Bash Scripts
+- **`tools/nginx/scripts/validate-nginx-config.sh`**: Cross-platform NGINX configuration validation
+  - Supports Linux, macOS, Windows (Git Bash/WSL)
+  - Validates all NGINX scenarios using Docker
+  - Color-coded output for better readability
+  - Comprehensive error reporting
+  
+#### Deprecated Scripts
+- **`tools/nginx/scripts/validate-nginx-config.ps1`**: PowerShell version (deprecated)
+  - Still available for backward compatibility
+  - Will be removed in a future release
+  - Users should migrate to the Bash version
 
 ## Usage Examples
 
@@ -253,6 +272,12 @@ Each service has development and production overlays:
 ```bash
 # Validate setup
 ./tools/nginx/validate.sh
+
+# Validate NGINX configurations (Bash script - recommended)
+bash tools/nginx/scripts/validate-nginx-config.sh all
+
+# Or validate via Nx
+nx run nginx:validate-config
 
 # Build all images
 nx run nginx:docker:build-all

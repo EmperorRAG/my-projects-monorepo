@@ -30,6 +30,21 @@ This monorepo contains the following projects:
     pnpm install
     ```
 
+3. (Optional) Configure custom Nx cache directory:
+   
+   If you're using OneDrive or another cloud sync service, you may want to store Nx cache files outside of the synced directory:
+   
+   ```sh
+   # Copy the example configuration
+   cp .nx-cache-config.example .nx-cache-config
+   
+   # Edit the configuration and set your cache directory
+   # Then source the setup script
+   source ./scripts/nx-setup-cache.sh
+   ```
+   
+   See [Nx Cache Configuration Documentation](docs/nx-cache-configuration.md) for detailed instructions.
+
 ## Development
 
 To run the development server for the main application:

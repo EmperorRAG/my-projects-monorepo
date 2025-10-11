@@ -21,6 +21,16 @@ You should see:
 ✓ Validation completed successfully!
 ```
 
+Optionally, validate NGINX configurations using the cross-platform Bash script:
+
+```bash
+# Validate all NGINX scenarios
+bash tools/nginx/scripts/validate-nginx-config.sh all
+
+# Or via Nx
+nx run nginx:validate-config
+```
+
 ## Step 2: (Optional) Generate Self-Signed Certificates
 
 For local development with HTTPS, generate self-signed certificates:
@@ -198,8 +208,15 @@ If services fail to start:
    docker compose -f tools/nginx/docker-compose.yaml logs proxy-edge
    ```
 
-2. Validate configuration:
+2. Validate configuration using the Bash script:
    ```bash
+   # Validate specific scenario
+   bash tools/nginx/scripts/validate-nginx-config.sh proxy-edge
+   
+   # Validate all scenarios
+   bash tools/nginx/scripts/validate-nginx-config.sh all
+   
+   # Or via Nx
    nx run nginx:validate-config
    ```
 
