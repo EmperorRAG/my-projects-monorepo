@@ -616,10 +616,19 @@ proxy_set_header Connection $connection_upgrade;
 
 ## Additional Resources
 
+### NGINX Documentation
 - [NGINX Official Documentation](https://nginx.org/en/docs/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Nx Documentation](https://nx.dev)
+
+### Project Documentation
 - [nginx-integration.md](../../docs/nx-monorepo/nginx-integration.md) - Detailed integration guide
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Implementation summary and statistics
+- [HEALTH_CHECK_INTEGRATION.md](HEALTH_CHECK_INTEGRATION.md) - Health check integration guide
+- [HEALTH_CHECK_BEFORE_AFTER.md](HEALTH_CHECK_BEFORE_AFTER.md) - Health check integration before/after
+- [HEALTH_CHECK_QUICK_REF.md](HEALTH_CHECK_QUICK_REF.md) - Health check quick reference
+- [QUICKSTART.md](QUICKSTART.md) - Quick start guide
+- [RUNBOOK.md](RUNBOOK.md) - Operations runbook
 
 ## Support
 

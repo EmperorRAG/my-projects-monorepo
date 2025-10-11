@@ -1,0 +1,55 @@
+---
+title: NGINX Health Check Architecture
+---
+graph TB
+    subgraph "External Access (localhost)"
+        CLI[CLI/Monitoring Tool]
+    end
+    
+    subgraph "Edge Proxy - Port 80"
+        EDGE[Edge Proxy Container]
+        H1["/health"]
+        H2["/health/lb-frontend"]
+        H3["/health/lb-api"]
+        H4["/health/lb-email"]
+        
+        EDGE --> H1
+        EDGE --> H2
+        EDGE --> H3
+        EDGE --> H4
+    end
+    
+    subgraph "Internal Network - Port 8080"
+        LBF[Frontend LB<br/>lb-frontend:8080/health]
+        LBA[API LB<br/>lb-api:8080/health]
+        LBE[Email LB<br/>lb-email:8080/health]
+    end
+    
+    CLI -->|"curl localhost/health"| H1
+    CLI -->|"curl localhost/health/lb-frontend"| H2
+    CLI -->|"curl localhost/health/lb-api"| H3
+    CLI -->|"curl localhost/health/lb-email"| H4
+    
+    H1 -->|"200 OK<br/>healthy"| CLI
+    
+    H2 -->|proxy_pass| LBF
+    H3 -->|proxy_pass| LBA
+    H4 -->|proxy_pass| LBE
+    
+    LBF -->|"200 OK or 503"| H2
+    LBA -->|"200 OK or 503"| H3
+    LBE -->|"200 OK or 503"| H4
+    
+    H2 -->|"response"| CLI
+    H3 -->|"response"| CLI
+    H4 -->|"response"| CLI
+    
+    style EDGE fill:#e1f5fe
+    style LBF fill:#fff3e0
+    style LBA fill:#fff3e0
+    style LBE fill:#fff3e0
+    style CLI fill:#e8f5e9
+    style H1 fill:#f3e5f5
+    style H2 fill:#f3e5f5
+    style H3 fill:#f3e5f5
+    style H4 fill:#f3e5f5

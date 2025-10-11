@@ -21,6 +21,10 @@ The edge proxy now acts as a health check aggregator, providing:
 
 ## Architecture
 
+The following diagram illustrates how health checks are routed through the edge proxy:
+
+![Health Check Architecture](diagrams/health-check-architecture.mmd)
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Edge Proxy (Port 80)                    │
