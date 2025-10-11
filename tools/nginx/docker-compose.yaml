@@ -16,7 +16,7 @@
 #
 # =================================================================================================
 
-version: '3.8'
+version: "3.8"
 
 # =================================================================================================
 # Services
@@ -32,36 +32,38 @@ services:
     build:
       context: ../..
       dockerfile: tools/nginx/proxy-edge/Dockerfile
-    
+
     # Environment configuration
     environment:
       - NGINX_ENV=development
-    
+
     # Port mapping
     # 80: HTTP traffic
     # 443: HTTPS traffic (when TLS is configured)
     ports:
       - "80:80"
       - "443:443"
-    
+
     # Volume mounts
     volumes:
       # Mount TLS certificates (create this directory and add certs as needed)
       - ./secrets/tls:/etc/nginx/tls:ro
       # Custom error pages (optional)
       # - ./proxy-edge/html:/usr/share/nginx/html:ro
-    
+
     # Network configuration
     networks:
       - nginx-internal
       - app-network
-    
+    extra_hosts:
+      - "my-programs-app:host-gateway"
+
     # Dependencies
     depends_on:
       - lb-frontend
       - lb-api
       - lb-email
-    
+
     # Health check
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health"]
@@ -69,17 +71,17 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
-    
+
     # Resource limits
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: "0.50"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
-    
+
     # Restart policy
     restart: unless-stopped
 
@@ -92,38 +94,41 @@ services:
     build:
       context: ../..
       dockerfile: tools/nginx/load-balancers/lb-frontend/Dockerfile
-    
+
     environment:
       - NGINX_ENV=development
-    
+
     # Internal port only (not exposed to host)
     expose:
       - "8080"
-    
+
     # Optional: expose for direct testing
     # ports:
     #   - "8080:8080"
-    
+
     networks:
       - nginx-internal
       - app-network
-    
+    extra_hosts:
+      - "my-programs-app:host-gateway"
+      - "my-nest-js-email-microservice:host-gateway"
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
-    
+
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: "0.50"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
-    
+
     restart: unless-stopped
 
   # -----------------------------------------------------------------------------------------------
@@ -135,37 +140,39 @@ services:
     build:
       context: ../..
       dockerfile: tools/nginx/load-balancers/lb-api/Dockerfile
-    
+
     environment:
       - NGINX_ENV=development
-    
+
     expose:
       - "8080"
-    
+
     # Optional: expose for direct testing
     # ports:
     #   - "8081:8080"
-    
+
     networks:
       - nginx-internal
       - app-network
-    
+    extra_hosts:
+      - "my-nest-js-email-microservice:host-gateway"
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
-    
+
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: "0.50"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
-    
+
     restart: unless-stopped
 
   # -----------------------------------------------------------------------------------------------
@@ -177,43 +184,45 @@ services:
     build:
       context: ../..
       dockerfile: tools/nginx/load-balancers/lb-email/Dockerfile
-    
+
     environment:
       - NGINX_ENV=development
-    
+
     expose:
       - "8080"
-    
+
     # Optional: expose for direct testing
     # ports:
     #   - "8082:8080"
-    
+
     networks:
       - nginx-internal
       - app-network
-    
+    extra_hosts:
+      - "my-nest-js-email-microservice:host-gateway"
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
-    
+
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: "0.50"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
-    
+
     restart: unless-stopped
 
   # -----------------------------------------------------------------------------------------------
   # Application Services (commented out - uncomment to run with NGINX)
   # -----------------------------------------------------------------------------------------------
-  
+
   # Frontend Application - Next.js
   # my-programs-app:
   #   image: my-programs-app:latest
@@ -228,7 +237,7 @@ services:
   #   networks:
   #     - app-network
   #   restart: unless-stopped
-  
+
   # Email Microservice - NestJS
   # my-nest-js-email-microservice:
   #   image: my-nest-js-email-microservice:latest
@@ -254,7 +263,7 @@ networks:
   nginx-internal:
     driver: bridge
     name: nginx-internal
-  
+
   # Application network
   # Load balancers talk to application services on this network
   # This can be an existing network that your apps are already on
@@ -272,7 +281,6 @@ volumes:
   # Volume for TLS certificates (optional)
   tls-certs:
     driver: local
-
 # =================================================================================================
 # Usage Examples
 # =================================================================================================

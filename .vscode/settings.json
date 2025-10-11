@@ -76,5 +76,6 @@
 	"chat.useNestedAgentsMdFiles": true,
 	"markdownlint.config": {
 		"ol-prefix": false
-	}
+	},
+	"terminal.integrated.defaultProfile.windows": "Git Bash"
 }
