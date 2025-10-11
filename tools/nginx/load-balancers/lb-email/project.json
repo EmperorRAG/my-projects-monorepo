@@ -1,0 +1,29 @@
+{
+  "name": "nginx-lb-email",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "root": "tools/nginx/load-balancers/lb-email",
+  "sourceRoot": "tools/nginx/load-balancers/lb-email",
+  "targets": {
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-lb-email:latest -f tools/nginx/load-balancers/lb-email/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-lb-email:prod -f tools/nginx/load-balancers/lb-email/Dockerfile ."
+        }
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pwsh -NoLogo -NoProfile -File tools/nginx/scripts/validate-nginx-config.ps1 lb-email",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  },
+  "tags": ["infrastructure", "nginx", "load-balancer"]
+}

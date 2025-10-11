@@ -1,0 +1,29 @@
+{
+  "name": "nginx-lb-frontend",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "root": "tools/nginx/load-balancers/lb-frontend",
+  "sourceRoot": "tools/nginx/load-balancers/lb-frontend",
+  "targets": {
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-lb-frontend:latest -f tools/nginx/load-balancers/lb-frontend/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-lb-frontend:prod -f tools/nginx/load-balancers/lb-frontend/Dockerfile ."
+        }
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pwsh -NoLogo -NoProfile -File tools/nginx/scripts/validate-nginx-config.ps1 lb-frontend",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  },
+  "tags": ["infrastructure", "nginx", "load-balancer"]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "nginx-lb-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "root": "tools/nginx/load-balancers/lb-api",
+  "sourceRoot": "tools/nginx/load-balancers/lb-api",
+  "targets": {
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-lb-api:latest -f tools/nginx/load-balancers/lb-api/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-lb-api:prod -f tools/nginx/load-balancers/lb-api/Dockerfile ."
+        }
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pwsh -NoLogo -NoProfile -File tools/nginx/scripts/validate-nginx-config.ps1 lb-api",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  },
+  "tags": ["infrastructure", "nginx", "load-balancer"]
+}
