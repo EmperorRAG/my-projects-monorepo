@@ -1,0 +1,114 @@
+# =================================================================================================
+# NGINX Infrastructure .gitignore
+# =================================================================================================
+#
+# This file specifies intentionally untracked files that Git should ignore.
+# Prevents sensitive data and temporary files from being committed.
+#
+# =================================================================================================
+
+# TLS Certificates and Secrets
+# NEVER commit certificates, keys, or secrets to version control
+secrets/
+*.pem
+*.key
+*.crt
+*.csr
+*.pfx
+*.p12
+
+# Environment Files
+# May contain sensitive configuration
+.env
+.env.local
+.env.*.local
+*.env
+
+# Docker Generated Files
+# Build artifacts and runtime data
+.dockerignore
+
+# Logs
+# Runtime logs should not be committed
+*.log
+logs/
+*.log.*
+
+# Temporary Files
+# OS and editor temporary files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.*.swp
+
+# IDE and Editor Files
+# Project-specific IDE configurations
+.vscode/
+.idea/
+*.sublime-*
+
+# NGINX Runtime Files
+# Generated at runtime
+nginx.pid
+*.pid
+
+# Cache Directories
+# Generated cache should not be committed
+cache/
+*_cache/
+*.cache
+
+# Backup Files
+# Backups created during editing
+*.bak
+*.backup
+*.orig
+
+# Test and Development Artifacts
+# Generated during testing
+test-results/
+coverage/
+
+# Docker Compose Overrides
+# Personal development overrides
+docker-compose.override.yaml
+docker-compose.override.yml
+
+# Generated Configuration
+# If using configuration generation scripts
+dist/
+generated/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# =================================================================================================
+# Security Note
+# =================================================================================================
+#
+# IMPORTANT: This .gitignore is configured to prevent accidental commits of sensitive data.
+# Always verify that sensitive files are properly ignored before committing.
+#
+# To check what would be committed:
+#   git status
+#   git add --dry-run .
+#
+# To verify a file is ignored:
+#   git check-ignore -v <filename>
+#
+# =================================================================================================
