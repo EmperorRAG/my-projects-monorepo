@@ -1,0 +1,32 @@
+# =================================================================================================
+# Nx Cache Directory Configuration
+# =================================================================================================
+#
+# This file specifies a custom directory for Nx to store its cache files.
+# This is particularly useful for storing cache outside of cloud-synced directories
+# like OneDrive, which can cause performance issues and unnecessary sync operations.
+#
+# USAGE:
+#   1. Copy this file to `.nx-cache-config` (without the .example extension)
+#   2. Set the cache directory path below
+#   3. The path can be absolute or relative to the workspace root
+#   4. Source the setup script before running Nx commands:
+#      - Linux/macOS/WSL: source ./scripts/nx-setup-cache.sh
+#      - Windows (Git Bash): source ./scripts/nx-setup-cache.sh
+#
+# EXAMPLES:
+#   - Absolute path (Windows): NX_CACHE_DIR=C:/dev-cache/nx-cache
+#   - Absolute path (Linux/macOS): NX_CACHE_DIR=/home/user/dev-cache/nx-cache
+#   - Relative path: NX_CACHE_DIR=../nx-cache-external
+#
+# NOTES:
+#   - The directory will be created automatically if it doesn't exist
+#   - Make sure the path is accessible and has proper write permissions
+#   - The cache directory path should NOT be inside a cloud-synced folder
+#   - Add your custom cache directory to .gitignore
+#
+# =================================================================================================
+
+# Set your custom cache directory path here
+# Default: uses Nx's default cache directory (.nx/cache in the workspace)
+NX_CACHE_DIR=

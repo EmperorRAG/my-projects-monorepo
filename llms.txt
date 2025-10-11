@@ -10,6 +10,9 @@ This file provides a map of the repository for Large Language Models (LLMs).
 - [AGENTS.md](AGENTS.md): High-level instructions for AI agents on how to interact with this repository.
 - [CONTRIBUTING.md](.github/CONTRIBUTING.md): Guidelines for contributing to the project, including the pull request process and TSDoc standards.
 - [Architectural Decision Records](docs/adr/): Contains documents that record key architectural decisions made in the project.
+- [Nx Cache Configuration](docs/nx-cache-configuration.md): Guide for configuring custom Nx cache directories (e.g., outside OneDrive).
+- [Nx Cache Implementation Summary](docs/nx-cache-implementation-summary.md): Technical summary of the Nx cache configuration implementation.
+- [NGINX Integration](docs/nx-monorepo/nginx-integration.md): Detailed guide for integrating NGINX into the Nx monorepo.
 
 ## Key Projects
 
@@ -21,3 +24,9 @@ This file provides a map of the repository for Large Language Models (LLMs).
 
 - [nx.json](nx.json): The main Nx workspace configuration file.
 - [package.json](package.json): The root package.json file, defining workspace-level dependencies and scripts.
+- [.nx-cache-config.example](.nx-cache-config.example): Example configuration for custom Nx cache directory.
+
+## Tools and Scripts
+
+- [Nx Cache Setup Script](scripts/nx-setup-cache.sh): Bash script to configure custom Nx cache directory.
+- [NGINX Tools](tools/nginx/README.md): NGINX infrastructure for the monorepo, including validation scripts and operational guides.
