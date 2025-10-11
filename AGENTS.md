@@ -69,3 +69,10 @@ This is an Nx monorepo containing a Next.js application (`my-programs-app`), a N
 
 - Follow the guidelines in `.github/CONTRIBUTING.md`.
 - Ensure all tests and lint checks pass before submitting a PR.
+
+## Learning Log Workflow
+
+- Document every resolved issue using the If/When/Then format so future runs benefit from prior discoveries.
+- Run `bash tools/scripts/add-learning.sh --tech <domain> --title "Title" --if "..." --when "..." --then "..." --solution "..."`.
+- The script appends to `docs/learnings/<domain>.md`, creating the file when necessary and keeping entries grouped by technology.
+- Reference the log entry in your task summary to confirm documentation was updated.
