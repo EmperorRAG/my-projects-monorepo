@@ -1,0 +1,177 @@
+{
+  "name": "nginx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "tools/nginx",
+  "targets": {
+    "docker:build-edge": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-edge:latest -f tools/nginx/proxy-edge/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-edge:prod -f tools/nginx/proxy-edge/Dockerfile ."
+        }
+      }
+    },
+    "docker:build-lb-frontend": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-lb-frontend:latest -f tools/nginx/load-balancers/lb-frontend/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-lb-frontend:prod -f tools/nginx/load-balancers/lb-frontend/Dockerfile ."
+        }
+      }
+    },
+    "docker:build-lb-api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-lb-api:latest -f tools/nginx/load-balancers/lb-api/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-lb-api:prod -f tools/nginx/load-balancers/lb-api/Dockerfile ."
+        }
+      }
+    },
+    "docker:build-lb-email": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t my-org/nginx-lb-email:latest -f tools/nginx/load-balancers/lb-email/Dockerfile .",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker build -t my-org/nginx-lb-email:prod -f tools/nginx/load-balancers/lb-email/Dockerfile ."
+        }
+      }
+    },
+    "docker:build-all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run nginx:docker:build-edge",
+          "nx run nginx:docker:build-lb-frontend",
+          "nx run nginx:docker:build-lb-api",
+          "nx run nginx:docker:build-lb-email"
+        ],
+        "parallel": true
+      }
+    },
+    "docker:compose-up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/nginx/docker-compose.yaml up -d",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml up -d"
+        }
+      }
+    },
+    "docker:compose-down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/nginx/docker-compose.yaml down",
+        "cwd": "."
+      },
+      "configurations": {
+        "production": {
+          "command": "docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml down"
+        }
+      }
+    },
+    "docker:compose-logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/nginx/docker-compose.yaml logs -f",
+        "cwd": "."
+      }
+    },
+    "docker:compose-ps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/nginx/docker-compose.yaml ps",
+        "cwd": "."
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run nginx:docker:build-all",
+          "nx run nginx:docker:compose-up"
+        ]
+      },
+      "dependsOn": ["docker:build-all"],
+      "configurations": {
+        "production": {
+          "commands": [
+            "nx run nginx:docker:build-all --configuration=production",
+            "nx run nginx:docker:compose-up --configuration=production"
+          ]
+        }
+      }
+    },
+    "stop": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run nginx:docker:compose-down"
+      }
+    },
+    "restart": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run nginx:docker:compose-down",
+          "nx run nginx:docker:build-all",
+          "nx run nginx:docker:compose-up"
+        ]
+      }
+    },
+    "validate-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker run --rm -v $(pwd)/tools/nginx/proxy-edge/nginx.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine nginx -t",
+          "docker run --rm -v $(pwd)/tools/nginx/load-balancers/lb-frontend/nginx.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine nginx -t",
+          "docker run --rm -v $(pwd)/tools/nginx/load-balancers/lb-api/nginx.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine nginx -t",
+          "docker run --rm -v $(pwd)/tools/nginx/load-balancers/lb-email/nginx.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine nginx -t"
+        ],
+        "parallel": false
+      }
+    },
+    "health-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -f http://localhost/health || echo 'Edge proxy health check failed'",
+          "curl -f http://localhost:8080/health || echo 'LB frontend health check failed'",
+          "curl -f http://localhost:8081/health || echo 'LB API health check failed'",
+          "curl -f http://localhost:8082/health || echo 'LB email health check failed'"
+        ],
+        "parallel": true
+      }
+    },
+    "reload-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker compose -f tools/nginx/docker-compose.yaml exec proxy-edge nginx -s reload",
+          "docker compose -f tools/nginx/docker-compose.yaml exec lb-frontend nginx -s reload",
+          "docker compose -f tools/nginx/docker-compose.yaml exec lb-api nginx -s reload",
+          "docker compose -f tools/nginx/docker-compose.yaml exec lb-email nginx -s reload"
+        ],
+        "parallel": true
+      }
+    }
+  },
+  "tags": ["infrastructure", "nginx", "docker"]
+}

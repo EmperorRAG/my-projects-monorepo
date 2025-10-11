@@ -1,0 +1,298 @@
+# =================================================================================================
+# Docker Compose Configuration - NGINX Infrastructure
+# =================================================================================================
+#
+# This Docker Compose file defines the complete NGINX infrastructure for the Nx monorepo.
+# It includes:
+# - 1 Edge Proxy (reverse proxy and TLS termination)
+# - 3 Load Balancers (frontend, API, email)
+#
+# Architecture:
+#   Internet → Edge Proxy → Load Balancers → Application Services
+#
+# Usage:
+#   Development: docker compose -f tools/nginx/docker-compose.yaml up
+#   Production:  docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml up
+#
+# =================================================================================================
+
+version: '3.8'
+
+# =================================================================================================
+# Services
+# =================================================================================================
+
+services:
+  # -----------------------------------------------------------------------------------------------
+  # Edge Proxy - Entry point for all external traffic
+  # -----------------------------------------------------------------------------------------------
+  proxy-edge:
+    image: my-org/nginx-edge:latest
+    container_name: nginx-proxy-edge
+    build:
+      context: ../..
+      dockerfile: tools/nginx/proxy-edge/Dockerfile
+    
+    # Environment configuration
+    environment:
+      - NGINX_ENV=development
+    
+    # Port mapping
+    # 80: HTTP traffic
+    # 443: HTTPS traffic (when TLS is configured)
+    ports:
+      - "80:80"
+      - "443:443"
+    
+    # Volume mounts
+    volumes:
+      # Mount TLS certificates (create this directory and add certs as needed)
+      - ./secrets/tls:/etc/nginx/tls:ro
+      # Custom error pages (optional)
+      # - ./proxy-edge/html:/usr/share/nginx/html:ro
+    
+    # Network configuration
+    networks:
+      - nginx-internal
+      - app-network
+    
+    # Dependencies
+    depends_on:
+      - lb-frontend
+      - lb-api
+      - lb-email
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    # Restart policy
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Frontend Load Balancer - Distributes traffic to Next.js apps
+  # -----------------------------------------------------------------------------------------------
+  lb-frontend:
+    image: my-org/nginx-lb-frontend:latest
+    container_name: nginx-lb-frontend
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-frontend/Dockerfile
+    
+    environment:
+      - NGINX_ENV=development
+    
+    # Internal port only (not exposed to host)
+    expose:
+      - "8080"
+    
+    # Optional: expose for direct testing
+    # ports:
+    #   - "8080:8080"
+    
+    networks:
+      - nginx-internal
+      - app-network
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # API Load Balancer - Distributes traffic to API services
+  # -----------------------------------------------------------------------------------------------
+  lb-api:
+    image: my-org/nginx-lb-api:latest
+    container_name: nginx-lb-api
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-api/Dockerfile
+    
+    environment:
+      - NGINX_ENV=development
+    
+    expose:
+      - "8080"
+    
+    # Optional: expose for direct testing
+    # ports:
+    #   - "8081:8080"
+    
+    networks:
+      - nginx-internal
+      - app-network
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Email Load Balancer - Distributes traffic to email microservice
+  # -----------------------------------------------------------------------------------------------
+  lb-email:
+    image: my-org/nginx-lb-email:latest
+    container_name: nginx-lb-email
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-email/Dockerfile
+    
+    environment:
+      - NGINX_ENV=development
+    
+    expose:
+      - "8080"
+    
+    # Optional: expose for direct testing
+    # ports:
+    #   - "8082:8080"
+    
+    networks:
+      - nginx-internal
+      - app-network
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Application Services (commented out - uncomment to run with NGINX)
+  # -----------------------------------------------------------------------------------------------
+  
+  # Frontend Application - Next.js
+  # my-programs-app:
+  #   image: my-programs-app:latest
+  #   container_name: my-programs-app
+  #   build:
+  #     context: ../..
+  #     dockerfile: apps/my-programs-app/Dockerfile
+  #   environment:
+  #     - NODE_ENV=development
+  #   expose:
+  #     - "3000"
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
+  
+  # Email Microservice - NestJS
+  # my-nest-js-email-microservice:
+  #   image: my-nest-js-email-microservice:latest
+  #   container_name: my-nest-js-email-microservice
+  #   build:
+  #     context: ../..
+  #     dockerfile: services/my-nest-js-email-microservice/Dockerfile
+  #   environment:
+  #     - NODE_ENV=development
+  #   expose:
+  #     - "3000"
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
+
+# =================================================================================================
+# Networks
+# =================================================================================================
+
+networks:
+  # Internal network for NGINX communication
+  # Edge proxy talks to load balancers on this network
+  nginx-internal:
+    driver: bridge
+    name: nginx-internal
+  
+  # Application network
+  # Load balancers talk to application services on this network
+  # This can be an existing network that your apps are already on
+  app-network:
+    driver: bridge
+    name: app-network
+    # If using an existing network created by another compose file:
+    # external: true
+
+# =================================================================================================
+# Volumes
+# =================================================================================================
+
+volumes:
+  # Volume for TLS certificates (optional)
+  tls-certs:
+    driver: local
+
+# =================================================================================================
+# Usage Examples
+# =================================================================================================
+#
+# Start all NGINX services:
+#   docker compose -f tools/nginx/docker-compose.yaml up -d
+#
+# Start with application services:
+#   docker compose -f tools/nginx/docker-compose.yaml -f docker-compose.yaml up -d
+#
+# View logs:
+#   docker compose -f tools/nginx/docker-compose.yaml logs -f
+#
+# Stop all services:
+#   docker compose -f tools/nginx/docker-compose.yaml down
+#
+# Rebuild and restart:
+#   docker compose -f tools/nginx/docker-compose.yaml up -d --build
+#
+# Test configuration:
+#   docker compose -f tools/nginx/docker-compose.yaml config
+#
+# =================================================================================================
