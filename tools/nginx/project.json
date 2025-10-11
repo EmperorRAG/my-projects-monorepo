@@ -139,7 +139,7 @@
     "validate-config": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pwsh -NoLogo -NoProfile -File tools/nginx/scripts/validate-nginx-config.ps1 proxy-edge lb-frontend lb-api lb-email",
+        "command": "bash tools/nginx/scripts/validate-nginx-config.sh proxy-edge lb-frontend lb-api lb-email",
         "cwd": "{workspaceRoot}"
       }
     },

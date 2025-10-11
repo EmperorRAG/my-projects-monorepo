@@ -160,14 +160,22 @@ docker compose -f tools/nginx/docker-compose.yaml exec proxy-edge nginx -s reloa
 
 2. **Validate syntax locally** (optional but recommended):
    ```bash
-   # Install nginx locally for validation
+   # Using the validation script (recommended - cross-platform)
+   bash tools/nginx/scripts/validate-nginx-config.sh proxy-edge
+   
+   # Or validate all scenarios
+   bash tools/nginx/scripts/validate-nginx-config.sh all
+   
+   # Or install nginx locally for validation
    nginx -t -c tools/nginx/proxy-edge/nginx.conf
    ```
 
-3. **Validate in container**:
+3. **Validate in container** (recommended):
    ```bash
    nx run nginx:validate-config
    ```
+   
+   This runs the Bash validation script which validates all scenarios using Docker containers.
 
 4. **Apply changes** (choose one method):
 

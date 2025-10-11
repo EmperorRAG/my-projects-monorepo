@@ -113,6 +113,75 @@ tools/nginx/
         └── key.pem
 ```
 
+## Scripts
+
+The NGINX infrastructure includes several utility scripts for validation and management:
+
+### Validation Scripts
+
+#### `validate-nginx-config.sh` (Bash)
+
+Cross-platform Bash script for validating NGINX configurations using Docker.
+
+**Location**: `tools/nginx/scripts/validate-nginx-config.sh`
+
+**Usage**:
+```bash
+# Validate specific scenario
+bash tools/nginx/scripts/validate-nginx-config.sh proxy-edge
+
+# Validate multiple scenarios
+bash tools/nginx/scripts/validate-nginx-config.sh proxy-edge lb-frontend lb-api lb-email
+
+# Validate all scenarios
+bash tools/nginx/scripts/validate-nginx-config.sh all
+```
+
+**Via Nx**:
+```bash
+nx run nginx:validate-config
+```
+
+**Features**:
+- ✅ Cross-platform (Linux, macOS, Windows with Git Bash/WSL)
+- ✅ Validates configuration syntax using Docker
+- ✅ Supports multiple scenarios (proxy-edge, lb-frontend, lb-api, lb-email)
+- ✅ Color-coded output for easy reading
+- ✅ Detailed error reporting
+
+**Scenarios**:
+- `proxy-edge` - Validates edge proxy configuration
+- `lb-frontend` - Validates frontend load balancer configuration
+- `lb-api` - Validates API load balancer configuration
+- `lb-email` - Validates email load balancer configuration
+- `all` - Validates all scenarios
+
+#### `validate-nginx-config.ps1` (PowerShell) [Deprecated]
+
+The PowerShell version of the validation script is still available for backward compatibility but is deprecated in favor of the Bash version for better cross-platform support.
+
+**Location**: `tools/nginx/scripts/validate-nginx-config.ps1`
+
+**Note**: This script will be removed in a future version. Please migrate to the Bash version.
+
+### Validation Script
+
+The validation script is also available as a standalone bash script:
+
+**Location**: `tools/nginx/validate.sh`
+
+This script performs comprehensive infrastructure validation including:
+- Directory structure checks
+- Required files validation
+- Docker configuration verification
+- Configuration syntax validation (if Docker is available)
+- Overlay structure validation
+
+**Usage**:
+```bash
+bash tools/nginx/validate.sh
+```
+
 ## Quick Start
 
 ### Prerequisites
