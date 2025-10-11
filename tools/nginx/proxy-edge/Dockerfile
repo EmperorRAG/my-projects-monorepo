@@ -74,6 +74,10 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 COPY tools/nginx/proxy-edge/overlays/development.conf /etc/nginx/conf.d/overlays/development.conf
 COPY tools/nginx/proxy-edge/overlays/production.conf /etc/nginx/conf.d/overlays/production.conf
 
+# Copy health check script
+COPY tools/nginx/proxy-edge/scripts/health-check.sh /usr/local/bin/health-check.sh
+RUN chmod +x /usr/local/bin/health-check.sh
+
 # Create a startup script that selects the appropriate overlay based on environment
 RUN echo '#!/bin/bash' > /docker-entrypoint.d/50-select-overlay.sh && \
 	echo 'set -e' >> /docker-entrypoint.d/50-select-overlay.sh && \
@@ -123,9 +127,9 @@ RUN echo '<!DOCTYPE html>' > /usr/share/nginx/html/50x.html && \
 	echo '</html>' >> /usr/share/nginx/html/50x.html
 
 # Health check configuration
-# This checks if NGINX is responding and can reach the health endpoint
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-	CMD curl -f http://localhost/health || exit 1
+# This checks if NGINX is responding and all load balancers are healthy
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+	CMD /usr/local/bin/health-check.sh --simple || exit 1
 
 # Expose ports
 # Port 80 for HTTP traffic
