@@ -1,5 +1,5 @@
 {
-	"chat.agent.thinkingStyle": "collapsedPreview",
+	"chat.agent.thinkingStyle": "expanded",
 	"chat.agentSessionsViewLocation": "view",
 	"chat.editor.fontFamily": "Fira Code, monospace",
 	"chat.edits2.enabled": true,
@@ -97,5 +97,7 @@
 	"terminal.integrated.fontFamily": "Fira Code, monospace",
 	"terminal.integrated.fontLigatures.enabled": true,
 	"terminal.integrated.shellIntegration.enabled": true,
-	"cSpell.words": ["Chatmode", "Codacy", "emperorrag", "mermaidchart"]
+	"cSpell.words": ["Chatmode", "Codacy", "emperorrag", "mermaidchart", "runbook"],
+	"inlineChat.enableV2": true,
+	"chat.useCloudButtonV2": true
 }
