@@ -2,6 +2,18 @@
 
 Welcome to the centralized documentation for the Nx monorepo. This directory contains cross-cutting documentation that applies to multiple projects or the workspace as a whole.
 
+## 🚀 Quick Start
+
+**New to the documentation?** Start here:
+- [Quick Start Guide](./QUICK-START.md) - Get started in 5 minutes!
+- [How to Use Documentation](./HOW-TO-USE-DOCUMENTATION.md) - Detailed usage guide
+
+**Need a visual reference?**
+- [Visual Structure Guide](./DOCUMENTATION-STRUCTURE-VISUAL.md) - Flowcharts and decision matrices
+
+**Want the complete guide?**
+- [Documentation Structure Guide](./DOCUMENTATION-STRUCTURE.md) - Comprehensive organization guide
+
 ## Directory Structure
 
 ### 📚 [Guides](./guides/)
