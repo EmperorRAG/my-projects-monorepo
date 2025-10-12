@@ -6,13 +6,39 @@ This file provides a map of the repository for Large Language Models (LLMs).
 
 ## Documentation
 
+### Core Documentation
 - [README.md](README.md): The main entry point for understanding the project, its structure, and how to get started.
 - [AGENTS.md](AGENTS.md): High-level instructions for AI agents on how to interact with this repository.
 - [CONTRIBUTING.md](.github/CONTRIBUTING.md): Guidelines for contributing to the project, including the pull request process and TSDoc standards.
-- [Architectural Decision Records](docs/adr/): Contains documents that record key architectural decisions made in the project.
+
+### Documentation Hub
+- [Documentation Index](docs/README.md): Central hub for all documentation with links to guides, architecture, API docs, and more.
+- [Documentation Structure Guide](docs/DOCUMENTATION-STRUCTURE.md): Comprehensive guide to the documentation organization and standards.
+- [Visual Structure Guide](docs/DOCUMENTATION-STRUCTURE-VISUAL.md): Visual reference with flowcharts and decision matrices.
+- [How to Use Documentation](docs/HOW-TO-USE-DOCUMENTATION.md): Quick start guide for using the documentation structure.
+
+### Guides and Tutorials
+- [Guides](docs/guides/): Step-by-step tutorials and how-to guides for common tasks.
 - [Nx Cache Configuration](docs/nx-cache-configuration.md): Guide for configuring custom Nx cache directories (e.g., outside OneDrive).
 - [Nx Cache Implementation Summary](docs/nx-cache-implementation-summary.md): Technical summary of the Nx cache configuration implementation.
+
+### Architecture
+- [Architecture Overview](docs/architecture/overview.md): High-level system architecture and design patterns.
+- [Architecture Diagrams](docs/architecture/diagrams/): Visual representations of the system architecture.
+- [Architectural Decision Records](docs/architecture/decisions/): Documents that record key architectural decisions made in the project.
+
+### Nx Monorepo
+- [Nx Monorepo Documentation](docs/nx-monorepo/): Nx-specific documentation and configuration guides.
 - [NGINX Integration](docs/nx-monorepo/nginx-integration.md): Detailed guide for integrating NGINX into the Nx monorepo.
+
+### Operations
+- [API Documentation](docs/api/): API documentation and contracts for services.
+- [Runbooks](docs/runbooks/): Operational procedures and troubleshooting guides.
+- [Reference](docs/reference/): Quick reference guides and command cheatsheets.
+- [Learnings](docs/learnings/): Problem-solution knowledge base organized by technology.
+
+### Tooling
+- [Tooling Documentation](docs/tooling/): Documentation for tools and infrastructure components.
 
 ## Key Projects
 
