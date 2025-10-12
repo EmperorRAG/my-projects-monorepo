@@ -66,7 +66,14 @@ This runbook provides step-by-step procedures for common operational tasks relat
 - Certificate is valid and trusted
 - Private key matches the certificate
 
-**Steps**:
+**Automated Method** (Recommended):
+
+```bash
+# Using the rotation script with automatic backup and reload
+nx run nginx:tls:rotate-certs
+```
+
+**Manual Steps**:
 
 1. **Backup existing certificates**:
    ```bash
@@ -77,7 +84,10 @@ This runbook provides step-by-step procedures for common operational tasks relat
 
 2. **Verify new certificate**:
    ```bash
-   # Check certificate validity
+   # Validate using Nx target
+   nx run nginx:tls:validate-certs
+   
+   # Or manually check certificate validity
    openssl x509 -in new-cert.pem -text -noout
    
    # Verify certificate and key match
@@ -90,7 +100,8 @@ This runbook provides step-by-step procedures for common operational tasks relat
    ```bash
    cp new-cert.pem tools/nginx/secrets/tls/cert.pem
    cp new-key.pem tools/nginx/secrets/tls/key.pem
-   chmod 600 tools/nginx/secrets/tls/*.pem
+   chmod 644 tools/nginx/secrets/tls/cert.pem
+   chmod 600 tools/nginx/secrets/tls/key.pem
    ```
 
 4. **Test configuration**:
@@ -101,12 +112,21 @@ This runbook provides step-by-step procedures for common operational tasks relat
 5. **Reload NGINX** (zero-downtime):
    ```bash
    docker compose -f tools/nginx/docker-compose.yaml exec proxy-edge nginx -s reload
+   # Or use Nx target
+   nx run nginx:reload-config
    ```
 
 6. **Verify HTTPS**:
    ```bash
+   # Test locally
+   curl -k https://localhost/health
+   
+   # Test production
    curl -I https://your-domain.com
    openssl s_client -connect your-domain.com:443 -servername your-domain.com
+   
+   # Use Nx target
+   nx run nginx:tls:test-https
    ```
 
 **Rollback Procedure** (if issues occur):

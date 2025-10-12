@@ -60,9 +60,10 @@ RUN mkdir -p \
 # Base configuration with global settings
 COPY tools/nginx/common/base.nginx.conf /etc/nginx/nginx.conf
 
-# Copy common snippets (headers, logging)
+# Copy common snippets (headers, logging, tls)
 COPY tools/nginx/common/snippets/headers.conf /etc/nginx/snippets/headers.conf
 COPY tools/nginx/common/snippets/logging.conf /etc/nginx/snippets/logging.conf
+COPY tools/nginx/common/snippets/tls.conf /etc/nginx/snippets/tls.conf
 
 # Copy proxy-edge specific configuration
 COPY tools/nginx/proxy-edge/nginx.conf /etc/nginx/conf.d/proxy-edge.conf

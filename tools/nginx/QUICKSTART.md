@@ -31,16 +31,25 @@ bash tools/nginx/scripts/validate-nginx-config.sh all
 nx run nginx:validate-config
 ```
 
-## Step 2: (Optional) Generate Self-Signed Certificates
+## Step 2: Generate TLS Certificates (Optional)
 
-For local development with HTTPS, generate self-signed certificates:
+For local development with HTTPS, generate self-signed certificates using the provided script:
 
 ```bash
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout tools/nginx/secrets/tls/key.pem \
-  -out tools/nginx/secrets/tls/cert.pem \
-  -subj "/CN=localhost"
+# Using Nx (recommended)
+nx run nginx:tls:generate-dev-certs
+
+# Or directly
+bash tools/nginx/scripts/tls/generate-dev-certs.sh
 ```
+
+This will create certificates in `tools/nginx/secrets/tls/` with:
+- `cert.pem` - Server certificate
+- `key.pem` - Private key
+- `fullchain.pem` - Full certificate chain
+- Subject Alternative Names (SANs) for localhost, dev.local, and IP addresses
+
+**Note:** Browsers will show security warnings for self-signed certificates. This is expected for development.
 
 ## Step 3: Build Docker Images
 
@@ -66,17 +75,35 @@ Expected output:
 
 ## Step 4: Start Services
 
-Start all NGINX services:
+### Option A: HTTP Only (Development)
+
+Start all NGINX services without TLS:
 
 ```bash
 nx run nginx:serve
 ```
 
-This will:
-1. Build all images (if not already built)
-2. Start Docker Compose
-3. Create networks
-4. Launch all containers
+### Option B: With HTTPS (Development + TLS)
+
+Start with TLS using self-signed certificates:
+
+```bash
+# Ensure certificates are generated (from Step 2)
+nx run nginx:tls:generate-dev-certs
+
+# Start with TLS overlay
+docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+```
+
+### Option C: Production with HTTPS
+
+Start with production configuration and TLS:
+
+```bash
+# Ensure production certificates are configured
+# Then start services
+docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+```
 
 Expected output:
 ```
@@ -122,9 +149,28 @@ docker compose -f tools/nginx/docker-compose.yaml logs -f proxy-edge
 
 The NGINX infrastructure is now running:
 
-- **Edge Proxy**: http://localhost (HTTP) or https://localhost (HTTPS if certs configured)
-- **Health Endpoint**: http://localhost/health
+- **Edge Proxy (HTTP)**: http://localhost
+- **Edge Proxy (HTTPS)**: https://localhost (if TLS configured)
+- **Health Endpoint**: http://localhost/health or https://localhost/health
 - **Dev Health (detailed)**: http://localhost/dev/health (development mode only)
+
+### Testing HTTPS
+
+If you started with TLS:
+
+```bash
+# Test HTTP endpoint
+curl http://localhost/health
+
+# Test HTTPS endpoint (use -k to ignore self-signed cert warnings)
+curl -k https://localhost/health
+
+# Use the Nx target
+nx run nginx:tls:test-https
+
+# Inspect the certificate
+openssl s_client -connect localhost:443 -servername localhost
+```
 
 ## Common Commands
 
@@ -165,21 +211,46 @@ docker compose -f tools/nginx/docker-compose.yaml exec proxy-edge nginx -t
 
 ## Production Deployment
 
-For production, use the production configuration:
+For production, use the production configuration with TLS:
 
 ```bash
-# Build with production settings
+# Step 1: Setup Let's Encrypt certificates (first time only)
+nx run nginx:tls:setup-letsencrypt -- --domain yourdomain.com --email admin@yourdomain.com
+
+# Step 2: Build with production settings
 nx run nginx:docker:build-all --configuration=production
 
-# Start with production overlay
-nx run nginx:serve --configuration=production
+# Step 3: Start with production overlay and TLS
+docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml -f tools/nginx/docker-compose.tls.yaml up -d
 ```
 
 This will:
 - Use production Docker Compose overlay
 - Set `NGINX_ENV=production` environment variable
 - Apply production-specific configurations (rate limiting, stricter security, etc.)
+- Enable HTTPS with automatic redirect from HTTP
+- Apply HSTS headers for enhanced security
 - Use JSON logging format
+- Configure Let's Encrypt auto-renewal
+
+### TLS/HTTPS Management Commands
+
+```bash
+# Generate development certificates
+nx run nginx:tls:generate-dev-certs
+
+# Validate certificates
+nx run nginx:tls:validate-certs
+
+# Rotate certificates
+nx run nginx:tls:rotate-certs
+
+# Setup Let's Encrypt (production)
+nx run nginx:tls:setup-letsencrypt -- --domain example.com --email admin@example.com
+
+# Test HTTPS connectivity
+nx run nginx:tls:test-https
+```
 
 ## Troubleshooting
 
@@ -235,14 +306,18 @@ If load balancers can't reach applications:
 
 ## Next Steps
 
-1. **Integrate Applications**: Update your application Docker Compose files to use the `app-network`
-2. **Configure TLS**: Add production TLS certificates for HTTPS
+1. **TLS/HTTPS Setup**: Configure SSL/TLS certificates for secure communication
+   - Development: `nx run nginx:tls:generate-dev-certs`
+   - Production: `nx run nginx:tls:setup-letsencrypt`
+   - See [TLS_SETUP.md](./TLS_SETUP.md) for complete guide
+2. **Integrate Applications**: Update your application Docker Compose files to use the `app-network`
 3. **Set Up Monitoring**: Configure log aggregation and metrics collection
 4. **Customize**: Adjust rate limits, timeouts, and other settings for your needs
 5. **Documentation**: Read the full README and RUNBOOK for detailed information
 
 ## Resources
 
+- [TLS Setup Guide](./TLS_SETUP.md) - Complete TLS/HTTPS configuration guide
 - [Full Documentation](./README.md) - Complete setup and usage guide
 - [Operations Runbook](./RUNBOOK.md) - Operational procedures and incident response
 - [NGINX Integration Guide](../../docs/nx-monorepo/nginx-integration.md) - Detailed integration guide

@@ -1,0 +1,116 @@
+# =================================================================================================
+# Docker Compose TLS/HTTPS Configuration Overlay
+# =================================================================================================
+#
+# This file provides TLS-specific configuration for the NGINX infrastructure.
+# Use it when you want to enable HTTPS with either self-signed or production certificates.
+#
+# Usage with development certificates:
+#   docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+#
+# Usage with production certificates:
+#   docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+#
+# =================================================================================================
+
+version: '3.8'
+
+services:
+  # Edge Proxy - TLS/HTTPS Configuration
+  proxy-edge:
+    # TLS Certificate Volumes
+    volumes:
+      # Mount TLS certificates (read-only for security)
+      - ./secrets/tls:/etc/nginx/tls:ro
+      
+      # Optional: Mount Let's Encrypt certificates
+      # - /etc/letsencrypt:/etc/letsencrypt:ro
+      
+      # Optional: Mount custom DH parameters
+      # - ./secrets/tls/dhparam.pem:/etc/nginx/tls/dhparam.pem:ro
+    
+    # Ensure HTTPS port is exposed
+    ports:
+      - "443:443"
+    
+    # HTTPS health check
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost/health && curl -k -f https://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    
+    # Environment variables for TLS
+    environment:
+      # Enable HTTPS in NGINX
+      - ENABLE_HTTPS=true
+      
+      # Optional: Certificate paths (if different from default)
+      # - TLS_CERT_PATH=/etc/nginx/tls/cert.pem
+      # - TLS_KEY_PATH=/etc/nginx/tls/key.pem
+
+# =================================================================================================
+# Usage Examples
+# =================================================================================================
+#
+# 1. Start with development (self-signed) certificates:
+#    nx run nginx:tls:generate-dev-certs
+#    docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+#
+# 2. Start with production certificates:
+#    # Ensure certificates are in tools/nginx/secrets/tls/
+#    docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+#
+# 3. Test HTTPS:
+#    curl -k https://localhost/health
+#    nx run nginx:tls:test-https
+#
+# 4. Verify TLS configuration:
+#    openssl s_client -connect localhost:443 -servername localhost
+#    nx run nginx:tls:validate-certs
+#
+# =================================================================================================
+
+# =================================================================================================
+# Certificate Management
+# =================================================================================================
+#
+# Development Certificates:
+#   Generate: nx run nginx:tls:generate-dev-certs
+#   Validate: nx run nginx:tls:validate-certs
+#   Location:  tools/nginx/secrets/tls/
+#
+# Production Certificates (Let's Encrypt):
+#   Setup:    nx run nginx:tls:setup-letsencrypt -- --domain example.com --email admin@example.com
+#   Renew:    certbot renew
+#   Location: /etc/letsencrypt/live/<domain>/
+#
+# Certificate Rotation:
+#   Rotate:   nx run nginx:tls:rotate-certs
+#   Reload:   docker exec nginx-proxy-edge nginx -s reload
+#
+# =================================================================================================
+
+# =================================================================================================
+# Security Notes
+# =================================================================================================
+#
+# 1. Certificate Security:
+#    - Always mount certificates as read-only (:ro)
+#    - Use proper file permissions (600 for keys, 644 for certs)
+#    - Never commit certificates to version control
+#    - Rotate certificates before expiration
+#
+# 2. Production Recommendations:
+#    - Use Let's Encrypt for automated certificate management
+#    - Enable HSTS only after verifying HTTPS works correctly
+#    - Configure OCSP stapling for better performance
+#    - Test SSL configuration: https://www.ssllabs.com/ssltest/
+#
+# 3. Development Setup:
+#    - Self-signed certificates will show browser warnings (expected)
+#    - Trust certificates locally to avoid warnings
+#    - Use different certificates for different environments
+#
+# =================================================================================================
