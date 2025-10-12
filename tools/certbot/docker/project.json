@@ -1,0 +1,22 @@
+{
+	"name": "certbot-docker",
+	"$schema": "../../../node_modules/nx/schemas/project-schema.json",
+	"projectType": "application",
+	"root": "tools/certbot/docker",
+	"sourceRoot": "tools/certbot/docker",
+	"targets": {
+		"docker:build": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "docker build -t my-org/certbot:latest -f tools/certbot/docker/Dockerfile .",
+				"cwd": "."
+			},
+			"configurations": {
+				"production": {
+					"command": "docker build -t my-org/certbot:prod -f tools/certbot/docker/Dockerfile ."
+				}
+			}
+		}
+	},
+	"tags": ["infrastructure", "certbot", "docker"]
+}
