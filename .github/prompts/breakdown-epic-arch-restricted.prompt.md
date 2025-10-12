@@ -26,11 +26,7 @@ Act as a Senior Software Architect. Your task is to take an Epic PRD and create 
 The output should be a complete Epic Architecture Specification in Markdown format.
 
 **Directory Paths:**
-- **Monorepo-level epic**: Save to `/docs/epics/{epic-name}/arch.md`
-- **Project-specific epic**: Save to `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
-  - Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
-
-The path should match the location of the corresponding Epic PRD. Ask the user to confirm if needed.
+Refer to `/docs/documentation-structure-reference.md` for the canonical documentation structure. The assistant will use this file to determine the correct paths for all documentation.
 
 ### Specification Structure
 
