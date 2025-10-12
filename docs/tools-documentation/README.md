@@ -1,244 +1,267 @@
-# Tool Documentation Index
+# Tools Documentation & Simplification Analysis
 
-This directory contains comprehensive documentation for the prompt-based tools in this monorepo, created to identify and simplify overly complex functionality.
+## Overview
 
-## Purpose
-
-This documentation project was created to:
-1. **Document current tool functionality** as if implementing from scratch
-2. **Identify features that are out of scope or too complex**
-3. **Provide actionable simplification recommendations**
-4. **"Trim the fat"** to reduce errors from growing complexity
+This documentation provides comprehensive analysis of the NGINX infrastructure and certbot automation tools to identify complexity and opportunities for simplification. The goal is to reduce errors caused by growing complexity in the monorepo by "trimming the fat" from overly complex functionality.
 
 ## Documentation Structure
 
-### Executive Summary
-📄 **[TOOL-SIMPLIFICATION-SUMMARY.md](./TOOL-SIMPLIFICATION-SUMMARY.md)**
-- Cross-tool complexity analysis
-- Overall findings and recommendations
-- Implementation roadmap
-- Success metrics and validation approach
-- **Start here for high-level overview**
+```
+docs/tools-documentation/
+├── README.md                           # This file
+├── SIMPLIFICATION-SUMMARY.md           # Executive summary and recommendations
+├── nginx-infrastructure/
+│   ├── epic-prd.md                    # NGINX Epic PRD
+│   ├── epic-architecture.md           # NGINX Architecture Specification
+│   ├── features/                      # Individual feature documentation
+│   │   ├── edge-proxy/
+│   │   │   ├── prd.md
+│   │   │   └── implementation-plan.md
+│   │   ├── load-balancers/
+│   │   │   ├── prd.md
+│   │   │   └── implementation-plan.md
+│   │   ├── tls-automation/
+│   │   │   ├── prd.md
+│   │   │   └── implementation-plan.md
+│   │   └── health-checks/
+│   │       ├── prd.md
+│   │       └── implementation-plan.md
+│   └── adrs/
+│       ├── adr-001-nginx-alpine-base.md
+│       ├── adr-002-docker-compose-orchestration.md
+│       ├── adr-003-tls-certificate-management.md
+│       └── adr-004-health-check-architecture.md
+└── certbot-automation/
+    ├── epic-prd.md                    # Certbot Epic PRD
+    ├── epic-architecture.md           # Certbot Architecture Specification
+    ├── features/
+    │   ├── installation-automation/
+    │   │   ├── prd.md
+    │   │   └── implementation-plan.md
+    │   ├── certificate-management/
+    │   │   ├── prd.md
+    │   │   └── implementation-plan.md
+    │   ├── docker-integration/
+    │   │   ├── prd.md
+    │   │   └── implementation-plan.md
+    │   └── monitoring-automation/
+    │       ├── prd.md
+    │       └── implementation-plan.md
+    └── adrs/
+        ├── adr-001-os-auto-detection.md
+        ├── adr-002-docker-containerization.md
+        └── adr-003-nx-integration.md
+```
 
-### Individual Tool Documentation
+## Quick Navigation
 
-Each tool has comprehensive documentation covering:
-- Purpose & Goal
-- Current Functionality Breakdown
-- Input Requirements
-- Output Specification
-- Complexity Analysis
-- Simplification Recommendations
-- Implementation Complexity Score
-- Migration Path
-- Success Metrics
-- Risk Assessment
+### NGINX Infrastructure
 
-#### Epic-Level Tools
+**Epic Level:**
+- [NGINX Epic PRD](./nginx-infrastructure/epic-prd.md) - Product requirements and business goals
+- [NGINX Epic Architecture](./nginx-infrastructure/epic-architecture.md) - Technical architecture specification
 
-1. **[breakdown-epic-arch-restricted.md](./prompts/breakdown-epic-arch-restricted.md)**
-   - Epic Architecture Specification Generator
-   - Current Complexity: 7/10 (High)
-   - Simplified Complexity: 4/10 (Medium)
-   - **Key Issues:** Mandatory 5-layer diagrams, color coding requirements
-   - **Reduction: 43%** | **Time Savings: 50%**
+**Features:**
+1. **Edge Proxy** - [PRD](./nginx-infrastructure/features/edge-proxy/prd.md) | [Implementation](./nginx-infrastructure/features/edge-proxy/implementation-plan.md)
+2. **Load Balancers** - [PRD](./nginx-infrastructure/features/load-balancers/prd.md) | [Implementation](./nginx-infrastructure/features/load-balancers/implementation-plan.md)
+3. **TLS Automation** - [PRD](./nginx-infrastructure/features/tls-automation/prd.md) | [Implementation](./nginx-infrastructure/features/tls-automation/implementation-plan.md)
+4. **Health Checks** - [PRD](./nginx-infrastructure/features/health-checks/prd.md) | [Implementation](./nginx-infrastructure/features/health-checks/implementation-plan.md)
 
-2. **[breakdown-epic-pm.md](./prompts/breakdown-epic-pm.md)**
-   - Epic Product Requirements Document (PRD) Generator
-   - Current Complexity: 6/10 (Medium-High)
-   - Simplified Complexity: 3/10 (Low-Medium)
-   - **Key Issues:** Open-ended requirements, unlimited metrics
-   - **Reduction: 50%** | **Time Savings: 40%**
+**Architectural Decisions:**
+- [ADR-001: NGINX Alpine Base](./nginx-infrastructure/adrs/adr-001-nginx-alpine-base.md)
+- [ADR-002: Docker Compose Orchestration](./nginx-infrastructure/adrs/adr-002-docker-compose-orchestration.md)
+- [ADR-003: TLS Certificate Management](./nginx-infrastructure/adrs/adr-003-tls-certificate-management.md)
+- [ADR-004: Health Check Architecture](./nginx-infrastructure/adrs/adr-004-health-check-architecture.md)
 
-#### Feature-Level Tools
+### Certbot Automation
 
-3. **[breakdown-feature-implementation.md](./prompts/breakdown-feature-implementation.md)**
-   - Feature Implementation Plan Generator
-   - Current Complexity: 9/10 (Very High)
-   - Simplified Complexity: 4/10 (Medium)
-   - **Key Issues:** 5-layer architecture, CSS Modules enforcement, multiple diagrams
-   - **Reduction: 56%** | **Time Savings: 60% (simple), 40% (medium), 20% (complex)**
+**Epic Level:**
+- [Certbot Epic PRD](./certbot-automation/epic-prd.md) - Product requirements and business goals
+- [Certbot Epic Architecture](./certbot-automation/epic-architecture.md) - Technical architecture specification
 
-4. **[breakdown-feature-prd.md](./prompts/breakdown-feature-prd.md)**
-   - Feature Product Requirements Document (PRD) Generator
-   - Current Complexity: 7/10 (High)
-   - Simplified Complexity: 3/10 (Low-Medium)
-   - **Key Issues:** Open-ended user stories, unlimited acceptance criteria
-   - **Reduction: 57%** | **Time Savings: 50%**
+**Features:**
+1. **Installation Automation** - [PRD](./certbot-automation/features/installation-automation/prd.md) | [Implementation](./certbot-automation/features/installation-automation/implementation-plan.md)
+2. **Certificate Management** - [PRD](./certbot-automation/features/certificate-management/prd.md) | [Implementation](./certbot-automation/features/certificate-management/implementation-plan.md)
+3. **Docker Integration** - [PRD](./certbot-automation/features/docker-integration/prd.md) | [Implementation](./certbot-automation/features/docker-integration/implementation-plan.md)
+4. **Monitoring Automation** - [PRD](./certbot-automation/features/monitoring-automation/prd.md) | [Implementation](./certbot-automation/features/monitoring-automation/implementation-plan.md)
 
-#### Architectural Tools
+**Architectural Decisions:**
+- [ADR-001: OS Auto-Detection](./certbot-automation/adrs/adr-001-os-auto-detection.md)
+- [ADR-002: Docker Containerization](./certbot-automation/adrs/adr-002-docker-containerization.md)
+- [ADR-003: Nx Integration](./certbot-automation/adrs/adr-003-nx-integration.md)
 
-5. **[create-architectural-decision-record.md](./prompts/create-architectural-decision-record.md)**
-   - Architectural Decision Record (ADR) Generator
-   - Current Complexity: 7/10 (High)
-   - Simplified Complexity: 2/10 (Low)
-   - **Key Issues:** Coded bullet points (POS-001, NEG-001, etc.), complex formatting
-   - **Reduction: 71%** | **Time Savings: 50%**
+## Complexity Analysis Summary
 
-## Key Findings
+### NGINX Infrastructure
 
-### Overall Metrics
-- **Average Complexity Reduction: 55%**
-- **Average Time Savings: 50%**
-- **Total Tools Analyzed: 5**
+**Current Complexity Score: 8/10** ⚠️
 
-### Common Complexity Patterns
+**Key Complexity Drivers:**
+1. **Multi-Component Architecture** - 4 separate Docker containers (edge + 3 LBs)
+2. **Configuration Layering** - Base + Service + Environment overlays
+3. **TLS Integration** - Multiple certificate management scripts
+4. **Health Check System** - Gateway-based health monitoring
+5. **Nx Target Proliferation** - 23 different Nx targets
 
-1. **Over-Specification Through Diagrams**
-   - Mandatory complex Mermaid diagrams for all features
-   - 5-layer architecture requirements regardless of size
-   - Recommendation: Tiered approach (text/3-layer/5-layer)
+**Simplification Opportunities:**
+- Consolidate load balancers for similar services
+- Simplify configuration overlay system
+- Reduce number of TLS scripts (currently 6)
+- Streamline Nx targets (reduce from 23 to ~12)
 
-2. **Coded Bullet Point Over-Engineering**
-   - Six code types (POS-001, NEG-001, ALT-001, IMP-001, REF-001)
-   - No clear benefit for AI or humans
-   - Recommendation: Standard markdown lists
+**Estimated Complexity Reduction: 40%** (8/10 → 5/10)
 
-3. **Open-Ended Requirements Without Limits**
-   - Can lead to 50+ requirements or acceptance criteria
-   - Causes analysis paralysis and documentation fatigue
-   - Recommendation: Clear limits (5-7 requirements, 3-5 metrics)
+### Certbot Automation
 
-4. **Technology Lock-In**
-   - Forces specific approaches (CSS Modules + SCSS)
-   - Limits flexibility
-   - Recommendation: Remove technology prescriptions
+**Current Complexity Score: 6/10** ⚠️
 
-### Top Simplification Opportunities
+**Key Complexity Drivers:**
+1. **Dual Installation Paths** - Both native and Docker installation
+2. **OS Auto-Detection** - Complex platform detection logic
+3. **Multiple Integration Points** - NGINX, Docker Compose, systemd
+4. **Monitoring Features** - JSON, Prometheus, and text outputs
+5. **Script Proliferation** - 6 different bash scripts
 
-| Priority | Change | Impact | Tools Affected |
-|----------|--------|--------|----------------|
-| 1 | Remove coded bullet points | 71% reduction | ADR |
-| 2 | Tiered architecture approach | 60% time savings | Implementation Plan |
-| 3 | Limit user stories & acceptance criteria | 57% reduction | Feature PRD |
-| 4 | Remove CSS Modules enforcement | Flexibility gain | Implementation Plan |
-| 5 | Implement templates & checklists | 40-60% time savings | All tools |
+**Simplification Opportunities:**
+- Standardize on Docker-first approach
+- Simplify OS detection (focus on common platforms)
+- Consolidate scripts (reduce from 6 to 3-4)
+- Remove redundant monitoring formats
 
-## Implementation Roadmap
+**Estimated Complexity Reduction: 35%** (6/10 → 4/10)
+
+## Identified Issues & Recommendations
+
+### Critical Issues
+
+1. **NGINX Configuration Complexity**
+   - **Issue**: 3-layer configuration system (base + service + overlay)
+   - **Impact**: High maintenance overhead, difficult to debug
+   - **Recommendation**: Reduce to 2-layer system or use templating
+   - **Priority**: High
+
+2. **Certbot Dual-Path Installation**
+   - **Issue**: Supports both native and Docker installation
+   - **Impact**: Increased testing surface, maintenance burden
+   - **Recommendation**: Standardize on Docker-only approach
+   - **Priority**: High
+
+3. **TLS Script Proliferation**
+   - **Issue**: 6 separate TLS management scripts
+   - **Impact**: Fragmented functionality, user confusion
+   - **Recommendation**: Consolidate into 2-3 core scripts
+   - **Priority**: Medium
+
+### Moderate Issues
+
+4. **Load Balancer Redundancy**
+   - **Issue**: 3 separate load balancer containers for similar services
+   - **Impact**: Resource overhead, configuration duplication
+   - **Recommendation**: Consolidate to 1-2 load balancers with virtual hosts
+   - **Priority**: Medium
+
+5. **Health Check Complexity**
+   - **Issue**: Gateway-based health check routing
+   - **Impact**: Additional latency, complex troubleshooting
+   - **Recommendation**: Direct health checks where possible
+   - **Priority**: Low
+
+6. **Nx Target Overload**
+   - **Issue**: 23+ Nx targets for NGINX alone
+   - **Impact**: Overwhelming user experience, hard to discover
+   - **Recommendation**: Group related targets, reduce to ~12 core targets
+   - **Priority**: Medium
+
+## Simplification Roadmap
 
 ### Phase 1: Quick Wins (Week 1-2)
-**Target: 30-40% complexity reduction**
+**Target: 20% complexity reduction**
 
-- [ ] Make diagrams optional/configurable
-- [ ] Remove coded bullet points
-- [ ] Add requirement limits (5-7, 10-15)
-- [ ] Add metric limits (3-5)
-- [ ] Separate edge cases from user stories
-- [ ] Remove technology prescriptions
+- [ ] Consolidate TLS scripts (6 → 3)
+- [ ] Remove redundant Nx targets
+- [ ] Simplify certbot monitoring (3 formats → 1)
+- [ ] Documentation cleanup
 
-### Phase 2: Templates (Week 3-4)
-**Target: Additional 15-20% reduction**
+### Phase 2: Structural Changes (Week 3-4)
+**Target: Additional 15% complexity reduction**
 
-- [ ] Create template library
-- [ ] Implement tiered approaches (simple/medium/complex)
-- [ ] Provide feature type templates
-- [ ] Add decision trees for selection
+- [ ] Standardize certbot on Docker-first
+- [ ] Reduce NGINX configuration layers (3 → 2)
+- [ ] Consolidate load balancers (3 → 2)
 
-### Phase 3: Integration (Week 5-6)
-**Target: Workflow efficiency**
+### Phase 3: Architecture Refinement (Week 5-6)
+**Target: Additional 10% complexity reduction**
 
-- [ ] Validate data flow between tools
+- [ ] Simplify health check architecture
+- [ ] Streamline Docker Compose files
+- [ ] Optimize script dependencies
+
+### Phase 4: Validation & Documentation (Week 7-8)
+- [ ] Update all documentation
 - [ ] Create migration guides
-- [ ] Update downstream expectations
+- [ ] Performance testing
+- [ ] User acceptance testing
 
-### Phase 4: Validation (Week 7-8)
-**Target: Refinement**
+## Success Metrics
 
-- [ ] Pilot with real features
-- [ ] Collect feedback
-- [ ] Measure improvements
-- [ ] Optimize based on learnings
+**Quantitative Goals:**
+- Reduce NGINX complexity from 8/10 to 5/10 (37% reduction)
+- Reduce certbot complexity from 6/10 to 4/10 (33% reduction)
+- Reduce total scripts from 12 to 7 (42% reduction)
+- Reduce Nx targets from 35 to 20 (43% reduction)
+- Reduce configuration files from 25+ to 15 (40% reduction)
+
+**Qualitative Goals:**
+- Improved developer onboarding time (2 hours → 1 hour)
+- Reduced troubleshooting time (30 min → 15 min)
+- Better tool discoverability
+- Clearer documentation flow
+- Enhanced maintainability
 
 ## How to Use This Documentation
 
-### For Product Managers & Architects
-1. Start with the [Summary Document](./TOOL-SIMPLIFICATION-SUMMARY.md)
-2. Review recommendations for your tools
-3. Prioritize changes based on impact
+**For Executives (10 minutes):**
+1. Read [SIMPLIFICATION-SUMMARY.md](./SIMPLIFICATION-SUMMARY.md)
+2. Review complexity scores and reduction targets
+3. Approve roadmap phases
 
-### For Developers
-1. Read individual tool documentation
-2. Understand current complexity issues
-3. Review simplified approaches
-4. Provide feedback on practical implementation
+**For Product Managers (30 minutes):**
+1. Review Epic PRDs for both tools
+2. Understand business impact of complexity
+3. Prioritize simplification opportunities
+4. Plan resource allocation
 
-### For Leadership
-1. Review [Executive Summary](./TOOL-SIMPLIFICATION-SUMMARY.md#executive-summary)
-2. Assess [Success Metrics](./TOOL-SIMPLIFICATION-SUMMARY.md#5-success-metrics)
-3. Evaluate [Implementation Roadmap](./TOOL-SIMPLIFICATION-SUMMARY.md#3-implementation-roadmap)
-4. Approve resource allocation for phases
+**For Engineers (1-2 hours):**
+1. Study Epic Architecture documents
+2. Review feature implementation plans
+3. Identify overly complex patterns
+4. Propose specific simplifications
+5. Validate with ADRs
 
-## Quick Reference: Complexity Scores
+**For Architects (2-4 hours):**
+1. Deep dive into all documentation
+2. Validate architectural decisions
+3. Design simplified architecture
+4. Create migration strategy
+5. Update ADRs with new decisions
 
-### Current State
-```
-Feature Implementation Plan:  ████████░░ 9/10 (Very High)
-Feature PRD Generator:        ███████░░░ 7/10 (High)
-Epic Architecture Generator:  ███████░░░ 7/10 (High)
-ADR Generator:                ███████░░░ 7/10 (High)
-Epic PRD Generator:           ██████░░░░ 6/10 (Medium-High)
-```
+## Next Steps
 
-### Simplified State (Target)
-```
-Feature Implementation Plan:  ████░░░░░░ 4/10 (Medium)
-Feature PRD Generator:        ███░░░░░░░ 3/10 (Low-Medium)
-Epic PRD Generator:           ███░░░░░░░ 3/10 (Low-Medium)
-Epic Architecture Generator:  ████░░░░░░ 4/10 (Medium)
-ADR Generator:                ██░░░░░░░░ 2/10 (Low)
-```
-
-## Expected Benefits
-
-### Time Savings
-- **Epic Architecture:** 2h → 1h (50% reduction)
-- **Epic PRD:** 3h → 1.8h (40% reduction)
-- **Feature Implementation (Simple):** 5h → 2h (60% reduction)
-- **Feature Implementation (Medium):** 4h → 2.4h (40% reduction)
-- **Feature Implementation (Complex):** 5h → 4h (20% reduction)
-- **Feature PRD:** 2.5h → 1.25h (50% reduction)
-- **ADR:** 1.5h → 0.75h (50% reduction)
-
-### Quality Improvements
-- 30-40% reduction in revision cycles
-- 35% reduction in review time
-- 40% improvement in consistency
-- Enhanced maintainability
-- Better adoption rates
-
-### Developer Experience
-- Reduced documentation fatigue
-- Faster time to implementation
-- Improved clarity
-- Better tool adoption
-
-## Contributing
-
-To add or update documentation:
-
-1. **Follow the established structure** - Use the existing tool documentation as templates
-2. **Include all sections** - Purpose, functionality, complexity analysis, recommendations
-3. **Provide examples** - Show current vs. simplified approaches
-4. **Quantify impact** - Include complexity scores and time savings
-5. **Update the summary** - Reflect changes in TOOL-SIMPLIFICATION-SUMMARY.md
+1. **Team Review** - Gather feedback on documentation (Week 1)
+2. **Complexity Validation** - Validate scores with team (Week 1)
+3. **Prioritization** - Rank simplification opportunities (Week 2)
+4. **Roadmap Approval** - Get stakeholder buy-in (Week 2)
+5. **Phase 1 Execution** - Begin quick wins (Week 3)
 
 ## Related Documentation
 
-- **Prompt Files:** `.github/prompts/`
-- **Implementation Plans:** `docs/implementation-plans/`
-- **ADR Directory:** `docs/adr/`
-- **Ways of Work:** `docs/ways-of-work/`
-
-## Questions or Feedback?
-
-For questions about this documentation or the simplification initiative:
-1. Review the [Summary Document](./TOOL-SIMPLIFICATION-SUMMARY.md)
-2. Check individual tool documentation
-3. Refer to the [Implementation Roadmap](./TOOL-SIMPLIFICATION-SUMMARY.md#3-implementation-roadmap)
-4. Create an issue or discussion in the repository
+- [NGINX Tool README](../../tools/nginx/README.md) - Current tool documentation
+- [Certbot Tool README](../../tools/certbot/README.md) - Current tool documentation
+- [Original Implementation Plans](../../tools/nginx/IMPLEMENTATION_SUMMARY.md)
+- [Project Architecture](../../docs/nx-monorepo/nginx-integration.md)
 
 ---
 
 **Last Updated:** 2025-10-12  
-**Status:** Initial Documentation Complete  
-**Next Steps:** Team review and Phase 1 implementation
+**Maintained By:** DevOps & Platform Team  
+**Status:** Active Documentation & Analysis
