@@ -174,15 +174,15 @@ The automated installation script detects your OS and installs certbot with the 
 
 ```bash
 # Install certbot automatically
-nx run nginx:tls:install-certbot
+nx run certbot:install
 
 # Or run the script directly
-bash tools/nginx/scripts/tls/install-certbot.sh
+bash tools/certbot/scripts/install-certbot.sh
 ```
 
 **Dry Run (See what would be installed):**
 ```bash
-bash tools/nginx/scripts/tls/install-certbot.sh --dry-run
+nx run certbot:install:dry-run
 ```
 
 **Supported Operating Systems:**

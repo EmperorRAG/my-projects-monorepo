@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  certbot:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    image: monorepo/certbot:latest
+    container_name: certbot
+    volumes:
+      # Mount Let's Encrypt configuration and certificates
+      - letsencrypt-config:/etc/letsencrypt
+      - letsencrypt-lib:/var/lib/letsencrypt
+      - letsencrypt-logs:/var/log/letsencrypt
+      # Mount webroot for HTTP-01 challenge (if using with NGINX)
+      - webroot:/var/www/certbot:ro
+    networks:
+      - certbot-network
+    command: certonly --help
+    restart: "no"
+
+  # Renewal service (runs periodically)
+  certbot-renew:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    image: monorepo/certbot:latest
+    container_name: certbot-renew
+    volumes:
+      - letsencrypt-config:/etc/letsencrypt
+      - letsencrypt-lib:/var/lib/letsencrypt
+      - letsencrypt-logs:/var/log/letsencrypt
+      - webroot:/var/www/certbot:ro
+    networks:
+      - certbot-network
+    command: renew --quiet
+    restart: "no"
+    profiles:
+      - renew
+
+volumes:
+  letsencrypt-config:
+    driver: local
+  letsencrypt-lib:
+    driver: local
+  letsencrypt-logs:
+    driver: local
+  webroot:
+    driver: local
+
+networks:
+  certbot-network:
+    name: certbot-network
+    driver: bridge

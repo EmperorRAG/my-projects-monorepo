@@ -199,14 +199,14 @@
     "tls:install-certbot": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "bash tools/nginx/scripts/tls/install-certbot.sh",
+        "command": "nx run certbot:install",
         "cwd": "."
       }
     },
     "tls:setup-letsencrypt": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "bash tools/nginx/scripts/tls/setup-letsencrypt.sh",
+        "command": "nx run certbot:setup-letsencrypt",
         "cwd": "."
       }
     },

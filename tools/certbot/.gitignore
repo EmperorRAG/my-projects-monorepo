@@ -1,0 +1,22 @@
+# Certbot/Let's Encrypt directories
+/letsencrypt/
+/etc/letsencrypt/
+/var/lib/letsencrypt/
+/var/log/letsencrypt/
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.csr
+
+# Docker volumes
+/docker/volumes/
+
+# Credentials
+*.ini
+*credentials*
+*.conf.secret
+
+# Logs
+*.log
