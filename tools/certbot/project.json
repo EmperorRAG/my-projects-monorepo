@@ -80,7 +80,27 @@
         "command": "bash tools/certbot/scripts/validate-certbot.sh",
         "cwd": "."
       }
+    },
+    "setup-integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/setup-integration.sh",
+        "cwd": "."
+      },
+      "configurations": {
+        "dry-run": {
+          "command": "bash tools/certbot/scripts/setup-integration.sh --dry-run",
+          "cwd": "."
+        }
+      }
+    },
+    "setup-integration:dry-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/setup-integration.sh --dry-run",
+        "cwd": "."
+      }
     }
   },
-  "tags": ["infrastructure", "certbot", "tls", "security", "docker"]
+  "tags": ["infrastructure", "certbot", "tls", "security", "docker", "nginx"]
 }
