@@ -529,10 +529,13 @@ curl -k https://localhost/health
 
 **Production (Let's Encrypt):**
 ```bash
-# Setup Let's Encrypt
+# Step 1: Install certbot (automated with OS detection)
+nx run nginx:tls:install-certbot
+
+# Step 2: Setup Let's Encrypt
 nx run nginx:tls:setup-letsencrypt -- --domain yourdomain.com --email your@email.com
 
-# Start in production with TLS
+# Step 3: Start in production with TLS
 docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml -f tools/nginx/docker-compose.tls.yaml up -d
 ```
 
@@ -552,11 +555,12 @@ docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.
 
 ```bash
 # Certificate Management
-nx run nginx:tls:generate-dev-certs    # Generate self-signed certificates
-nx run nginx:tls:validate-certs        # Validate certificate configuration
-nx run nginx:tls:rotate-certs          # Rotate certificates with backup
-nx run nginx:tls:setup-letsencrypt     # Setup Let's Encrypt automation
-nx run nginx:tls:test-https            # Test HTTPS connectivity
+nx run nginx:tls:install-certbot        # Install certbot with OS auto-detection
+nx run nginx:tls:generate-dev-certs     # Generate self-signed certificates
+nx run nginx:tls:validate-certs         # Validate certificate configuration
+nx run nginx:tls:rotate-certs           # Rotate certificates with backup
+nx run nginx:tls:setup-letsencrypt      # Setup Let's Encrypt automation
+nx run nginx:tls:test-https             # Test HTTPS connectivity
 ```
 
 ### Certificate Management
