@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+mode: 'documentation'
 description: 'Create an Architectural Decision Record (ADR) document for AI-optimized decision documentation.'
 tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---
@@ -26,7 +26,9 @@ If any of the required inputs are not provided or cannot be determined from the 
 - Structure for machine parsing and human reference
 - Use coded bullet points (3-4 letter codes + 3-digit numbers) for multi-item sections
 
-The ADR must be saved in the `/docs/adr/` directory using the naming convention: `adr-NNNN-[title-slug].md`, where NNNN is the next sequential 4-digit number (e.g., `adr-0001-database-selection.md`).
+The ADR must be saved in the `/docs/architecture/decisions/` directory using the naming convention: `adr-NNNN-[title-slug].md`, where NNNN is the next sequential 4-digit number (e.g., `adr-0001-database-selection.md`).
+
+Before creating the ADR, check the `/docs/architecture/decisions/` directory to determine the next available number in the sequence.
 
 ## Required Documentation Structure
 

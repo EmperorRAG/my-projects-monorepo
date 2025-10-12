@@ -1,6 +1,6 @@
 ---
-mode: 'agent'
-description: 'Prompt for creating detailed feature implementation plans, following Epoch monorepo structure.'
+mode: 'documentation'
+description: 'Prompt for creating detailed feature implementation plans, following Nx monorepo structure.'
 ---
 
 # Feature Implementation Plan Prompt
@@ -13,11 +13,18 @@ Review the provided context and output a thorough, comprehensive implementation 
 
 ## Output Format
 
-The output should be a complete implementation plan in Markdown format, saved to `/docs/ways-of-work/plan/{epic-name}/{feature-name}/implementation-plan.md`.
+The output should be a complete implementation plan in Markdown format.
+
+**Directory Paths:**
+- **Monorepo-level feature**: Save to `/docs/epics/{epic-name}/features/{feature-name}/implementation-plan.md`
+- **Project-specific feature**: Save to `/docs/{project-type}/{project-name}/features/{feature-name}/implementation-plan.md`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
+
+The path should match the location of the corresponding Feature PRD. Ask the user to confirm if needed.
 
 ### File System
 
-Folder and file structure for both front-end and back-end repositories following Epoch's monorepo structure:
+Folder and file structure for both front-end and back-end repositories following Nx monorepo structure:
 
 ```
 apps/
