@@ -17,13 +17,13 @@ For epics and features that affect the entire monorepo:
 - **Feature Implementation Plan**: `/docs/epics/{epic-name}/features/{feature-name}/implementation-plan.md`
 
 ### Project-Specific Documentation
-For epics and features specific to apps, services, or libraries:
+For epics and features specific to apps, services, libraries, or tools:
 - **Epic PRD**: `/docs/{project-type}/{project-name}/epics/{epic-name}/epic.md`
 - **Epic Architecture**: `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
 - **Feature PRD**: `/docs/{project-type}/{project-name}/features/{feature-name}/prd.md`
 - **Feature Implementation Plan**: `/docs/{project-type}/{project-name}/features/{feature-name}/implementation-plan.md`
 
-Where `{project-type}` is one of: `apps`, `services`, `libs`
+Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 ### Architectural Decision Records
 - **ADR**: `/docs/architecture/decisions/adr-{NNNN}-{title-slug}.md`

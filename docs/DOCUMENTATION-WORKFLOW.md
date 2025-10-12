@@ -29,7 +29,7 @@ docs/{project-type}/{project-name}/
     └── implementation-plan.md                 # Implementation Plan
 ```
 
-Where `{project-type}` is: `apps`, `services`, or `libs`
+Where `{project-type}` is: `apps`, `services`, `libs`, or `tools`
 
 ### Architectural Decisions
 ```

@@ -61,6 +61,7 @@ Created informative README files to guide users:
 - `docs/services/README.md` - Service-specific documentation guidance
 - `docs/apps/README.md` - App-specific documentation guidance
 - `docs/libs/README.md` - Library-specific documentation guidance
+- `docs/tools/README.md` - Tool-specific documentation guidance
 
 ### 6. Comprehensive Workflow Guide
 
@@ -182,6 +183,7 @@ When creating documentation, AI models MUST:
 - `docs/services/README.md` - Services documentation guidance
 - `docs/apps/README.md` - Apps documentation guidance
 - `docs/libs/README.md` - Libraries documentation guidance
+- `docs/tools/README.md` - Tools documentation guidance
 - `docs/DOCUMENTATION-WORKFLOW.md` - Comprehensive workflow guide
 - `docs/DOCUMENTATION-CHATMODE-IMPLEMENTATION.md` - This summary
 

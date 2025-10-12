@@ -18,7 +18,7 @@ The output should be a complete implementation plan in Markdown format.
 **Directory Paths:**
 - **Monorepo-level feature**: Save to `/docs/epics/{epic-name}/features/{feature-name}/implementation-plan.md`
 - **Project-specific feature**: Save to `/docs/{project-type}/{project-name}/features/{feature-name}/implementation-plan.md`
-  - Where `{project-type}` is one of: `apps`, `services`, `libs`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 The path should match the location of the corresponding Feature PRD. Ask the user to confirm if needed.
 

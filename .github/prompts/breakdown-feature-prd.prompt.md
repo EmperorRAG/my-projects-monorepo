@@ -18,7 +18,7 @@ The output should be a complete PRD in Markdown format.
 **Directory Paths:**
 - **Monorepo-level feature**: Save to `/docs/epics/{epic-name}/features/{feature-name}/prd.md`
 - **Project-specific feature**: Save to `/docs/{project-type}/{project-name}/features/{feature-name}/prd.md`
-  - Where `{project-type}` is one of: `apps`, `services`, `libs`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 The path should align with the parent epic's location. Ask the user to confirm the scope and paths if needed.
 

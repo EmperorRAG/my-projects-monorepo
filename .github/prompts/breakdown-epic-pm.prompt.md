@@ -18,7 +18,7 @@ The output should be a complete Epic PRD in Markdown format.
 **Directory Paths:**
 - **Monorepo-level epic**: Save to `/docs/epics/{epic-name}/epic.md`
 - **Project-specific epic**: Save to `/docs/{project-type}/{project-name}/epics/{epic-name}/epic.md`
-  - Where `{project-type}` is one of: `apps`, `services`, `libs`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 Ask the user to confirm the scope (monorepo-level or project-specific) and provide necessary details to construct the correct path.
 

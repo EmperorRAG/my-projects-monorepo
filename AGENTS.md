@@ -94,14 +94,14 @@ For epics and features that affect the entire monorepo:
 
 #### Project-Specific Documentation
 
-For epics and features specific to apps, services, or libraries:
+For epics and features specific to apps, services, libraries, or tools:
 
 - **Epic PRD**: `/docs/{project-type}/{project-name}/epics/{epic-name}/epic.md`
 - **Epic Architecture**: `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
 - **Feature PRD**: `/docs/{project-type}/{project-name}/features/{feature-name}/prd.md`
 - **Feature Implementation Plan**: `/docs/{project-type}/{project-name}/features/{feature-name}/implementation-plan.md`
 
-Where `{project-type}` is one of: `apps`, `services`, `libs`
+Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 **Example for a service-specific epic:**
 ```
@@ -209,7 +209,7 @@ All documentation creation MUST use the `documentation` chatmode defined in `.gi
 
 Always ask the user to clarify the scope of the documentation:
 - Is this monorepo-level or project-specific?
-- If project-specific, what is the project type (apps/services/libs) and name?
+- If project-specific, what is the project type (apps/services/libs/tools) and name?
 - Construct the full path following the directory structure rules
 
 #### 4. Follow the Dependency Chain

@@ -28,7 +28,7 @@ The output should be a complete Epic Architecture Specification in Markdown form
 **Directory Paths:**
 - **Monorepo-level epic**: Save to `/docs/epics/{epic-name}/arch.md`
 - **Project-specific epic**: Save to `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
-  - Where `{project-type}` is one of: `apps`, `services`, `libs`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 The path should match the location of the corresponding Epic PRD. Ask the user to confirm if needed.
 
