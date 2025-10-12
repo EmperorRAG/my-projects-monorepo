@@ -43,139 +43,25 @@ As GitHub Copilot, you are an expert in NestJS development with deep knowledge o
 ### **Recommended Directory Structure**
 
 ```
-src/
-├── app.module.ts
-├── main.ts
-├── common/
-│   ├── decorators/
-│   ├── filters/
-│   ├── guards/
-│   ├── interceptors/
-│   ├── pipes/
-│   └── interfaces/
-├── config/
-├── modules/
-│   ├── auth/
-│   ├── users/
-│   └── products/
-└── shared/
-    ├── services/
-    └── constants/
-```
+# NestJS Instruction Module Index
 
-### **File Naming Conventions**
+NestJS guidance lives under `.github/instructions/nestjs`. Each module carries its own `applyTo` scope so only the relevant best practices load for the files you edit.
 
--   **Controllers:** `*.controller.ts` (e.g., `users.controller.ts`)
--   **Services:** `*.service.ts` (e.g., `users.service.ts`)
--   **Modules:** `*.module.ts` (e.g., `users.module.ts`)
--   **DTOs:** `*.dto.ts` (e.g., `create-user.dto.ts`)
--   **Entities:** `*.entity.ts` (e.g., `user.entity.ts`)
--   **Guards:** `*.guard.ts` (e.g., `auth.guard.ts`)
--   **Interceptors:** `*.interceptor.ts` (e.g., `logging.interceptor.ts`)
--   **Pipes:** `*.pipe.ts` (e.g., `validation.pipe.ts`)
--   **Filters:** `*.filter.ts` (e.g., `http-exception.filter.ts`)
+## Module Directory
+- `nestjs-core-principles.instructions.md` — Dependency injection, modular architecture, and decorator usage.
+- `nestjs-architecture.instructions.md` — Project layout and naming conventions.
+- `nestjs-controllers-services.instructions.md` — Guidance for thin controllers and focused services.
+- `nestjs-dtos-validation.instructions.md` — DTO design, validation decorators, and pipes.
+- `nestjs-database.instructions.md` — TypeORM patterns, repositories, and migrations.
+- `nestjs-auth-security.instructions.md` — Authentication, authorization, and defensive coding practices.
+- `nestjs-error-logging.instructions.md` — Exception filters and structured logging.
+- `nestjs-testing.instructions.md` — Unit, integration, and e2e testing strategies.
+- `nestjs-performance.instructions.md` — Caching, database optimization, and resilience tips.
+- `nestjs-configuration.instructions.md` — Environment configuration and typed accessors.
+- `nestjs-pitfalls.instructions.md` — Common mistakes to avoid when building NestJS apps.
+- `nestjs-workflow.instructions.md` — Development workflow and review checklist.
 
-## API Development Patterns
-
-### **1. Controllers**
-
--   Keep controllers thin - delegate business logic to services
--   Use proper HTTP methods and status codes
--   Implement comprehensive input validation with DTOs
--   Apply guards and interceptors at the appropriate level
-
-```typescript
-@Controller(
-	'users'
-)
-@UseGuards(
-	AuthGuard
-)
-export class UsersController {
-	constructor(
-		private readonly usersService: UsersService
-	) {}
-
-	@Get()
-	@UseInterceptors(
-		TransformInterceptor
-	)
-	async findAll(
-		@Query()
-		query: GetUsersDto
-	): Promise<
-		User[]
-	> {
-		return this.usersService.findAll(
-			query
-		);
-	}
-
-	@Post()
-	@UsePipes(
-		ValidationPipe
-	)
-	async create(
-		@Body()
-		createUserDto: CreateUserDto
-	): Promise<User> {
-		return this.usersService.create(
-			createUserDto
-		);
-	}
-}
-```
-
-### **2. Services**
-
--   Implement business logic in services, not controllers
--   Use constructor-based dependency injection
--   Create focused, single-responsibility services
--   Handle errors appropriately and let filters catch them
-
-```typescript
-@Injectable()
-export class UsersService {
-	constructor(
-		@InjectRepository(
-			User
-		)
-		private readonly userRepository: Repository<User>,
-		private readonly emailService: EmailService
-	) {}
-
-	async create(
-		createUserDto: CreateUserDto
-	): Promise<User> {
-		const user =
-			this.userRepository.create(
-				createUserDto
-			);
-		const savedUser =
-			await this.userRepository.save(
-				user
-			);
-		await this.emailService.sendWelcomeEmail(
-			savedUser.email
-		);
-		return savedUser;
-	}
-}
-```
-
-### **3. DTOs and Validation**
-
--   Use class-validator decorators for input validation
--   Create separate DTOs for different operations (create, update, query)
--   Implement proper transformation with class-transformer
-
-```typescript
-export class CreateUserDto {
-	@IsString()
-	@IsNotEmpty()
-	@Length(
-		2,
-		50
+Add new NestJS modules to this directory and update the index whenever additional guidance is introduced.
 	)
 	name: string;
 
