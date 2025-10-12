@@ -226,12 +226,12 @@ Each service has development and production overlays:
 ## Statistics
 
 ### Files Created
-- **Total Files**: 27
-- **Total Lines**: 4,476
+- **Total Files**: 29
+- **Total Lines**: ~5,600
 - **Configuration Files**: 16 (.conf)
 - **Dockerfiles**: 4
-- **Documentation**: 4 (.md)
-- **Scripts**: 1 (.sh)
+- **Documentation**: 5 (.md)
+- **Scripts**: 5 (.sh)
 - **Compose Files**: 2 (.yaml)
 - **Nx Config**: 1 (project.json)
 
@@ -248,6 +248,8 @@ Each service has development and production overlays:
 - `validate.sh`: 247 lines
 - `scripts/validate-nginx-config.sh`: 290 lines (Bash - cross-platform)
 - `scripts/validate-nginx-config.ps1`: 117 lines (PowerShell - deprecated)
+- `scripts/tls/install-certbot.sh`: 388 lines (Bash - NEW)
+- `scripts/tls/README-install-certbot.md`: 264 lines (Documentation - NEW)
 
 ### 🔄 Script Migration (October 2025)
 
@@ -355,10 +357,12 @@ nx run nginx:stop
 - Configurable options (--no-backup, --no-reload)
 
 ✅ **Let's Encrypt Integration**
+- Automated certbot installation script with OS auto-detection
 - Automated setup script for Let's Encrypt
 - HTTP-01 and DNS-01 challenge support
 - Automatic renewal configuration
 - Post-renewal hooks for NGINX reload
+- Support for Ubuntu/Debian, CentOS/RHEL, Fedora, Alpine, Amazon Linux, and macOS
 
 #### HTTPS Configuration
 ✅ **Modern TLS Security**
@@ -382,22 +386,28 @@ nx run nginx:stop
 #### Nx Integration
 ✅ **TLS Nx Targets**
 ```bash
-nx run nginx:tls:generate-dev-certs    # Generate development certificates
-nx run nginx:tls:validate-certs        # Validate certificates
-nx run nginx:tls:rotate-certs          # Rotate certificates
-nx run nginx:tls:setup-letsencrypt     # Setup Let's Encrypt
-nx run nginx:tls:test-https            # Test HTTPS connectivity
+nx run nginx:tls:install-certbot        # Install certbot automatically (with OS detection)
+nx run nginx:tls:generate-dev-certs     # Generate development certificates
+nx run nginx:tls:validate-certs         # Validate certificates
+nx run nginx:tls:rotate-certs           # Rotate certificates
+nx run nginx:tls:setup-letsencrypt      # Setup Let's Encrypt
+nx run nginx:tls:test-https             # Test HTTPS connectivity
 ```
 
 #### Documentation
 ✅ **Comprehensive TLS Documentation**
-- TLS_SETUP.md (18KB) - Complete setup guide
+- TLS_SETUP.md (20KB) - Complete setup guide
   - Development and production setup
+  - **Automated certbot installation with OS detection**
   - Let's Encrypt integration
   - Certificate management workflows
   - Security configuration details
   - Troubleshooting guide
   - Advanced topics (wildcard certs, mTLS, performance)
+- README-install-certbot.md (7KB) - Certbot installation guide
+  - OS detection and automatic installation
+  - Supported platforms and package managers
+  - Usage examples and troubleshooting
 - README.md updated with TLS section
 - QUICKSTART.md updated with TLS quickstart
 - RUNBOOK.md updated with TLS operations

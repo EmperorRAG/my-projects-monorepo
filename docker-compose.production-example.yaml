@@ -1,0 +1,458 @@
+# =================================================================================================
+# Production-Ready Certbot-NGINX Integration Example
+# =================================================================================================
+#
+# This is a complete, production-ready example showing how to integrate Certbot with NGINX
+# and other services in a real-world application stack.
+#
+# This example includes:
+# - NGINX edge proxy with TLS termination
+# - Certbot for automatic certificate management
+# - Backend application services
+# - Monitoring stack (Prometheus, Grafana)
+# - Logging stack (optional)
+# - Health checks and graceful shutdown
+#
+# Usage:
+#   # Initial setup
+#   docker compose -f docker-compose.production-example.yaml run --rm certbot-acquire
+#
+#   # Start all services
+#   docker compose -f docker-compose.production-example.yaml up -d
+#
+#   # View logs
+#   docker compose -f docker-compose.production-example.yaml logs -f
+#
+# =================================================================================================
+
+version: '3.8'
+
+# =================================================================================================
+# Networks
+# =================================================================================================
+
+networks:
+  # Frontend network (internet-facing)
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+  # Backend network (internal services)
+  backend:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+  # Monitoring network
+  monitoring:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+
+# =================================================================================================
+# Volumes
+# =================================================================================================
+
+volumes:
+  # TLS Certificates
+  letsencrypt-config:
+  letsencrypt-lib:
+  certbot-webroot:
+
+  # Application Data
+  app-data:
+  database-data:
+
+  # Monitoring Data
+  prometheus-data:
+  grafana-data:
+
+  # Logs
+  nginx-logs:
+  app-logs:
+
+# =================================================================================================
+# Services
+# =================================================================================================
+
+services:
+
+  # -----------------------------------------------------------------------------------------------
+  # NGINX Edge Proxy (TLS Termination)
+  # -----------------------------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: prod-nginx-proxy
+    restart: unless-stopped
+
+    networks:
+      - frontend
+      - backend
+      - monitoring
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      # NGINX Configuration
+      - ./tools/nginx/proxy-edge/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./tools/nginx/common:/etc/nginx/common:ro
+
+      # TLS Certificates
+      - letsencrypt-config:/etc/letsencrypt:ro
+
+      # ACME Challenge Webroot
+      - certbot-webroot:/var/www/certbot:ro
+
+      # Logs
+      - nginx-logs:/var/log/nginx
+
+    environment:
+      - TLS_ENABLED=true
+      - ENABLE_MONITORING=true
+
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    depends_on:
+      - app
+      - certbot-setup
+
+    labels:
+      - "com.example.service=nginx"
+      - "com.example.monitoring=true"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certbot - Certificate Acquisition (One-time)
+  # -----------------------------------------------------------------------------------------------
+  certbot-acquire:
+    build:
+      context: ./tools/certbot/docker
+      dockerfile: Dockerfile
+    container_name: prod-certbot-acquire
+    profiles:
+      - setup
+
+    networks:
+      - frontend
+
+    volumes:
+      - letsencrypt-config:/etc/letsencrypt
+      - letsencrypt-lib:/var/lib/letsencrypt
+      - certbot-webroot:/var/www/certbot
+
+    environment:
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL:?CERTBOT_EMAIL is required}
+      - CERTBOT_DOMAINS=${CERTBOT_DOMAINS:?CERTBOT_DOMAINS is required}
+
+    entrypoint: /bin/sh
+    command: >
+      -c "certbot certonly
+      --webroot
+      --webroot-path=/var/www/certbot
+      --email $${CERTBOT_EMAIL}
+      --agree-tos
+      --no-eff-email
+      --non-interactive
+      --expand
+      --domains $${CERTBOT_DOMAINS}
+      --rsa-key-size 4096
+      --staple-ocsp
+      || exit 1"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certbot - Automatic Renewal
+  # -----------------------------------------------------------------------------------------------
+  certbot-renew:
+    build:
+      context: ./tools/certbot/docker
+      dockerfile: Dockerfile
+    container_name: prod-certbot-renew
+    restart: unless-stopped
+
+    networks:
+      - frontend
+      - monitoring
+
+    volumes:
+      - letsencrypt-config:/etc/letsencrypt
+      - letsencrypt-lib:/var/lib/letsencrypt
+      - certbot-webroot:/var/www/certbot
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      trap exit TERM;
+      while :; do
+        echo '[Certbot Renewal] Running certificate renewal check...';
+        certbot renew --webroot --webroot-path=/var/www/certbot --quiet --deploy-hook 'docker exec prod-nginx-proxy nginx -s reload';
+        echo '[Certbot Renewal] Next check in 12 hours';
+        sleep 12h &
+        wait $${!};
+      done"
+
+    depends_on:
+      - nginx
+
+    labels:
+      - "com.example.service=certbot"
+      - "com.example.monitoring=true"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certbot Setup - Webroot Initialization
+  # -----------------------------------------------------------------------------------------------
+  certbot-setup:
+    image: alpine:latest
+    container_name: prod-certbot-setup
+
+    volumes:
+      - certbot-webroot:/var/www/certbot
+
+    command: >
+      sh -c "
+      mkdir -p /var/www/certbot/.well-known/acme-challenge &&
+      chmod -R 755 /var/www/certbot &&
+      echo 'Certbot webroot initialized' &&
+      exit 0"
+
+  # -----------------------------------------------------------------------------------------------
+  # Application Backend
+  # -----------------------------------------------------------------------------------------------
+  app:
+    image: node:18-alpine
+    container_name: prod-app
+    restart: unless-stopped
+
+    networks:
+      - backend
+      - monitoring
+
+    volumes:
+      - app-data:/app/data
+      - app-logs:/app/logs
+
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://user:pass@database:5432/myapp
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    depends_on:
+      - database
+
+    labels:
+      - "com.example.service=app"
+      - "com.example.monitoring=true"
+
+  # -----------------------------------------------------------------------------------------------
+  # Database
+  # -----------------------------------------------------------------------------------------------
+  database:
+    image: postgres:15-alpine
+    container_name: prod-database
+    restart: unless-stopped
+
+    networks:
+      - backend
+
+    volumes:
+      - database-data:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:?DATABASE_PASSWORD is required}
+      - POSTGRES_DB=myapp
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    labels:
+      - "com.example.service=database"
+
+  # -----------------------------------------------------------------------------------------------
+  # Prometheus (Monitoring)
+  # -----------------------------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prod-prometheus
+    restart: unless-stopped
+
+    networks:
+      - monitoring
+
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - prometheus-data:/prometheus
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+
+    labels:
+      - "com.example.service=prometheus"
+
+  # -----------------------------------------------------------------------------------------------
+  # Grafana (Visualization)
+  # -----------------------------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:latest
+    container_name: prod-grafana
+    restart: unless-stopped
+
+    networks:
+      - monitoring
+      - frontend
+
+    ports:
+      - "3001:3000"
+
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD is required}
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+    depends_on:
+      - prometheus
+
+    labels:
+      - "com.example.service=grafana"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certificate Monitor (Cron Job)
+  # -----------------------------------------------------------------------------------------------
+  cert-monitor:
+    image: alpine:latest
+    container_name: prod-cert-monitor
+    restart: unless-stopped
+
+    networks:
+      - monitoring
+
+    volumes:
+      - letsencrypt-config:/etc/letsencrypt:ro
+      - ./tools/certbot/scripts/monitor-certificates.sh:/monitor.sh:ro
+
+    environment:
+      - SLACK_WEBHOOK=${SLACK_WEBHOOK:-}
+      - EMAIL=${ALERT_EMAIL:-}
+
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      apk add --no-cache bash openssl curl;
+      trap exit TERM;
+      while :; do
+        echo '[Certificate Monitor] Running certificate check...';
+        bash /monitor.sh --critical-days 7 --warning-days 14 --prometheus-file /tmp/cert_metrics.prom;
+        sleep 1h &
+        wait $${!};
+      done"
+
+    labels:
+      - "com.example.service=cert-monitor"
+
+# =================================================================================================
+# Environment Variables Required
+# =================================================================================================
+#
+# Create a .env file with the following variables:
+#
+# # Certbot Configuration
+# CERTBOT_EMAIL=your@email.com
+# CERTBOT_DOMAINS=yourdomain.com,www.yourdomain.com,api.yourdomain.com
+#
+# # Database
+# DATABASE_PASSWORD=your-secure-database-password
+#
+# # Monitoring
+# GRAFANA_PASSWORD=your-secure-grafana-password
+#
+# # Alerts (Optional)
+# SLACK_WEBHOOK=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+# ALERT_EMAIL=alerts@yourdomain.com
+#
+# =================================================================================================
+
+# =================================================================================================
+# Deployment Instructions
+# =================================================================================================
+#
+# 1. Setup Environment:
+#    cp .env.example .env
+#    # Edit .env with your configuration
+#
+# 2. Create Required Directories:
+#    mkdir -p monitoring/{prometheus,grafana/{dashboards,datasources}}
+#
+# 3. Initialize Volumes:
+#    docker compose -f docker-compose.production-example.yaml up -d certbot-setup
+#
+# 4. Obtain Initial Certificates:
+#    docker compose -f docker-compose.production-example.yaml run --rm certbot-acquire
+#
+# 5. Start All Services:
+#    docker compose -f docker-compose.production-example.yaml up -d
+#
+# 6. Verify:
+#    # Check HTTPS
+#    curl https://yourdomain.com
+#
+#    # Check monitoring
+#    open http://localhost:9090  # Prometheus
+#    open http://localhost:3001  # Grafana
+#
+# 7. View Logs:
+#    docker compose -f docker-compose.production-example.yaml logs -f
+#
+# =================================================================================================
+
+# =================================================================================================
+# Maintenance Commands
+# =================================================================================================
+#
+# # Force certificate renewal
+# docker compose -f docker-compose.production-example.yaml exec certbot-renew certbot renew --force-renewal
+#
+# # Check certificate status
+# docker compose -f docker-compose.production-example.yaml exec certbot-renew certbot certificates
+#
+# # Reload NGINX configuration
+# docker compose -f docker-compose.production-example.yaml exec nginx nginx -s reload
+#
+# # View certificate monitoring logs
+# docker compose -f docker-compose.production-example.yaml logs cert-monitor
+#
+# # Backup certificates
+# docker compose -f docker-compose.production-example.yaml exec certbot-renew tar czf /tmp/certs-backup.tar.gz /etc/letsencrypt
+#
+# # Scale application (if needed)
+# docker compose -f docker-compose.production-example.yaml up -d --scale app=3
+#
+# =================================================================================================

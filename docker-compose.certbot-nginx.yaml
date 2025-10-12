@@ -1,0 +1,331 @@
+# =================================================================================================
+# Certbot-NGINX Integration - Docker Compose Configuration
+# =================================================================================================
+#
+# This comprehensive Docker Compose configuration provides production-ready integration between
+# Certbot and NGINX for automated SSL/TLS certificate management.
+#
+# Features:
+# - Automatic certificate acquisition from Let's Encrypt
+# - Automated certificate renewal (runs twice daily)
+# - Shared certificate volumes between certbot and nginx
+# - ACME HTTP-01 challenge support via shared webroot
+# - Graceful NGINX reload after certificate renewal
+# - Health monitoring and logging
+#
+# Usage:
+#   # Initial setup (obtain certificates)
+#   docker compose -f docker-compose.certbot-nginx.yaml run --rm certbot-acquire
+#
+#   # Start services with automatic renewal
+#   docker compose -f docker-compose.certbot-nginx.yaml up -d
+#
+#   # Manual certificate renewal
+#   docker compose -f docker-compose.certbot-nginx.yaml run --rm certbot-renew
+#
+# Prerequisites:
+#   - Domain name pointing to your server
+#   - Ports 80 and 443 accessible from the internet
+#   - DNS records properly configured
+#
+# =================================================================================================
+
+version: '3.8'
+
+# =================================================================================================
+# Networks
+# =================================================================================================
+
+networks:
+  # Frontend network for external traffic
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+  # Internal network for certbot-nginx communication
+  certbot-nginx:
+    driver: bridge
+    internal: false  # Allow external access for ACME challenges
+
+# =================================================================================================
+# Volumes
+# =================================================================================================
+
+volumes:
+  # Let's Encrypt configuration and certificates
+  letsencrypt-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/letsencrypt
+
+  # Let's Encrypt library files
+  letsencrypt-lib:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/letsencrypt-lib
+
+  # Webroot for ACME HTTP-01 challenges
+  certbot-webroot:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/certbot-webroot
+
+  # NGINX configuration
+  nginx-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./tools/nginx
+
+  # NGINX logs
+  nginx-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/nginx-logs
+
+# =================================================================================================
+# Services
+# =================================================================================================
+
+services:
+
+  # -----------------------------------------------------------------------------------------------
+  # NGINX Edge Proxy with TLS Support
+  # -----------------------------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-certbot-proxy
+    restart: unless-stopped
+
+    # Network Configuration
+    networks:
+      - frontend
+      - certbot-nginx
+
+    # Port Mapping
+    ports:
+      - "80:80"     # HTTP (for ACME challenges and redirect)
+      - "443:443"   # HTTPS (TLS termination)
+
+    # Volume Mounts
+    volumes:
+      # NGINX configuration
+      - nginx-config:/etc/nginx:ro
+      - ./tools/nginx/proxy-edge/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./tools/nginx/common:/etc/nginx/common:ro
+
+      # TLS certificates (read-only for security)
+      - letsencrypt-config:/etc/letsencrypt:ro
+
+      # Webroot for ACME challenges (read-only, certbot writes to it)
+      - certbot-webroot:/var/www/certbot:ro
+
+      # Logs
+      - nginx-logs:/var/log/nginx
+
+    # Environment Variables
+    environment:
+      - TLS_ENABLED=true
+      - ACME_CHALLENGE_PATH=/var/www/certbot
+
+    # Health Check
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    # Dependencies
+    depends_on:
+      - certbot-setup
+
+    # Labels for monitoring and documentation
+    labels:
+      - "com.example.service=nginx"
+      - "com.example.type=proxy"
+      - "com.example.tls=enabled"
+      - "com.example.certbot-integration=true"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certbot - Initial Certificate Acquisition
+  # -----------------------------------------------------------------------------------------------
+  certbot-acquire:
+    build:
+      context: ./tools/certbot/docker
+      dockerfile: Dockerfile
+    container_name: certbot-acquire
+    profiles:
+      - setup
+
+    # Network Configuration
+    networks:
+      - certbot-nginx
+
+    # Volume Mounts
+    volumes:
+      - letsencrypt-config:/etc/letsencrypt
+      - letsencrypt-lib:/var/lib/letsencrypt
+      - certbot-webroot:/var/www/certbot
+
+    # Command: Obtain certificate using HTTP-01 challenge
+    # Override this with your domain and email
+    entrypoint: /bin/sh
+    command: >
+      -c "certbot certonly
+      --webroot
+      --webroot-path=/var/www/certbot
+      --email ${CERTBOT_EMAIL:-admin@example.com}
+      --agree-tos
+      --no-eff-email
+      --non-interactive
+      --expand
+      --domains ${CERTBOT_DOMAINS:-example.com,www.example.com}
+      --rsa-key-size 4096
+      --staple-ocsp
+      || exit 1"
+
+    # Labels
+    labels:
+      - "com.example.service=certbot"
+      - "com.example.type=certificate-acquisition"
+      - "com.example.profile=setup"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certbot - Automatic Renewal Service
+  # -----------------------------------------------------------------------------------------------
+  certbot-renew:
+    build:
+      context: ./tools/certbot/docker
+      dockerfile: Dockerfile
+    container_name: certbot-renew
+    restart: unless-stopped
+
+    # Network Configuration
+    networks:
+      - certbot-nginx
+
+    # Volume Mounts
+    volumes:
+      - letsencrypt-config:/etc/letsencrypt
+      - letsencrypt-lib:/var/lib/letsencrypt
+      - certbot-webroot:/var/www/certbot
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # For NGINX reload
+
+    # Command: Run renewal check twice daily
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      trap exit TERM;
+      while :; do
+        echo '[Certbot Renewal] Running certificate renewal check...';
+        certbot renew --webroot --webroot-path=/var/www/certbot --quiet --deploy-hook 'docker exec nginx-certbot-proxy nginx -s reload';
+        echo '[Certbot Renewal] Next check in 12 hours';
+        sleep 12h &
+        wait $${!};
+      done"
+
+    # Dependencies
+    depends_on:
+      - nginx
+
+    # Labels
+    labels:
+      - "com.example.service=certbot"
+      - "com.example.type=certificate-renewal"
+      - "com.example.schedule=twice-daily"
+
+  # -----------------------------------------------------------------------------------------------
+  # Certbot Setup - Volume Initialization
+  # -----------------------------------------------------------------------------------------------
+  certbot-setup:
+    image: alpine:latest
+    container_name: certbot-setup
+    profiles:
+      - default
+
+    # Volume Mounts
+    volumes:
+      - certbot-webroot:/var/www/certbot
+
+    # Command: Create necessary directories
+    command: >
+      sh -c "
+      mkdir -p /var/www/certbot/.well-known/acme-challenge &&
+      chmod -R 755 /var/www/certbot &&
+      echo 'Certbot webroot initialized' &&
+      exit 0"
+
+    # Labels
+    labels:
+      - "com.example.service=certbot"
+      - "com.example.type=setup"
+
+# =================================================================================================
+# Usage Instructions
+# =================================================================================================
+#
+# Initial Setup:
+# --------------
+# 1. Create volume directories:
+#    mkdir -p volumes/{letsencrypt,letsencrypt-lib,certbot-webroot,nginx-logs}
+#
+# 2. Configure environment variables in .env file:
+#    CERTBOT_EMAIL=your@email.com
+#    CERTBOT_DOMAINS=yourdomain.com,www.yourdomain.com
+#
+# 3. Start NGINX (without TLS initially):
+#    docker compose -f docker-compose.certbot-nginx.yaml up -d nginx
+#
+# 4. Obtain initial certificates:
+#    docker compose -f docker-compose.certbot-nginx.yaml run --rm certbot-acquire
+#
+# 5. Restart NGINX with TLS:
+#    docker compose -f docker-compose.certbot-nginx.yaml restart nginx
+#
+# 6. Start automatic renewal service:
+#    docker compose -f docker-compose.certbot-nginx.yaml up -d certbot-renew
+#
+# Certificate Management:
+# -----------------------
+# - Check certificate status:
+#   docker compose -f docker-compose.certbot-nginx.yaml exec certbot-renew certbot certificates
+#
+# - Force renewal:
+#   docker compose -f docker-compose.certbot-nginx.yaml exec certbot-renew certbot renew --force-renewal
+#
+# - Test renewal (dry run):
+#   docker compose -f docker-compose.certbot-nginx.yaml exec certbot-renew certbot renew --dry-run
+#
+# - View NGINX logs:
+#   docker compose -f docker-compose.certbot-nginx.yaml logs -f nginx
+#
+# - Reload NGINX configuration:
+#   docker compose -f docker-compose.certbot-nginx.yaml exec nginx nginx -s reload
+#
+# Troubleshooting:
+# ----------------
+# - Verify ACME challenge is accessible:
+#   curl http://yourdomain.com/.well-known/acme-challenge/test
+#
+# - Check certbot logs:
+#   docker compose -f docker-compose.certbot-nginx.yaml logs certbot-renew
+#
+# - Test NGINX configuration:
+#   docker compose -f docker-compose.certbot-nginx.yaml exec nginx nginx -t
+#
+# - Check certificate expiration:
+#   docker compose -f docker-compose.certbot-nginx.yaml exec certbot-renew certbot certificates
+#
+# =================================================================================================

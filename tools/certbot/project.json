@@ -1,0 +1,123 @@
+{
+  "name": "certbot",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "tools/certbot",
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/install-certbot.sh",
+        "cwd": "."
+      }
+    },
+    "install:dry-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/install-certbot.sh --dry-run",
+        "cwd": "."
+      }
+    },
+    "setup-letsencrypt": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/setup-letsencrypt.sh",
+        "cwd": "."
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/test-install-certbot.sh",
+        "cwd": "."
+      }
+    },
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t monorepo/certbot:latest -f tools/certbot/docker/Dockerfile tools/certbot/docker",
+        "cwd": "."
+      }
+    },
+    "docker:certonly": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/certbot/docker-compose.yaml run --rm certbot certonly",
+        "cwd": "."
+      }
+    },
+    "docker:renew": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/certbot/docker-compose.yaml run --rm certbot-renew",
+        "cwd": "."
+      }
+    },
+    "docker:up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/certbot/docker-compose.yaml up -d",
+        "cwd": "."
+      }
+    },
+    "docker:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/certbot/docker-compose.yaml down",
+        "cwd": "."
+      }
+    },
+    "docker:logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/certbot/docker-compose.yaml logs -f",
+        "cwd": "."
+      }
+    },
+    "validate-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/validate-certbot.sh",
+        "cwd": "."
+      }
+    },
+    "setup-integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/setup-integration.sh",
+        "cwd": "."
+      },
+      "configurations": {
+        "dry-run": {
+          "command": "bash tools/certbot/scripts/setup-integration.sh --dry-run",
+          "cwd": "."
+        }
+      }
+    },
+    "setup-integration:dry-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/setup-integration.sh --dry-run",
+        "cwd": "."
+      }
+    },
+    "monitor-certificates": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/certbot/scripts/monitor-certificates.sh",
+        "cwd": "."
+      },
+      "configurations": {
+        "json": {
+          "command": "bash tools/certbot/scripts/monitor-certificates.sh --json --quiet",
+          "cwd": "."
+        },
+        "prometheus": {
+          "command": "bash tools/certbot/scripts/monitor-certificates.sh --prometheus-file /tmp/cert_metrics.prom",
+          "cwd": "."
+        }
+      }
+    }
+  },
+  "tags": ["infrastructure", "certbot", "tls", "security", "docker", "nginx"]
+}
