@@ -174,7 +174,46 @@
         ],
         "parallel": true
       }
+    },
+    "tls:generate-dev-certs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/nginx/scripts/tls/generate-dev-certs.sh",
+        "cwd": "."
+      }
+    },
+    "tls:validate-certs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/nginx/scripts/tls/validate-certs.sh",
+        "cwd": "."
+      }
+    },
+    "tls:rotate-certs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/nginx/scripts/tls/rotate-certs.sh",
+        "cwd": "."
+      }
+    },
+    "tls:setup-letsencrypt": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash tools/nginx/scripts/tls/setup-letsencrypt.sh",
+        "cwd": "."
+      }
+    },
+    "tls:test-https": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo '=== Testing HTTPS Connectivity ===' && echo ''",
+          "echo 'Testing HTTPS on localhost:443...' && curl -k -v https://localhost/health 2>&1 | grep -E 'HTTP|SSL|TLS|subject|issuer' || echo 'Connection failed'",
+          "echo '' && echo 'Certificate details:' && echo | openssl s_client -connect localhost:443 -servername localhost 2>/dev/null | openssl x509 -noout -subject -issuer -dates || echo 'Could not retrieve certificate'"
+        ],
+        "parallel": false
+      }
     }
   },
-  "tags": ["infrastructure", "nginx", "docker"]
+  "tags": ["infrastructure", "nginx", "docker", "tls", "security"]
 }
