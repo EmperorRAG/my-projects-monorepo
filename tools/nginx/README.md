@@ -13,6 +13,7 @@ This directory contains the complete NGINX infrastructure setup for the Nx monor
 - [Monitoring & Health Checks](#monitoring--health-checks)
 - [Troubleshooting](#troubleshooting)
 - [Security](#security)
+- [TLS/HTTPS Setup](#tlshttps-setup)
 - [Performance Tuning](#performance-tuning)
 - [Advanced Topics](#advanced-topics)
 
@@ -507,6 +508,157 @@ The `tools/nginx/secrets/` directory is gitignored. For production:
 2. Mount secrets as read-only volumes
 3. Rotate TLS certificates regularly
 4. Use certificate automation (Let's Encrypt, cert-manager)
+
+## TLS/HTTPS Setup
+
+The NGINX infrastructure includes comprehensive TLS/HTTPS support with modern security configuration.
+
+### Quick Start
+
+**Development (Self-Signed Certificates):**
+```bash
+# Generate development certificates
+nx run nginx:tls:generate-dev-certs
+
+# Start with TLS
+docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+
+# Test HTTPS
+curl -k https://localhost/health
+```
+
+**Production (Let's Encrypt):**
+```bash
+# Setup Let's Encrypt
+nx run nginx:tls:setup-letsencrypt -- --domain yourdomain.com --email your@email.com
+
+# Start in production with TLS
+docker compose -f tools/nginx/docker-compose.yaml -f tools/nginx/docker-compose.prod.yaml -f tools/nginx/docker-compose.tls.yaml up -d
+```
+
+### TLS Features
+
+✅ **Implemented:**
+- Modern TLS protocols (TLS 1.2 and 1.3 only)
+- Strong cipher suites with forward secrecy
+- OCSP stapling for improved performance
+- HTTP to HTTPS redirect (production)
+- HSTS headers with preload support
+- Automated certificate generation and rotation
+- Let's Encrypt integration
+- Certificate validation and monitoring
+
+### Available Nx Targets
+
+```bash
+# Certificate Management
+nx run nginx:tls:generate-dev-certs    # Generate self-signed certificates
+nx run nginx:tls:validate-certs        # Validate certificate configuration
+nx run nginx:tls:rotate-certs          # Rotate certificates with backup
+nx run nginx:tls:setup-letsencrypt     # Setup Let's Encrypt automation
+nx run nginx:tls:test-https            # Test HTTPS connectivity
+```
+
+### Certificate Management
+
+**Development Certificates:**
+```bash
+# Generate
+nx run nginx:tls:generate-dev-certs
+
+# Validate
+nx run nginx:tls:validate-certs
+
+# Location
+tools/nginx/secrets/tls/
+├── cert.pem
+├── key.pem
+├── fullchain.pem
+└── README.md
+```
+
+**Production Certificates (Let's Encrypt):**
+```bash
+# Initial setup
+nx run nginx:tls:setup-letsencrypt -- --domain example.com --email admin@example.com
+
+# Automatic renewal (configured during setup)
+certbot renew
+
+# Manual renewal
+certbot renew --deploy-hook "docker exec nginx-proxy-edge nginx -s reload"
+```
+
+**Certificate Rotation:**
+```bash
+# Rotate with backup and reload
+nx run nginx:tls:rotate-certs
+
+# Skip backup
+nx run nginx:tls:rotate-certs -- --no-backup
+
+# Skip reload
+nx run nginx:tls:rotate-certs -- --no-reload
+```
+
+### Security Configuration
+
+**TLS Protocols:**
+- TLS 1.2 ✅
+- TLS 1.3 ✅
+- TLS 1.0/1.1 ❌ (disabled)
+- SSL 3.0 ❌ (disabled)
+
+**Cipher Suites:**
+```
+ECDHE-ECDSA-AES128-GCM-SHA256
+ECDHE-RSA-AES128-GCM-SHA256
+ECDHE-ECDSA-AES256-GCM-SHA384
+ECDHE-RSA-AES256-GCM-SHA384
+ECDHE-ECDSA-CHACHA20-POLY1305
+ECDHE-RSA-CHACHA20-POLY1305
+```
+
+**Production Headers:**
+```nginx
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Content-Security-Policy: default-src 'self' https:; ...
+```
+
+### Testing & Validation
+
+```bash
+# Test HTTPS connectivity
+nx run nginx:tls:test-https
+
+# Validate certificates
+nx run nginx:tls:validate-certs
+
+# Check certificate expiration
+openssl x509 -in tools/nginx/secrets/tls/cert.pem -noout -enddate
+
+# Test live server
+openssl s_client -connect localhost:443 -servername localhost
+
+# SSL Labs (production only)
+https://www.ssllabs.com/ssltest/analyze.html?d=yourdomain.com
+```
+
+### Comprehensive Documentation
+
+For detailed TLS setup, configuration, and troubleshooting, see:
+
+📚 **[TLS_SETUP.md](./TLS_SETUP.md)** - Complete TLS/HTTPS setup guide
+
+Topics covered:
+- Development and production setup
+- Let's Encrypt integration
+- Certificate management and rotation
+- Security configuration
+- Troubleshooting guide
+- Advanced topics (wildcard certs, mTLS, etc.)
 
 ## Performance Tuning
 
