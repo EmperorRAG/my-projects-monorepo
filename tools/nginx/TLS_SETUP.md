@@ -164,19 +164,53 @@ Let's Encrypt provides free, automated, and trusted SSL/TLS certificates.
 #### Prerequisites
 - Domain name pointing to your server
 - Ports 80 and 443 accessible from the internet
-- Certbot installed on your system
+- Root or sudo access for package installation
 
 #### Step 1: Install Certbot
 
+**Automated Installation (Recommended):**
+
+The automated installation script detects your OS and installs certbot with the correct package manager:
+
+```bash
+# Install certbot automatically
+nx run nginx:tls:install-certbot
+
+# Or run the script directly
+bash tools/nginx/scripts/tls/install-certbot.sh
+```
+
+**Dry Run (See what would be installed):**
+```bash
+bash tools/nginx/scripts/tls/install-certbot.sh --dry-run
+```
+
+**Supported Operating Systems:**
+- Ubuntu/Debian (apt)
+- CentOS/RHEL/Fedora (yum/dnf)
+- Amazon Linux (yum)
+- Alpine Linux (apk)
+- macOS (homebrew)
+
+**Manual Installation (Alternative):**
+
 ```bash
 # Ubuntu/Debian
-sudo apt-get update && sudo apt-get install certbot
+sudo apt-get update && sudo apt-get install certbot python3-certbot-nginx
 
 # macOS
 brew install certbot
 
 # CentOS/RHEL
-sudo yum install certbot
+sudo yum install epel-release
+sudo yum install certbot python3-certbot-nginx
+
+# Fedora
+sudo dnf install certbot python3-certbot-nginx
+
+# Alpine Linux
+sudo apk update
+sudo apk add certbot certbot-nginx
 ```
 
 #### Step 2: Generate Certificates
