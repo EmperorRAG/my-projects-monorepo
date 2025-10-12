@@ -12,6 +12,8 @@ Step-by-step tutorials and how-to guides for common tasks.
 - Deployment procedures
 - Testing strategies
 
+**→ [How to Use This Documentation](./HOW-TO-USE-DOCUMENTATION.md)** - Start here if you're new!
+
 ### 🏗️ [Architecture](./architecture/)
 System architecture documentation and design decisions.
 

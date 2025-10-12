@@ -14,6 +14,8 @@ This file provides a map of the repository for Large Language Models (LLMs).
 ### Documentation Hub
 - [Documentation Index](docs/README.md): Central hub for all documentation with links to guides, architecture, API docs, and more.
 - [Documentation Structure Guide](docs/DOCUMENTATION-STRUCTURE.md): Comprehensive guide to the documentation organization and standards.
+- [Visual Structure Guide](docs/DOCUMENTATION-STRUCTURE-VISUAL.md): Visual reference with flowcharts and decision matrices.
+- [How to Use Documentation](docs/HOW-TO-USE-DOCUMENTATION.md): Quick start guide for using the documentation structure.
 
 ### Guides and Tutorials
 - [Guides](docs/guides/): Step-by-step tutorials and how-to guides for common tasks.
