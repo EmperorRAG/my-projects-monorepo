@@ -10,42 +10,42 @@
 #
 # =================================================================================================
 
-version: '3.8'
+version: "3.8"
 
 services:
   # Edge Proxy - Production Configuration
   proxy-edge:
     environment:
       - NGINX_ENV=production
-    
+
     # Production port mapping (ensure 443 is available)
     ports:
       - "80:80"
       - "443:443"
-    
+
     # Production volumes
     volumes:
       - ./secrets/tls:/etc/nginx/tls:ro
       # Production custom pages
       - ./proxy-edge/html:/usr/share/nginx/html:ro
-    
+
     # Stricter resource limits for production
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
-      
+
       # Restart policy for production
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
-    
+
     # Production logging
     logging:
       driver: "json-file"
@@ -57,22 +57,22 @@ services:
   lb-frontend:
     environment:
       - NGINX_ENV=production
-    
+
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
-      
+
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
-    
+
     logging:
       driver: "json-file"
       options:
@@ -83,22 +83,22 @@ services:
   lb-api:
     environment:
       - NGINX_ENV=production
-    
+
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
-      
+
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
-    
+
     logging:
       driver: "json-file"
       options:
@@ -109,22 +109,22 @@ services:
   lb-email:
     environment:
       - NGINX_ENV=production
-    
+
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
-      
+
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
-    
+
     logging:
       driver: "json-file"
       options:
@@ -135,10 +135,6 @@ services:
 networks:
   nginx-internal:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: nginx-internal-prod
-  
+
   app-network:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: app-network-prod
