@@ -87,4 +87,8 @@ This repository is designed to be understood by AI agents. Key instructions and 
 
 - `AGENTS.md`: High-level instructions for AI agents interacting with this repository.
 - `llms.txt`: A mapping of important files and directories to guide language models.
-- `docs/adr/`: Contains Architectural Decision Records (ADRs) that document key architectural choices.
+- `docs/`: Centralized documentation hub with guides, architecture, API docs, and more.
+  - [Documentation Index](docs/README.md): Central hub for all documentation
+  - [How to Use Documentation](docs/HOW-TO-USE-DOCUMENTATION.md): Quick start guide
+  - [Documentation Structure](docs/DOCUMENTATION-STRUCTURE.md): Comprehensive organization guide
+- `docs/architecture/decisions/`: Contains Architectural Decision Records (ADRs) that document key architectural choices.
