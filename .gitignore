@@ -61,3 +61,7 @@ vitest.config.*.timestamp*
 
 # Nx cache directory configuration (contains user-specific paths)
 .nx-cache-config
+
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
