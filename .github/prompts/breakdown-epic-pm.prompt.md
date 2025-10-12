@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+mode: 'documentation'
 description: 'Prompt for creating an Epic Product Requirements Document (PRD) for a new epic. This PRD will be used as input for generating a technical architecture specification.'
 ---
 
@@ -13,7 +13,14 @@ Review the user's request for a new epic and generate a thorough PRD. If you don
 
 ## Output Format
 
-The output should be a complete Epic PRD in Markdown format, saved to `/docs/ways-of-work/plan/{epic-name}/epic.md`.
+The output should be a complete Epic PRD in Markdown format.
+
+**Directory Paths:**
+- **Monorepo-level epic**: Save to `/docs/epics/{epic-name}/epic.md`
+- **Project-specific epic**: Save to `/docs/{project-type}/{project-name}/epics/{epic-name}/epic.md`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`
+
+Ask the user to confirm the scope (monorepo-level or project-specific) and provide necessary details to construct the correct path.
 
 ### PRD Structure
 

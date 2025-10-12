@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+mode: 'documentation'
 description: 'Prompt for creating the high-level technical architecture for an Epic, based on a Product Requirements Document.'
 ---
 
@@ -23,7 +23,14 @@ Act as a Senior Software Architect. Your task is to take an Epic PRD and create 
 
 ## Output Format
 
-The output should be a complete Epic Architecture Specification in Markdown format, saved to `/docs/ways-of-work/plan/{epic-name}/arch.md`.
+The output should be a complete Epic Architecture Specification in Markdown format.
+
+**Directory Paths:**
+- **Monorepo-level epic**: Save to `/docs/epics/{epic-name}/arch.md`
+- **Project-specific epic**: Save to `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
+  - Where `{project-type}` is one of: `apps`, `services`, `libs`
+
+The path should match the location of the corresponding Epic PRD. Ask the user to confirm if needed.
 
 ### Specification Structure
 
