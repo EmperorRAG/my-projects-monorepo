@@ -11,19 +11,19 @@ docs/tools/{tool-name}/
 │   ├── overview.md                  # Architecture overview (optional)
 │   ├── diagrams/                    # Visual assets (optional)
 │   └── decisions/                   # Tool-scoped ADRs (optional)
-├── epics/                           # Tool-specific epics
-│   └── {epic-name}/
-│       ├── epic.md                  # Epic Product Requirements Document
-│       └── arch.md                  # Epic Architecture Specification
-└── features/                        # Tool features
-    └── {feature-name}/
-        ├── prd.md                   # Feature Product Requirements Document
-        └── implementation-plan.md   # Feature Implementation Plan
+└── epics/                           # Tool-specific epics
+    └── {epic-name}/
+        ├── epic.md                  # Epic Product Requirements Document
+        ├── arch.md                  # Epic Architecture Specification
+        └── features/
+            └── {feature-name}/
+                ├── prd.md           # Feature Product Requirements Document
+                └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Tools
 
-- [nginx](./nginx/) - NGINX reverse proxy and load balancer
+- nginx – NGINX reverse proxy and load balancer (see `docs/tools/nginx/`)
 
 ## When to Use This Directory
 
@@ -50,7 +50,7 @@ To create documentation for a tool:
 1. Use the `documentation` chatmode (`.github/chatmodes/documentation.chatmode.md`)
 2. Specify the project type as `tools` and provide the tool name
 3. Follow the documentation workflow dependency chain
-4. Path will be: `/docs/tools/{tool-name}/epics/{epic-name}/` or `/docs/tools/{tool-name}/features/{feature-name}/`
+4. Path will be: `/docs/tools/{tool-name}/epics/{epic-name}/` (features live under each epic)
 
 ## Related Documentation
 

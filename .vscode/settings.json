@@ -97,7 +97,23 @@
 	"terminal.integrated.fontFamily": "Fira Code, monospace",
 	"terminal.integrated.fontLigatures.enabled": true,
 	"terminal.integrated.shellIntegration.enabled": true,
-	"cSpell.words": ["Chatmode", "Codacy", "emperorrag", "mermaidchart", "runbook"],
+	"cSpell.words": ["Chatmode", "chatmodes", "Codacy", "commitlint", "dtos", "emperorrag", "mermaidchart", "runbook"],
 	"inlineChat.enableV2": true,
-	"chat.useCloudButtonV2": true
+	"chat.useCloudButtonV2": true,
+	"github.copilot.chat.scopeSelection": true,
+	"github.copilot.chat.customInstructionsInSystemMessage": true,
+	"github.copilot.chat.codeGeneration.useInstructionFiles": true,
+	"github.copilot.chat.reviewAgent.enabled": true,
+	"github.copilot.chat.reviewSelection.enabled": true,
+	"github.copilot.chat.reviewSelection.instructions": [],
+	"github.copilot.chat.pullRequestDescriptionGeneration.instructions": [],
+	"github.copilot.chat.commitMessageGeneration.instructions": [],
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"workbench.editor.highlightModifiedTabs": true,
+	"workbench.editor.pinnedTabsOnSeparateRow": true,
+	"workbench.editor.wrapTabs": true,
+	"workbench.editor.showTabIndex": true,
+	"workbench.editor.limit.enabled": true
 }

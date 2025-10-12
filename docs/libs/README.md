@@ -11,14 +11,14 @@ docs/libs/{library-name}/
 │   ├── overview.md                  # Architecture overview (optional)
 │   ├── diagrams/                    # Visual assets (optional)
 │   └── decisions/                   # Library-scoped ADRs (optional)
-├── epics/                           # Library-specific epics
-│   └── {epic-name}/
-│       ├── epic.md                  # Epic Product Requirements Document
-│       └── arch.md                  # Epic Architecture Specification
-└── features/                        # Library features
-    └── {feature-name}/
-        ├── prd.md                   # Feature Product Requirements Document
-        └── implementation-plan.md   # Feature Implementation Plan
+└── epics/                           # Library-specific epics
+    └── {epic-name}/
+        ├── epic.md                  # Epic Product Requirements Document
+        ├── arch.md                  # Epic Architecture Specification
+        └── features/
+            └── {feature-name}/
+                ├── prd.md           # Feature Product Requirements Document
+                └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Libraries
@@ -49,7 +49,7 @@ To create documentation for a library:
 1. Use the `documentation` chatmode (`.github/chatmodes/documentation.chatmode.md`)
 2. Specify the project type as `libs` and provide the library name
 3. Follow the documentation workflow dependency chain
-4. Path will be: `/docs/libs/{library-name}/epics/{epic-name}/` or `/docs/libs/{library-name}/features/{feature-name}/`
+4. Path will be: `/docs/libs/{library-name}/epics/{epic-name}/` (features live under each epic)
 
 ## Related Documentation
 

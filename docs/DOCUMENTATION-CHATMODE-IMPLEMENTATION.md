@@ -43,8 +43,8 @@ Updated all prompts to use the proper directory paths:
 - Architecture Decisions: `/docs/{project-type}/{project-name}/architecture/decisions/`
 - Epic PRD: `/docs/{project-type}/{project-name}/epics/{epic-name}/epic.md`
 - Epic Architecture: `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
-- Feature PRD: `/docs/{project-type}/{project-name}/features/{feature-name}/prd.md`
-- Feature Implementation: `/docs/{project-type}/{project-name}/features/{feature-name}/implementation-plan.md`
+- Feature PRD: `/docs/{project-type}/{project-name}/epics/{epic-name}/features/{feature-name}/prd.md`
+- Feature Implementation: `/docs/{project-type}/{project-name}/epics/{epic-name}/features/{feature-name}/implementation-plan.md`
 
 **Architectural Decisions:**
 
@@ -188,8 +188,8 @@ When creating documentation, AI models MUST:
 6. Create in order:
    - Epic PRD at `/docs/services/my-nest-js-email-microservice/epics/{epic-name}/epic.md`
    - Epic Architecture at `/docs/services/my-nest-js-email-microservice/epics/{epic-name}/arch.md`
-   - Feature PRD at `/docs/services/my-nest-js-email-microservice/features/email-templates/prd.md`
-   - Feature Implementation at `/docs/services/my-nest-js-email-microservice/features/email-templates/implementation-plan.md`
+   - Feature PRD at `/docs/services/my-nest-js-email-microservice/epics/{epic-name}/features/email-templates/prd.md`
+   - Feature Implementation at `/docs/services/my-nest-js-email-microservice/epics/{epic-name}/features/email-templates/implementation-plan.md`
 7. Ask: "Would you like to create additional features or document architectural decisions?"
 
 ## Files Changed

@@ -27,12 +27,12 @@ docs/{project-type}/{project-name}/
 │   ├── overview.md                            # Project architecture overview
 │   ├── diagrams/                              # Optional diagrams (files vary)
 │   └── decisions/                             # Project-scoped ADRs (optional)
-├── epics/{epic-name}/
-│   ├── epic.md                                # Epic PRD
-│   └── arch.md                                # Epic Architecture
-└── features/{feature-name}/
-    ├── prd.md                                 # Feature PRD
-    └── implementation-plan.md                 # Implementation Plan
+└── epics/{epic-name}/
+    ├── epic.md                                # Epic PRD
+    ├── arch.md                                # Epic Architecture
+    └── features/{feature-name}/
+        ├── prd.md                             # Feature PRD
+        └── implementation-plan.md             # Implementation Plan
 ```
 
 Where `{project-type}` is: `apps`, `services`, `libs`, or `tools`
@@ -154,7 +154,7 @@ Each document type requires specific information (the chatmode will ask):
 
 1. Confirms scope: Service-specific (email microservice)
 2. Checks for parent epic → If missing, creates it first
-3. Path: `/docs/services/my-nest-js-email-microservice/features/scheduled-emails/prd.md`
+3. Path: `/docs/services/my-nest-js-email-microservice/epics/{epic-name}/features/scheduled-emails/prd.md`
 4. Gathers information for Feature PRD
 5. Creates Feature PRD
 6. Suggests creating Implementation Plan next

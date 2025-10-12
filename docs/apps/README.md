@@ -11,14 +11,14 @@ docs/apps/{app-name}/
 │   ├── overview.md                  # Architecture overview
 │   ├── diagrams/                    # Visual assets (optional)
 │   └── decisions/                   # App-scoped ADRs (optional)
-├── epics/                           # App-specific epics
-│   └── {epic-name}/
-│       ├── epic.md                  # Epic Product Requirements Document
-│       └── arch.md                  # Epic Architecture Specification
-└── features/                        # App features
-    └── {feature-name}/
-        ├── prd.md                   # Feature Product Requirements Document
-        └── implementation-plan.md   # Feature Implementation Plan
+└── epics/                           # App-specific epics
+    └── {epic-name}/
+        ├── epic.md                  # Epic Product Requirements Document
+        ├── arch.md                  # Epic Architecture Specification
+        └── features/
+            └── {feature-name}/
+                ├── prd.md           # Feature Product Requirements Document
+                └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Apps
@@ -49,7 +49,7 @@ To create documentation for an app:
 1. Use the `documentation` chatmode (`.github/chatmodes/documentation.chatmode.md`)
 2. Specify the project type as `apps` and provide the app name
 3. Follow the documentation workflow dependency chain
-4. Path will be: `/docs/apps/{app-name}/epics/{epic-name}/` or `/docs/apps/{app-name}/features/{feature-name}/`
+4. Path will be: `/docs/apps/{app-name}/epics/{epic-name}/` (features live under each epic)
 
 ## Related Documentation
 

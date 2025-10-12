@@ -11,14 +11,14 @@ docs/services/{service-name}/
 │   ├── overview.md                  # Architecture overview
 │   ├── diagrams/                    # Visual assets (optional)
 │   └── decisions/                   # Service-scoped ADRs (optional)
-├── epics/                           # Service-specific epics
-│   └── {epic-name}/
-│       ├── epic.md                  # Epic Product Requirements Document
-│       └── arch.md                  # Epic Architecture Specification
-└── features/                        # Service features (preferred structure)
-    └── {feature-name}/
-        ├── prd.md                   # Feature Product Requirements Document
-        └── implementation-plan.md   # Feature Implementation Plan
+└── epics/                           # Service-specific epics
+    └── {epic-name}/
+        ├── epic.md                  # Epic Product Requirements Document
+        ├── arch.md                  # Epic Architecture Specification
+        └── features/
+            └── {feature-name}/
+                ├── prd.md           # Feature Product Requirements Document
+                └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Services
@@ -49,7 +49,7 @@ To create documentation for a service:
 1. Use the `documentation` chatmode (`.github/chatmodes/documentation.chatmode.md`)
 2. Specify the project type as `services` and provide the service name
 3. Follow the documentation workflow dependency chain
-4. Path will be: `/docs/services/{service-name}/epics/{epic-name}/` or `/docs/services/{service-name}/features/{feature-name}/`
+4. Path will be: `/docs/services/{service-name}/epics/{epic-name}/` (features live under each epic)
 
 ## Related Documentation
 

@@ -7,7 +7,7 @@ This directory contains epics that affect the entire monorepo, spanning multiple
 Each epic follows this structure:
 
 ```
-docs/epics/{epic-name}/
+docs/monorepo/epics/{epic-name}/
 ├── epic.md                          # Epic Product Requirements Document
 ├── arch.md                          # Epic Architecture Specification
 └── features/                        # Features within this epic
@@ -18,7 +18,8 @@ docs/epics/{epic-name}/
 
 ## When to Use This Directory
 
-Use `docs/epics/` for epics that:
+Use `docs/monorepo/epics/` for epics that:
+
 - Affect multiple projects (apps, services, or libraries)
 - Provide infrastructure or platform-level capabilities
 - Define monorepo-wide standards or patterns
@@ -27,6 +28,7 @@ Use `docs/epics/` for epics that:
 ## When to Use Project-Specific Epic Directories
 
 Use project-specific directories (e.g., `docs/services/{service-name}/epics/`) for epics that:
+
 - Are specific to a single app, service, or library
 - Only affect one project's codebase
 - Implement features within a single project boundary
@@ -60,6 +62,6 @@ Each document requires the previous one to exist before it can be created.
 
 ## Related Documentation
 
-- [AGENTS.md](../../AGENTS.md) - Complete documentation workflow and AI model behavior requirements
-- [Documentation Chatmode](../../.github/chatmodes/documentation.chatmode.md) - Orchestration chatmode for documentation creation
-- [ADRs](../architecture/decisions/) - Architectural Decision Records for technical decisions
+- Refer to `AGENTS.md` for the complete documentation workflow and AI model behavior requirements
+- See `.github/chatmodes/documentation.chatmode.md` for the orchestration chatmode used during documentation creation
+- Browse `docs/monorepo/architecture/decisions/` for Architectural Decision Records tied to epic-level decisions

@@ -39,17 +39,17 @@ docs/{project-type}/{project-name}/
 │   ├── overview.md
 │   ├── diagrams/
 │   └── decisions/              # Project-scoped ADRs (optional)
-├── epics/
-│   └── {epic-name}/
-│       ├── epic.md
-│       └── arch.md
-└── features/
-    └── {feature-name}/
-        ├── prd.md
-        └── implementation-plan.md
+└── epics/
+    └── {epic-name}/
+        ├── epic.md
+        ├── arch.md
+        └── features/
+            └── {feature-name}/
+                ├── prd.md
+                └── implementation-plan.md
 ```
 
-Where `{project-type}` is one of `apps`, `services`, `libs`, or `tools`. Choose a project directory when the scope affects a single codebase.
+Where `{project-type}` is one of `apps`, `services`, `libs`, or `tools`. Each project stores its features inside the epic that owns them, matching the monorepo-wide convention. Choose a project directory when the scope affects a single codebase.
 
 ## Path Patterns
 

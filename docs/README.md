@@ -15,7 +15,7 @@ Welcome to the centralized documentation for the Nx monorepo. This directory now
   - `epics/` – monorepo initiatives with their dependent features.
   - `guides/`, `learnings/`, `copilot-deep-dive/`, `mcp-tools/` – shared knowledge bases.
 - **Project Documentation** → `docs/{project-type}/{project-name}/`
-  - Every project exposes `architecture/`, `epics/`, and `features/` directories scoped to that codebase.
+  - Every project exposes an `architecture/` folder plus an `epics/` collection where each epic contains its own `features/` subdirectory.
   - Use the project README to understand local conventions and cross-links.
 
 ## Finding Documentation
@@ -23,7 +23,7 @@ Welcome to the centralized documentation for the Nx monorepo. This directory now
 - **Monorepo Initiatives**: `docs/monorepo/epics/`
 - **Workspace ADRs**: `docs/monorepo/architecture/decisions/`
 - **Project Architecture**: `docs/{project-type}/{project-name}/architecture/`
-- **Project Epics & Features**: `docs/{project-type}/{project-name}/epics/` and `docs/{project-type}/{project-name}/features/`
+- **Project Epics & Features**: `docs/{project-type}/{project-name}/epics/{epic-name}/` (features live inside each epic)
 - **Operational Learnings**: `docs/monorepo/learnings/`
 
 ## Contribution Checklist
