@@ -325,12 +325,20 @@ docker compose -f tools/nginx/docker-compose.yaml exec proxy-edge nginx -s reloa
 
 ### Health Check Endpoints
 
-Each service exposes health check endpoints:
+The edge proxy provides comprehensive health check endpoints that include the status of all load balancers:
 
-- **Edge Proxy**: `http://localhost/health`
-- **Frontend LB**: Exposed internally at `:8080/health`
-- **API LB**: Exposed internally at `:8080/health`
-- **Email LB**: Exposed internally at `:8080/health`
+- **Edge Proxy Basic Health**: `http://localhost/health` - Returns "healthy" if edge proxy is running
+- **Load Balancer Health via Gateway**: 
+  - `http://localhost/health/lb-frontend` - Frontend load balancer health
+  - `http://localhost/health/lb-api` - API load balancer health  
+  - `http://localhost/health/lb-email` - Email load balancer health
+
+**Note**: Load balancers are only accessible internally on port 8080. The edge proxy exposes their health endpoints through the gateway, allowing external health monitoring without direct access to the load balancers.
+
+Internal endpoints (accessible only within the Docker network):
+- **Frontend LB**: `http://lb-frontend:8080/health`
+- **API LB**: `http://lb-api:8080/health`
+- **Email LB**: `http://lb-email:8080/health`
 
 ### Development Health Endpoints
 
@@ -342,7 +350,7 @@ In development mode, enhanced health endpoints are available:
 ### Checking Service Status
 
 ```bash
-# Quick health check
+# Quick health check (checks all components via gateway)
 nx run nginx:health-check
 
 # Detailed Docker status
@@ -351,6 +359,11 @@ docker compose -f tools/nginx/docker-compose.yaml ps
 # Container stats
 docker stats nginx-proxy-edge nginx-lb-frontend nginx-lb-api nginx-lb-email
 ```
+
+The `nx run nginx:health-check` command now checks:
+1. Edge proxy availability
+2. All load balancers via the gateway's proxy endpoints
+3. Provides clear output showing the status of each component
 
 ### Logging
 
@@ -603,10 +616,19 @@ proxy_set_header Connection $connection_upgrade;
 
 ## Additional Resources
 
+### NGINX Documentation
 - [NGINX Official Documentation](https://nginx.org/en/docs/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Nx Documentation](https://nx.dev)
+
+### Project Documentation
 - [nginx-integration.md](../../docs/nx-monorepo/nginx-integration.md) - Detailed integration guide
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Implementation summary and statistics
+- [HEALTH_CHECK_INTEGRATION.md](HEALTH_CHECK_INTEGRATION.md) - Health check integration guide
+- [HEALTH_CHECK_BEFORE_AFTER.md](HEALTH_CHECK_BEFORE_AFTER.md) - Health check integration before/after
+- [HEALTH_CHECK_QUICK_REF.md](HEALTH_CHECK_QUICK_REF.md) - Health check quick reference
+- [QUICKSTART.md](QUICKSTART.md) - Quick start guide
+- [RUNBOOK.md](RUNBOOK.md) - Operations runbook
 
 ## Support
 

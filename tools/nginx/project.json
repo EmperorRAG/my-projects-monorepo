@@ -152,12 +152,15 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -f http://localhost/health || echo 'Edge proxy health check failed'",
-          "curl -f http://localhost:8080/health || echo 'LB frontend health check failed'",
-          "curl -f http://localhost:8081/health || echo 'LB API health check failed'",
-          "curl -f http://localhost:8082/health || echo 'LB email health check failed'"
+          "echo '=== NGINX Health Check ===' && echo ''",
+          "echo 'Edge Proxy Health:' && curl -f http://localhost/health && echo ''",
+          "echo '' && echo 'Load Balancer Health Checks (via Gateway):' && echo ''",
+          "echo '  - Frontend LB:' && curl -f http://localhost/health/lb-frontend && echo ''",
+          "echo '  - API LB:' && curl -f http://localhost/health/lb-api && echo ''",
+          "echo '  - Email LB:' && curl -f http://localhost/health/lb-email && echo ''",
+          "echo '' && echo 'All health checks completed successfully!'"
         ],
-        "parallel": true
+        "parallel": false
       }
     },
     "reload-config": {
