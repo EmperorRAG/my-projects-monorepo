@@ -1,178 +1,45 @@
 # Documentation Hub
 
-Welcome to the centralized documentation for the Nx monorepo. This directory contains cross-cutting documentation that applies to multiple projects or the workspace as a whole.
+Welcome to the centralized documentation for the Nx monorepo. This directory now reflects the updated structure where all workspace-wide references live under `docs/monorepo`, and every project contains its own `architecture`, `epics`, and `features` collections.
 
-## 🚀 Quick Start
+## Quick Start
 
-**New to the documentation?** Start here:
-- [Quick Start Guide](./QUICK-START.md) - Get started in 5 minutes!
-- [How to Use Documentation](./HOW-TO-USE-DOCUMENTATION.md) - Detailed usage guide
+- Review the canonical [Documentation Structure Reference](./documentation-structure-reference.md) for paths, naming rules, and scope guidance.
+- Read [DOCUMENTATION-WORKFLOW.md](./DOCUMENTATION-WORKFLOW.md) when creating new documents with the `documentation` chatmode.
+- Consult the project-specific README files inside `docs/apps`, `docs/libs`, `docs/services`, and `docs/tools` for additional conventions.
 
-**Need a visual reference?**
-- [Visual Structure Guide](./DOCUMENTATION-STRUCTURE-VISUAL.md) - Flowcharts and decision matrices
+## Directory Overview
 
-**Want the complete guide?**
-- [Documentation Structure Guide](./DOCUMENTATION-STRUCTURE.md) - Comprehensive organization guide
-
-## Directory Structure
-
-### 📚 [Guides](./guides/)
-Step-by-step tutorials and how-to guides for common tasks.
-
-- Getting started with the monorepo
-- Development workflows
-- Deployment procedures
-- Testing strategies
-
-**→ [How to Use This Documentation](./HOW-TO-USE-DOCUMENTATION.md)** - Start here if you're new!
-
-### 🏗️ [Architecture](./architecture/)
-System architecture documentation and design decisions.
-
-- [Overview](./architecture/overview.md) - System architecture overview
-- [Diagrams](./architecture/diagrams/) - Architecture diagrams and visuals
-- [Decisions](./architecture/decisions/) - Architectural Decision Records (ADRs)
-
-### 🔧 [Nx Monorepo](./nx-monorepo/)
-Nx-specific documentation and configuration guides.
-
-- Nx configuration
-- Generators and executors
-- Cache configuration
-- Best practices
-
-### 🛠️ [Tooling](./tooling/)
-Documentation for tools and infrastructure.
-
-- NGINX configuration
-- Docker and containerization
-- CI/CD pipelines
-- Development tools
-
-### 📡 [API](./api/)
-API documentation and contracts.
-
-- REST API references
-- GraphQL schemas
-- Service contracts
-
-### 📖 [Runbooks](./runbooks/)
-Operational procedures and playbooks.
-
-- Deployment runbooks
-- Rollback procedures
-- Troubleshooting guides
-- Incident response
-
-### 💡 [Learnings](./learnings/)
-Problem-solution knowledge base organized by technology.
-
-- [How to use](./learnings/README.md)
-- Technology-specific learnings
-- Lessons learned from incidents
-
-### 📋 [Implementation Plans](./implementation-plans/)
-Planning documents for features and initiatives.
-
-- Implementation plans
-- Project guides
-- Templates
-
-### 📚 [Reference](./reference/)
-Quick reference documentation.
-
-- Glossary of terms
-- Command references
-- Configuration options
-
-## Documentation Types
-
-### Centralized (This Directory)
-
-Documentation here applies to:
-
-- Multiple projects or services
-- Workspace-level concerns
-- Cross-cutting architecture
-- Shared knowledge and learnings
-- Operational procedures
-
-### Project-Specific
-
-Each project has its own documentation:
-
-- **Apps**: `apps/[app-name]/README.md` and `apps/[app-name]/docs/`
-- **Libraries**: `libs/[lib-name]/README.md` and `libs/[lib-name]/docs/`
-- **Services**: `services/[service-name]/README.md` and `services/[service-name]/docs/`
-- **Tools**: `tools/[tool-name]/README.md` and `tools/[tool-name]/docs/`
-
-### AI/Automation
-
-AI and automation documentation:
-
-- **Instructions**: `.github/instructions/` - Technology-specific coding guidelines
-- **Prompts**: `.github/prompts/` - Reusable AI prompt templates
-- **Chat Modes**: `.github/chatmodes/` - Copilot chat mode definitions
+- **Monorepo-Level Documentation** → `docs/monorepo/`
+  - `architecture/` – workspace-wide architecture overviews, diagrams, and ADRs.
+  - `epics/` – monorepo initiatives with their dependent features.
+  - `guides/`, `learnings/`, `copilot-deep-dive/`, `mcp-tools/` – shared knowledge bases.
+- **Project Documentation** → `docs/{project-type}/{project-name}/`
+  - Every project exposes `architecture/`, `epics/`, and `features/` directories scoped to that codebase.
+  - Use the project README to understand local conventions and cross-links.
 
 ## Finding Documentation
 
-### By Topic
+- **Monorepo Initiatives**: `docs/monorepo/epics/`
+- **Workspace ADRs**: `docs/monorepo/architecture/decisions/`
+- **Project Architecture**: `docs/{project-type}/{project-name}/architecture/`
+- **Project Epics & Features**: `docs/{project-type}/{project-name}/epics/` and `docs/{project-type}/{project-name}/features/`
+- **Operational Learnings**: `docs/monorepo/learnings/`
 
-- **Getting Started**: See [guides/](./guides/)
-- **Architecture Decisions**: See [architecture/decisions/](./architecture/decisions/)
-- **API References**: See [api/](./api/)
-- **Troubleshooting**: See [runbooks/](./runbooks/) or project-specific docs
-- **Lessons Learned**: See [learnings/](./learnings/)
+## Contribution Checklist
 
-### By Project
+1. Confirm the appropriate scope using the [Documentation Structure Reference](./documentation-structure-reference.md).
+2. Use the `documentation` chatmode workflow so prerequisites are created first.
+3. Follow the formatting rules in `.github/instructions/markdown/` and `.github/instructions/docs/`.
+4. Update `llms.txt` if new documentation materially changes the repository map.
 
-Check the project's README.md:
+## Related Resources
 
-- `apps/my-programs-app/README.md`
-- `libs/utilities/README.md`
-- `services/my-nest-js-email-microservice/README.md`
-
-### For AI Context
-
-- **llms.txt**: Repository map for AI models (workspace root)
-- **AGENTS.md**: High-level AI agent instructions (workspace root)
-- **.github/copilot-instructions.md**: Copilot workspace settings
-
-## Contributing to Documentation
-
-1. **Read**: [.github/CONTRIBUTING.md](../.github/CONTRIBUTING.md)
-2. **Follow**: [DOCUMENTATION-STRUCTURE.md](./DOCUMENTATION-STRUCTURE.md)
-3. **Use**: Templates provided in the structure guide
-4. **Update**: `llms.txt` when adding significant documentation
-
-## Quick Links
-
-### Workspace Documentation
-- [Main README](../README.md)
-- [AI Agents Guide](../AGENTS.md)
-- [LLM Context Map](../llms.txt)
-- [Contributing Guidelines](../.github/CONTRIBUTING.md)
-
-### Structure and Organization
-- [Documentation Structure Guide](./DOCUMENTATION-STRUCTURE.md) - Comprehensive structure documentation
-- [Visual Structure Guide](./DOCUMENTATION-STRUCTURE-VISUAL.md) - Visual reference and decision flowcharts
-
-### Key Guides
-- [Nx Cache Configuration](./nx-cache-configuration.md)
-- [NGINX Integration](./nx-monorepo/nginx-integration.md)
-
-### Important ADRs
-- [ADR-0001: Use Nx for Monorepo](./architecture/decisions/adr-0001-use-nx-for-monorepo-management.md)
+- Workspace README: [`../README.md`](../README.md)
+- AI Agent Guidance: [`../AGENTS.md`](../AGENTS.md)
+- Documentation Workflow: [`./DOCUMENTATION-WORKFLOW.md`](./DOCUMENTATION-WORKFLOW.md)
+- Structure Reference: [`./documentation-structure-reference.md`](./documentation-structure-reference.md)
 
 ## Maintenance
 
-This documentation index should be updated when:
-
-- New documentation categories are added
-- Major documentation is created
-- Directory structure changes
-- Important links need updating
-
----
-
-**For detailed structure and guidelines**: See [DOCUMENTATION-STRUCTURE.md](./DOCUMENTATION-STRUCTURE.md)
+Refresh this index whenever directory layouts change, new shared guides are added, or project documentation grows significantly. Keeping this overview synchronized with the [Documentation Structure Reference](./documentation-structure-reference.md) ensures consistent navigation for contributors and automation.

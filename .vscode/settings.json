@@ -90,5 +90,12 @@
 	},
 	"npm.enableRunFromFolder": true,
 	"npm.packageManager": "pnpm",
-	"npm.scriptRunner": "pnpm"
+	"npm.scriptRunner": "pnpm",
+	"terminal.integrated.enableVisualBell": true,
+	"terminal.integrated.environmentChangesIndicator": "on",
+	"terminal.integrated.environmentChangesRelaunch": true,
+	"terminal.integrated.fontFamily": "Fira Code, monospace",
+	"terminal.integrated.fontLigatures.enabled": true,
+	"terminal.integrated.shellIntegration.enabled": true,
+	"cSpell.words": ["emperorrag"]
 }

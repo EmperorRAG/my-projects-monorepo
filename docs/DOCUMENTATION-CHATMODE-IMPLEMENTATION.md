@@ -9,6 +9,7 @@ This implementation creates a comprehensive documentation workflow system for th
 ### 1. Documentation Chatmode (`.github/chatmodes/documentation.chatmode.md`)
 
 A new chatmode that:
+
 - **Manages documentation dependencies**: Ensures prerequisite documents exist before creating dependent documents
 - **Guides users through the workflow**: Asks clarifying questions and gathers required information
 - **Determines correct paths**: Constructs appropriate directory paths based on scope (monorepo-level vs project-specific)
@@ -18,6 +19,7 @@ A new chatmode that:
 ### 2. Updated Documentation Prompts
 
 All documentation-related prompts now use the `documentation` chatmode:
+
 - `breakdown-epic-pm.prompt.md` - Epic PRD creation
 - `breakdown-epic-arch-restricted.prompt.md` - Epic Architecture creation
 - `breakdown-feature-prd.prompt.md` - Feature PRD creation
@@ -29,23 +31,29 @@ All documentation-related prompts now use the `documentation` chatmode:
 Updated all prompts to use the proper directory paths:
 
 **Monorepo-Level Documentation:**
-- Epic PRD: `/docs/epics/{epic-name}/epic.md`
-- Epic Architecture: `/docs/epics/{epic-name}/arch.md`
-- Feature PRD: `/docs/epics/{epic-name}/features/{feature-name}/prd.md`
-- Feature Implementation: `/docs/epics/{epic-name}/features/{feature-name}/implementation-plan.md`
+
+- Epic PRD: `/docs/monorepo/epics/{epic-name}/epic.md`
+- Epic Architecture: `/docs/monorepo/epics/{epic-name}/arch.md`
+- Feature PRD: `/docs/monorepo/epics/{epic-name}/features/{feature-name}/prd.md`
+- Feature Implementation: `/docs/monorepo/epics/{epic-name}/features/{feature-name}/implementation-plan.md`
 
 **Project-Specific Documentation:**
+
+- Architecture Overview: `/docs/{project-type}/{project-name}/architecture/overview.md`
+- Architecture Decisions: `/docs/{project-type}/{project-name}/architecture/decisions/`
 - Epic PRD: `/docs/{project-type}/{project-name}/epics/{epic-name}/epic.md`
 - Epic Architecture: `/docs/{project-type}/{project-name}/epics/{epic-name}/arch.md`
 - Feature PRD: `/docs/{project-type}/{project-name}/features/{feature-name}/prd.md`
 - Feature Implementation: `/docs/{project-type}/{project-name}/features/{feature-name}/implementation-plan.md`
 
 **Architectural Decisions:**
-- ADR: `/docs/architecture/decisions/adr-{NNNN}-{title-slug}.md`
+
+- ADR: `/docs/monorepo/architecture/decisions/adr-{NNNN}-{title-slug}.md`
 
 ### 4. Enhanced AGENTS.md
 
 Added comprehensive documentation management section including:
+
 - Complete directory structure reference
 - Documentation process workflow with dependency chain
 - Detailed document types and their purposes
@@ -57,7 +65,9 @@ Added comprehensive documentation management section including:
 ### 5. Documentation Structure README Files
 
 Created informative README files to guide users:
-- `docs/epics/README.md` - Monorepo-level epics guidance
+
+- `docs/monorepo/epics/README.md` - Monorepo-level epics guidance
+- `docs/monorepo/architecture/README.md` - Monorepo architecture overview guidance
 - `docs/services/README.md` - Service-specific documentation guidance
 - `docs/apps/README.md` - App-specific documentation guidance
 - `docs/libs/README.md` - Library-specific documentation guidance
@@ -66,6 +76,7 @@ Created informative README files to guide users:
 ### 6. Comprehensive Workflow Guide
 
 Created `docs/DOCUMENTATION-WORKFLOW.md`:
+
 - Quick reference for documentation creation
 - Visual dependency chain diagrams
 - Step-by-step creation guides
@@ -75,7 +86,7 @@ Created `docs/DOCUMENTATION-WORKFLOW.md`:
 
 ## Documentation Dependency Chain
 
-```
+```text
 Epic PRD (epic.md)
     ↓
 Epic Architecture (arch.md)
@@ -118,28 +129,33 @@ ADRs can be created at any stage
 ### Scope Determination
 
 The chatmode asks users to clarify scope:
-- **Monorepo-level**: Affects multiple projects → `/docs/epics/`
+
+- **Monorepo-level**: Affects multiple projects → `/docs/monorepo/epics/`
 - **Project-specific**: Affects single app/service/lib → `/docs/{project-type}/{project-name}/`
 
 ## Key Features
 
 ### 1. Dependency Management
+
 - Automatically detects missing prerequisite documents
 - Creates dependencies in the correct order
 - Ensures documentation consistency
 
 ### 2. Path Construction
+
 - Determines correct directory based on scope
 - Supports both monorepo-level and project-specific paths
 - Follows established naming conventions
 
 ### 3. Quality Assurance
+
 - Validates all required sections are present
 - Checks Mermaid diagram syntax
 - Verifies cross-references are accurate
 - Ensures instruction guideline compliance
 
 ### 4. Workflow Orchestration
+
 - Guides users through the complete documentation lifecycle
 - Asks targeted questions to gather required information
 - Suggests logical next steps
@@ -163,6 +179,7 @@ When creating documentation, AI models MUST:
 **Scenario**: Create feature implementation plan for "email templates" in email microservice
 
 **AI Actions**:
+
 1. Identify scope: Service-specific (my-nest-js-email-microservice)
 2. Check Feature PRD → Missing
 3. Ask for parent epic name
@@ -178,8 +195,10 @@ When creating documentation, AI models MUST:
 ## Files Changed
 
 ### Created
+
 - `.github/chatmodes/documentation.chatmode.md` - Main orchestration chatmode
-- `docs/epics/README.md` - Monorepo epics guidance
+- `docs/monorepo/epics/README.md` - Monorepo epics guidance
+- `docs/monorepo/architecture/README.md` - Monorepo architecture guidance
 - `docs/services/README.md` - Services documentation guidance
 - `docs/apps/README.md` - Apps documentation guidance
 - `docs/libs/README.md` - Libraries documentation guidance
@@ -188,6 +207,7 @@ When creating documentation, AI models MUST:
 - `docs/DOCUMENTATION-CHATMODE-IMPLEMENTATION.md` - This summary
 
 ### Modified
+
 - `.github/prompts/breakdown-epic-pm.prompt.md` - Updated mode and paths
 - `.github/prompts/breakdown-epic-arch-restricted.prompt.md` - Updated mode and paths
 - `.github/prompts/breakdown-feature-prd.prompt.md` - Updated mode and paths
@@ -220,3 +240,4 @@ When creating documentation, AI models MUST:
 - [AGENTS.md](../AGENTS.md#documentation-management)
 - [Documentation Prompts](../.github/prompts/)
 - [Documentation Instructions](../.github/instructions/docs/)
+- [Documentation Structure Reference](./documentation-structure-reference.md)

@@ -9,8 +9,9 @@ To create documentation, use the `documentation` chatmode and follow the depende
 ## 📁 Directory Structure at a Glance
 
 ### Monorepo-Level Documentation
-```
-docs/epics/{epic-name}/
+
+```text
+docs/monorepo/epics/{epic-name}/
 ├── epic.md                                    # Epic PRD
 ├── arch.md                                    # Epic Architecture
 └── features/{feature-name}/
@@ -19,8 +20,13 @@ docs/epics/{epic-name}/
 ```
 
 ### Project-Specific Documentation
-```
+
+```text
 docs/{project-type}/{project-name}/
+├── architecture/
+│   ├── overview.md                            # Project architecture overview
+│   ├── diagrams/                              # Optional diagrams (files vary)
+│   └── decisions/                             # Project-scoped ADRs (optional)
 ├── epics/{epic-name}/
 │   ├── epic.md                                # Epic PRD
 │   └── arch.md                                # Epic Architecture
@@ -32,8 +38,9 @@ docs/{project-type}/{project-name}/
 Where `{project-type}` is: `apps`, `services`, `libs`, or `tools`
 
 ### Architectural Decisions
-```
-docs/architecture/decisions/
+
+```text
+docs/monorepo/architecture/decisions/
 └── adr-{NNNN}-{title-slug}.md                 # ADR (sequential numbering)
 ```
 
@@ -44,7 +51,7 @@ graph LR
     A[Epic PRD<br/>epic.md] --> B[Epic Architecture<br/>arch.md]
     B --> C[Feature PRD<br/>prd.md]
     C --> D[Feature Implementation<br/>implementation-plan.md]
-    
+
     style A fill:#e1f5e1
     style B fill:#e3f2fd
     style C fill:#fff3e0
@@ -69,19 +76,21 @@ graph LR
 
 Ask yourself: "Is this monorepo-level or project-specific?"
 
-- **Monorepo-level**: Affects multiple projects → Use `/docs/epics/`
+- **Monorepo-level**: Affects multiple projects → Use `/docs/monorepo/epics/`
 - **Project-specific**: Affects one app/service/lib → Use `/docs/{project-type}/{project-name}/`
 
 ### Step 2: Use the Documentation Chatmode
 
 All documentation creation uses the `documentation` chatmode:
-```
+
+```text
 .github/chatmodes/documentation.chatmode.md
 ```
 
 ### Step 3: Follow the Dependency Chain
 
 The chatmode will:
+
 1. Check for prerequisite documents
 2. Create missing dependencies first
 3. Guide you through the workflow
@@ -93,26 +102,31 @@ The chatmode will:
 Each document type requires specific information (the chatmode will ask):
 
 **Epic PRD:**
+
 - Epic idea/concept
 - Target users
 - Business goals
 
 **Epic Architecture:**
+
 - Epic PRD reference
 - Technical approach
 - Technology stack
 
 **Feature PRD:**
+
 - Feature idea
 - Parent epic reference
 - User stories
 
 **Feature Implementation:**
+
 - Feature PRD reference
 - Technical details
 - Implementation approach
 
 **ADR:**
+
 - Decision title
 - Context
 - Decision rationale
@@ -125,8 +139,9 @@ Each document type requires specific information (the chatmode will ask):
 **Request**: "Create an epic for implementing SSO across all apps"
 
 **AI Response**:
+
 1. Confirms scope: Monorepo-level (affects multiple apps)
-2. Path: `/docs/epics/sso-implementation/epic.md`
+2. Path: `/docs/monorepo/epics/sso-implementation/epic.md`
 3. Gathers information for Epic PRD
 4. Creates Epic PRD
 5. Suggests creating Epic Architecture next
@@ -136,6 +151,7 @@ Each document type requires specific information (the chatmode will ask):
 **Request**: "Create a feature to send scheduled emails in the email service"
 
 **AI Response**:
+
 1. Confirms scope: Service-specific (email microservice)
 2. Checks for parent epic → If missing, creates it first
 3. Path: `/docs/services/my-nest-js-email-microservice/features/scheduled-emails/prd.md`
@@ -148,8 +164,9 @@ Each document type requires specific information (the chatmode will ask):
 **Request**: "Document the decision to use Temporal for workflow orchestration"
 
 **AI Response**:
+
 1. Checks existing ADRs for next number
-2. Path: `/docs/architecture/decisions/adr-0002-use-temporal-for-workflows.md`
+2. Path: `/docs/monorepo/architecture/decisions/adr-0002-use-temporal-for-workflows.md`
 3. Gathers context, decision, alternatives
 4. Creates ADR with proper structure
 
@@ -171,6 +188,7 @@ Before considering documentation complete:
 - [Documentation Chatmode](../.github/chatmodes/documentation.chatmode.md) - Orchestration chatmode
 - [Prompts](../.github/prompts/) - All documentation prompt templates
 - [Instructions](../.github/instructions/docs/) - Document-specific formatting guidelines
+- [Documentation Structure Reference](./documentation-structure-reference.md) - Canonical directory layout and naming rules
 
 ## 💡 Pro Tips
 
@@ -184,13 +202,17 @@ Before considering documentation complete:
 ## 🆘 Troubleshooting
 
 **Problem**: "I want to create a feature but don't have an epic"
+
 - **Solution**: The chatmode will detect this and offer to create the epic first
 
 **Problem**: "I'm not sure if this should be monorepo-level or project-specific"
+
 - **Solution**: Ask: "Does this affect multiple projects?" Yes = monorepo-level, No = project-specific
 
 **Problem**: "The documentation is in the wrong directory"
+
 - **Solution**: The chatmode constructs paths based on scope - verify you specified the correct scope
 
 **Problem**: "I need to create an ADR but don't know the next number"
+
 - **Solution**: The chatmode checks existing ADRs and uses the next sequential number automatically

@@ -4,17 +4,21 @@ This directory contains documentation for individual applications in the monorep
 
 ## Directory Structure
 
-```
+```text
 docs/apps/{app-name}/
 ├── README.md                        # App overview and documentation index
-├── epics/                          # App-specific epics
+├── architecture/                    # App architecture documentation (optional files)
+│   ├── overview.md                  # Architecture overview
+│   ├── diagrams/                    # Visual assets (optional)
+│   └── decisions/                   # App-scoped ADRs (optional)
+├── epics/                           # App-specific epics
 │   └── {epic-name}/
-│       ├── epic.md                 # Epic Product Requirements Document
-│       └── arch.md                 # Epic Architecture Specification
-└── features/                       # App features
+│       ├── epic.md                  # Epic Product Requirements Document
+│       └── arch.md                  # Epic Architecture Specification
+└── features/                        # App features
     └── {feature-name}/
-        ├── prd.md                  # Feature Product Requirements Document
-        └── implementation-plan.md  # Feature Implementation Plan
+        ├── prd.md                   # Feature Product Requirements Document
+        └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Apps
@@ -24,6 +28,7 @@ docs/apps/{app-name}/
 ## When to Use This Directory
 
 Use app-specific directories for:
+
 - Epics that only affect a single application
 - Features specific to an app's UI or functionality
 - App-specific user experiences and workflows
@@ -31,7 +36,8 @@ Use app-specific directories for:
 
 ## When to Use Monorepo-Level Documentation
 
-Use `/docs/epics/` for:
+Use `/docs/monorepo/epics/` for:
+
 - Epics that affect multiple apps
 - Cross-cutting platform features
 - Shared infrastructure or patterns
@@ -47,6 +53,7 @@ To create documentation for an app:
 
 ## Related Documentation
 
+- [Documentation Structure Reference](../documentation-structure-reference.md)
 - [AGENTS.md](../../AGENTS.md) - Documentation workflow and requirements
-- [Monorepo Epics](../epics/) - Monorepo-level epic documentation
-- [ADRs](../architecture/decisions/) - Architectural Decision Records
+- [Monorepo Epics](../monorepo/epics/) - Monorepo-level epic documentation
+- [ADRs](../monorepo/architecture/decisions/) - Architectural Decision Records

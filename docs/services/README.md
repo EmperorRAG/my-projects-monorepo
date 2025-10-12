@@ -4,21 +4,21 @@ This directory contains documentation for individual services in the monorepo. E
 
 ## Directory Structure
 
-```
+```text
 docs/services/{service-name}/
 ├── README.md                        # Service overview and documentation index
-├── epics/                          # Service-specific epics
+├── architecture/                    # Service architecture documentation
+│   ├── overview.md                  # Architecture overview
+│   ├── diagrams/                    # Visual assets (optional)
+│   └── decisions/                   # Service-scoped ADRs (optional)
+├── epics/                           # Service-specific epics
 │   └── {epic-name}/
-│       ├── epic.md                 # Epic Product Requirements Document
-│       ├── arch.md                 # Epic Architecture Specification
-│       └── features/               # Features within this epic (deprecated structure)
-│           └── {feature-name}/
-│               ├── prd.md
-│               └── implementation-plan.md
-└── features/                       # Service features (preferred structure)
+│       ├── epic.md                  # Epic Product Requirements Document
+│       └── arch.md                  # Epic Architecture Specification
+└── features/                        # Service features (preferred structure)
     └── {feature-name}/
-        ├── prd.md                  # Feature Product Requirements Document
-        └── implementation-plan.md  # Feature Implementation Plan
+        ├── prd.md                   # Feature Product Requirements Document
+        └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Services
@@ -28,6 +28,7 @@ docs/services/{service-name}/
 ## When to Use This Directory
 
 Use service-specific directories for:
+
 - Epics that only affect a single service
 - Features specific to a service's functionality
 - Service-specific architecture decisions
@@ -35,7 +36,8 @@ Use service-specific directories for:
 
 ## When to Use Monorepo-Level Documentation
 
-Use `/docs/epics/` for:
+Use `/docs/monorepo/epics/` for:
+
 - Epics that affect multiple services
 - Cross-cutting platform features
 - Monorepo-wide infrastructure or standards
@@ -51,6 +53,7 @@ To create documentation for a service:
 
 ## Related Documentation
 
+- [Documentation Structure Reference](../documentation-structure-reference.md)
 - [AGENTS.md](../../AGENTS.md) - Documentation workflow and requirements
-- [Monorepo Epics](../epics/) - Monorepo-level epic documentation
-- [ADRs](../architecture/decisions/) - Architectural Decision Records
+- [Monorepo Epics](../monorepo/epics/) - Monorepo-level epic documentation
+- [ADRs](../monorepo/architecture/decisions/) - Architectural Decision Records

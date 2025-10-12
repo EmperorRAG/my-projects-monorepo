@@ -4,17 +4,21 @@ This directory contains documentation for shared libraries in the monorepo. Each
 
 ## Directory Structure
 
-```
+```text
 docs/libs/{library-name}/
 ├── README.md                        # Library overview and API documentation
-├── epics/                          # Library-specific epics
+├── architecture/                    # Library architecture documentation
+│   ├── overview.md                  # Architecture overview (optional)
+│   ├── diagrams/                    # Visual assets (optional)
+│   └── decisions/                   # Library-scoped ADRs (optional)
+├── epics/                           # Library-specific epics
 │   └── {epic-name}/
-│       ├── epic.md                 # Epic Product Requirements Document
-│       └── arch.md                 # Epic Architecture Specification
-└── features/                       # Library features
+│       ├── epic.md                  # Epic Product Requirements Document
+│       └── arch.md                  # Epic Architecture Specification
+└── features/                        # Library features
     └── {feature-name}/
-        ├── prd.md                  # Feature Product Requirements Document
-        └── implementation-plan.md  # Feature Implementation Plan
+        ├── prd.md                   # Feature Product Requirements Document
+        └── implementation-plan.md   # Feature Implementation Plan
 ```
 
 ## Current Libraries
@@ -24,6 +28,7 @@ docs/libs/{library-name}/
 ## When to Use This Directory
 
 Use library-specific directories for:
+
 - Epics that only affect a single library
 - Features specific to library functionality
 - Library API design and implementation
@@ -31,7 +36,8 @@ Use library-specific directories for:
 
 ## When to Use Monorepo-Level Documentation
 
-Use `/docs/epics/` for:
+Use `/docs/monorepo/epics/` for:
+
 - Epics that affect multiple libraries
 - Cross-cutting shared functionality
 - Platform-wide utility patterns
@@ -47,6 +53,7 @@ To create documentation for a library:
 
 ## Related Documentation
 
+- [Documentation Structure Reference](../documentation-structure-reference.md)
 - [AGENTS.md](../../AGENTS.md) - Documentation workflow and requirements
-- [Monorepo Epics](../epics/) - Monorepo-level epic documentation
-- [ADRs](../architecture/decisions/) - Architectural Decision Records
+- [Monorepo Epics](../monorepo/epics/) - Monorepo-level epic documentation
+- [ADRs](../monorepo/architecture/decisions/) - Architectural Decision Records
