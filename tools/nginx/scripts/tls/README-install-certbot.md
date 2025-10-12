@@ -20,6 +20,7 @@ This script automatically detects your operating system and installs certbot wit
 | Amazon Linux | yum | ✅ nginx plugin |
 | Alpine Linux | apk | ✅ nginx plugin |
 | macOS | homebrew | ⚠️ nginx plugin separate |
+| Windows 10/11 (WSL) | apt/yum/dnf | ✅ nginx plugin |
 
 ## Usage
 
@@ -70,6 +71,19 @@ On macOS, Homebrew must be installed first:
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
+
+### Windows 10/11 Additional Prerequisite
+
+On Windows, WSL (Windows Subsystem for Linux) must be installed:
+
+```bash
+# Run in PowerShell as Administrator
+wsl --install
+```
+
+After installing WSL, open the WSL terminal and run the certbot installation script from there. The script will automatically detect the WSL environment and install certbot using the appropriate Linux package manager.
+
+**Note:** If you run the script from Git Bash (not WSL), it will provide instructions to install and use WSL.
 
 ## What Gets Installed
 

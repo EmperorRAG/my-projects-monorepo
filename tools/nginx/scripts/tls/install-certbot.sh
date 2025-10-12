@@ -12,6 +12,7 @@
 # - Amazon Linux (yum)
 # - Alpine Linux (apk)
 # - macOS (homebrew)
+# - Windows 10/11 (WSL/Git Bash)
 #
 # Prerequisites:
 # - Root or sudo access (for package installation)
@@ -70,6 +71,7 @@ Supported Operating Systems:
   - Amazon Linux (yum)
   - Alpine Linux (apk)
   - macOS (homebrew)
+  - Windows 10/11 (WSL/Git Bash)
 
 For more information, visit: https://certbot.eff.org/
 EOF
@@ -188,6 +190,61 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     OS_TYPE="macos"
     PACKAGE_MANAGER="brew"
     echo -e "${GREEN}✓ Detected: macOS${NC}"
+elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]] || [[ "$OSTYPE" == "cygwin" ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+    # Windows (Git Bash, WSL, or Cygwin)
+    if grep -qi microsoft /proc/version 2>/dev/null; then
+        # WSL (Windows Subsystem for Linux)
+        # WSL appears as a Linux distribution, so we need to detect the underlying Linux distro
+        if [ -f /etc/os-release ]; then
+            # shellcheck source=/dev/null
+            . /etc/os-release
+            OS_TYPE=$ID
+            
+            case $OS_TYPE in
+                ubuntu|debian)
+                    PACKAGE_MANAGER="apt"
+                    echo -e "${GREEN}✓ Detected: WSL - $PRETTY_NAME${NC}"
+                    ;;
+                centos|rhel)
+                    PACKAGE_MANAGER="yum"
+                    echo -e "${GREEN}✓ Detected: WSL - $PRETTY_NAME${NC}"
+                    ;;
+                fedora)
+                    PACKAGE_MANAGER="dnf"
+                    echo -e "${GREEN}✓ Detected: WSL - $PRETTY_NAME${NC}"
+                    ;;
+                alpine)
+                    PACKAGE_MANAGER="apk"
+                    echo -e "${GREEN}✓ Detected: WSL - $PRETTY_NAME${NC}"
+                    ;;
+                *)
+                    echo -e "${RED}✗ Unsupported WSL distribution: $OS_TYPE${NC}"
+                    echo ""
+                    echo "Please install certbot manually from: https://certbot.eff.org/instructions"
+                    exit 1
+                    ;;
+            esac
+        else
+            echo -e "${RED}✗ Could not detect WSL distribution${NC}"
+            exit 1
+        fi
+    else
+        # Git Bash or native Windows
+        echo -e "${YELLOW}⚠ Detected: Windows (Git Bash/Cygwin)${NC}"
+        echo ""
+        echo -e "${BLUE}For Windows, certbot should be installed via WSL (Windows Subsystem for Linux):${NC}"
+        echo ""
+        echo "1. Install WSL if not already installed:"
+        echo "   wsl --install"
+        echo ""
+        echo "2. Open WSL terminal and run this script again:"
+        echo "   bash tools/nginx/scripts/tls/install-certbot.sh"
+        echo ""
+        echo "Alternatively, you can install certbot manually:"
+        echo "  - Download from: https://certbot.eff.org/instructions?system=windows"
+        echo ""
+        exit 1
+    fi
 else
     echo -e "${RED}✗ Unsupported operating system${NC}"
     echo ""

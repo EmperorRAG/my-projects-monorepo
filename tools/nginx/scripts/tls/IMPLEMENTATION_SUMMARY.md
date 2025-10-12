@@ -78,6 +78,7 @@ Successfully implemented an automated certbot installation script with OS auto-d
 | Amazon Linux | yum | ✅ nginx | ✅ Validated |
 | Alpine Linux | apk | ✅ nginx | ✅ Validated |
 | macOS | homebrew | ⚠️ Manual | ✅ Validated |
+| Windows 10/11 (WSL) | apt/yum/dnf | ✅ nginx | ✅ Validated |
 
 ## Key Features
 

@@ -55,6 +55,7 @@ This document demonstrates the complete workflow for setting up certbot and Let'
 | Amazon Linux   | yum             | ✅            | ✅ nginx       |
 | Alpine Linux   | apk             | ✅            | ✅ nginx       |
 | macOS          | homebrew        | ✅            | ⚠️ manual      |
+| Windows 10/11 (WSL) | apt/yum/dnf | ✅            | ✅ nginx       |
 
 ## Quick Start Examples
 
@@ -169,6 +170,52 @@ Certbot Installation Script
 
 # 3. Configure and start as above...
 ```
+
+### Example 4: Windows 10/11 (WSL)
+
+```bash
+# 1. Ensure WSL is installed (run in PowerShell as Administrator)
+$ wsl --install
+
+# 2. Open WSL terminal (Ubuntu by default)
+$ wsl
+
+# 3. Install certbot (from within WSL)
+$ nx run nginx:tls:install-certbot
+
+=================================================================================================
+Certbot Installation Script
+=================================================================================================
+
+[1/5] Checking for existing certbot installation...
+  Certbot is not installed. Proceeding with installation...
+
+[2/5] Detecting operating system...
+✓ Detected: WSL - Ubuntu 22.04.3 LTS
+
+[3/5] Checking prerequisites...
+  Using sudo for package installation
+✓ Package manager: apt-get
+
+[4/5] Installing certbot...
+  Updating package list...
+  Installing certbot and nginx plugin...
+✓ Certbot installed successfully
+
+[5/5] Verifying installation...
+✓ Certbot installed: certbot 1.32.0
+
+=================================================================================================
+✓ Certbot Installation Completed Successfully!
+=================================================================================================
+
+# 4. Configure and start as above...
+```
+
+**Note for Windows Users:**
+- If running from Git Bash (not WSL), the script will provide instructions to install WSL
+- WSL (Windows Subsystem for Linux) is the recommended way to run certbot on Windows
+- You can install WSL with: `wsl --install` (requires Windows 10 version 2004+ or Windows 11)
 
 ## Script Options
 
