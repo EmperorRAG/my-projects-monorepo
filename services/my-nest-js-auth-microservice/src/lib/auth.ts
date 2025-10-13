@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '../../../../tools/postgresql/better-auth-db/prisma/generated/client';
+import { PrismaClient } from '@my-projects-monorepo/prisma-client';
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();

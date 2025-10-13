@@ -73,6 +73,13 @@
         "command": "bash scripts/restore-db.sh",
         "cwd": "tools/postgresql"
       }
+    },
+    "health-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash scripts/health-check.sh",
+        "cwd": "tools/postgresql"
+      }
     }
   },
   "tags": ["type:tool", "scope:database", "stack:postgresql"]

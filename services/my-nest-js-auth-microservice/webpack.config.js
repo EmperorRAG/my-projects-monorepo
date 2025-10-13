@@ -8,6 +8,11 @@ module.exports = {
       devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     }),
   },
+  resolve: {
+    alias: {
+      '@my-projects-monorepo/prisma-client': join(__dirname, '../../tools/postgresql/better-auth-db/prisma/generated/client'),
+    },
+  },
   plugins: [
     new NxAppWebpackPlugin({
       target: 'node',
