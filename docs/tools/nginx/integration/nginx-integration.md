@@ -1,131 +1,116 @@
-# Integrating NGINX into an Nx Monorepo
+# NGINX MVP Integration Guide for Nx Monorepo
 
-NGINX is commonly used to front applications hosted inside an Nx workspace for TLS termination, caching, static asset delivery, and reverse-proxy routing. This guide explains how to incorporate NGINX into an Nx monorepo, how to serve files from the repository, how to operate one NGINX edge reverse proxy in front of three NGINX load-balancer tiers, and where to keep configuration as the workspace grows.
+This guide explains how to set up a minimal viable NGINX infrastructure for an Nx monorepo with:
+- 1 NGINX reverse proxy (edge proxy) for TLS termination and routing
+- 2 NGINX load balancers (frontend app + email microservice)
+- 3 instances per service for high availability
+- TLS/HTTPS with Certbot (Let's Encrypt)
+- Docker Compose deployment
+- Nx monorepo integration
 
-## Target Topology
+## MVP Topology
 
-The reference design introduces an internet-facing reverse proxy that terminates TLS and proxies traffic to three independent NGINX load balancers. Each load balancer distributes requests to the relevant application or service pool.
+The MVP design uses one edge proxy terminating TLS and routing to two load balancers. Each load balancer distributes traffic across 3 instances of its service.
 
 ```text
-┌──────────────┐     ┌──────────────┐
-│  Clients /   │ TLS │  Reverse     │
-│  Internet    ├────▶│  Proxy NGINX │
-└──────────────┘     └──────┬───────┘
-             │
-         ┌───────────┴───────────┐
-         │           │           │
-    ┌────────▼──────┐ ┌──▼─────────┐ ┌────────▼──────┐
-  │ LB NGINX #1   │ │ LB NGINX #2│ │ LB NGINX #3   │
-  │ (e.g. Frontend│ │ (e.g. API) │ │ (e.g. Email)  │
-  └───────┬───────┘ └────┬───────┘ └───────┬───────┘
-    │              │                 │
-  ┌───────▼───────┐ ┌────▼───────┐ ┌───────▼───────┐
-  │ App Pool A    │ │ App Pool B │ │ Service Pool C│
-  └───────────────┘ └────────────┘ └───────────────┘
+┌──────────────┐     ┌──────────────────┐
+│  Clients /   │ TLS │  NGINX Edge      │
+│  Internet    ├────▶│  Reverse Proxy   │
+└──────────────┘     └────────┬─────────┘
+                              │
+                    ┌─────────┴─────────┐
+                    │                   │
+            ┌───────▼────────┐  ┌──────▼──────────┐
+            │ NGINX LB       │  │ NGINX LB        │
+            │ (Frontend)     │  │ (Email Service) │
+            └───────┬────────┘  └──────┬──────────┘
+                    │                   │
+          ┌─────────┼─────────┐  ┌──────┼──────────┐
+          │         │         │  │      │          │
+    ┌─────▼───┐┌────▼────┐┌───▼──▼┐┌───▼──┐┌──────▼──┐
+    │ App #1  ││ App #2  ││ App #3││Email││ Email #2││Email #3│
+    │(3000)   ││(3001)   ││(3002) ││#1   ││  (3001) ││ (3002) │
+    └─────────┘└─────────┘└───────┘└─────┘└─────────┘└────────┘
 ```
 
-Each load balancer can scale horizontally using the same container and configuration pattern. The reverse proxy shields the load-balancer tier from the public network and centralises TLS certificates, rate limiting, and common headers.
+**Key Features:**
+- TLS termination at edge proxy
+- Host-based routing to load balancers
+- Load balancing across 3 service instances
+- Health checks and failover
 
 ## Prerequisites
 
-- Nx CLI installed locally (`npm i -g nx` or via `npx`).
-- Docker Desktop or another container runtime if you plan to package NGINX as an image.
-- Basic knowledge of Nx project configuration (`project.json`) and dependency graph conventions (`apps/`, `libs/`, `tools/`).
+- **Nx CLI**: Installed locally (`npm i -g nx` or via `npx`)
+- **Docker & Docker Compose**: For containerized deployment
+- **Certbot**: For Let's Encrypt TLS certificates (install script provided)
+- **Basic knowledge**: Nx workspace structure and Docker Compose
 
-## Recommended Repository Layout
+## MVP Repository Layout
 
-As the monorepo scales, keep NGINX assets under an `infrastructure/` or `tools/` directory separate from application code so they can evolve independently. The layout below dedicates subfolders for the edge proxy and the three load balancers while sharing common snippets and Docker assets.
+The MVP uses a simplified structure under `tools/nginx/` for the edge proxy and two load balancers:
 
 ```text
 my-projects-monorepo/
 ├─ apps/
-├─ libs/
+│  └─ my-programs-app/          # Frontend Next.js app
+├─ services/
+│  └─ my-nest-js-email-microservice/  # Email microservice
 ├─ tools/
-│  └─ nginx/
-│     ├─ common/
-│     │  ├─ base.nginx.conf        # shared defaults (workers, gzip, security headers)
-│     │  └─ snippets/
-│     │     ├─ headers.conf        # security headers reused by all nodes
-│     │     └─ logging.conf
-│     ├─ proxy-edge/
-│     │  ├─ nginx.conf             # references common includes + upstream LBs
-│     │  ├─ overlays/
-│     │  │  ├─ development.conf
-│     │  │  └─ production.conf
-│     │  └─ Dockerfile
-│     ├─ load-balancers/
-│     │  ├─ lb-frontend/
-│     │  │  ├─ nginx.conf          # upstream pointing to frontend pods
-│     │  │  ├─ overlays/
-│     │  │  │  ├─ development.conf
-│     │  │  │  └─ production.conf
-│     │  │  └─ Dockerfile
-│     │  ├─ lb-api/
-│     │  │  └─ ...
-│     │  └─ lb-email/
-│     │     └─ ...
-│     ├─ docker-compose.yaml
-│     └─ README.md
+│  ├─ nginx/
+│  │  ├─ common/
+│  │  │  ├─ base.nginx.conf    # Shared defaults
+│  │  │  └─ snippets/
+│  │  │     ├─ headers.conf    # Security headers
+│  │  │     └─ logging.conf    # Logging config
+│  │  ├─ proxy-edge/           # Edge reverse proxy
+│  │  │  ├─ nginx.conf         # Main edge config
+│  │  │  ├─ Dockerfile
+│  │  │  └─ overlays/
+│  │  │     ├─ development.conf
+│  │  │     └─ production.conf
+│  │  ├─ load-balancers/
+│  │  │  ├─ lb-frontend/       # Frontend LB (my-programs-app)
+│  │  │  │  ├─ nginx.conf
+│  │  │  │  └─ Dockerfile
+│  │  │  └─ lb-email/          # Email LB (my-nest-js-email-microservice)
+│  │  │     ├─ nginx.conf
+│  │  │     └─ Dockerfile
+│  │  ├─ docker-compose.yaml   # Main orchestration
+│  │  ├─ project.json          # Nx targets
+│  │  └─ README.md
+│  └─ certbot/                 # TLS certificate automation
+│     ├─ scripts/
+│     │  ├─ install-certbot.sh
+│     │  └─ setup-letsencrypt.sh
+│     └─ docker-compose.yaml
 ├─ nx.json
 └─ README.md
 ```
 
-### Storing Configuration as You Scale
+**Key directories:**
+- `common/`: Shared NGINX configuration used by all nodes
+- `proxy-edge/`: Edge proxy for TLS termination and routing
+- `load-balancers/lb-frontend/`: Load balancer for my-programs-app (3 instances)
+- `load-balancers/lb-email/`: Load balancer for email microservice (3 instances)
+- `certbot/`: TLS certificate automation with Let's Encrypt
 
-1. **Base and overlay pattern:** Keep a `common/base.nginx.conf` with global settings, then layer environment-specific snippets in `overlays/<env>/`. Use `include` directives inside overlay files to compose from the base while avoiding duplication across the four NGINX nodes.
-2. **Node-specific configs:** Create one config per load balancer (`lb-frontend`, `lb-api`, `lb-email`) and one per proxy (`proxy-edge`). Each config defines the upstream pools it owns and includes only the snippets it needs.
-3. **Generated outputs:** If tooling generates config (Helm, Kustomize, Pulumi), store templates under the same `tools/nginx/` tree and write Nx targets to render them into `dist/tools/nginx/`. Templates can share variables for upstream lists so that adding a backend only updates a single values file.
-4. **Documentation:** Add a README inside `tools/nginx/` describing node responsibilities, ports, and how configs map to Nx projects. Cross-link from the main project documentation so new contributors find it quickly.
-5. **Secrets and certificates:** Store TLS certificates or secret references per node (typically under `proxy-edge/overlays/production.conf`) and retrieve them via environment variables, secret stores, or mounted volumes rather than committing them to the repo.
+## MVP Configuration
 
-## Serving Monorepo Assets Through NGINX
+### Edge Proxy Configuration
 
-### Static assets (Next.js or other frontend bundles)
-
-1. Build the frontend using Nx: `npx nx build my-programs-app` (outputs under `dist/apps/my-programs-app`).
-2. Configure NGINX to serve the built files directly:
-
-   ```nginx
-   server {
-     listen 80;
-     server_name _;
-
-     root /usr/share/nginx/html;
-     index index.html;
-
-     location / {
-       try_files $uri $uri/ /index.html;
-     }
-   }
-   ```
-
-3. In your Docker image or Compose file, copy the build output into the NGINX image:
-
-  ```dockerfile
-  FROM nginx:1.27-alpine
-  COPY tools/nginx/common/base.nginx.conf /etc/nginx/nginx.conf
-  COPY dist/apps/my-programs-app /usr/share/nginx/html
-  ```
-
-### Reverse proxy routing to load balancers
-
-The edge proxy forwards requests to the correct load-balancer service based on hostname or path. Use resilient upstream zones so that health checks and shared state work across workers.
+The edge proxy terminates TLS and routes to load balancers:
 
 ```nginx
+# Map hostnames to load balancer upstreams
 map $host $lb_upstream {
   default lb_frontend;
-  api.internal lb_api;
-  email.internal lb_email;
+  email.yourdomain.com lb_email;
 }
 
 upstream lb_frontend {
   zone lb_frontend 64k;
   server lb-frontend:8080;
-}
-
-upstream lb_api {
-  zone lb_api 64k;
-  server lb-api:8080;
 }
 
 upstream lb_email {
@@ -134,9 +119,13 @@ upstream lb_email {
 }
 
 server {
-  listen 80;
+  listen 443 ssl http2;
   server_name _;
 
+  # TLS Configuration
+  ssl_certificate /etc/nginx/tls/fullchain.pem;
+  ssl_certificate_key /etc/nginx/tls/privkey.pem;
+  
   include /etc/nginx/snippets/headers.conf;
 
   location / {
@@ -149,198 +138,327 @@ server {
 }
 ```
 
-Each load balancer receives traffic on its internal port (`8080` in the example) and routes to its service pool.
+### Frontend Load Balancer (3 instances)
 
-### Load balancing backend services (e.g., NestJS email microservice)
+Load balances traffic across 3 instances of my-programs-app:
 
-1. Expose the NestJS app on a known port (default `3000`).
-2. Define the upstream pool and load-balancing strategy (e.g., `least_conn`) within the load balancer configuration (`lb-email/nginx.conf`).
+```nginx
+upstream frontend_apps {
+  zone frontend_apps 64k;
+  least_conn;
+  
+  server my-programs-app-1:3000 max_fails=3 fail_timeout=30s;
+  server my-programs-app-2:3000 max_fails=3 fail_timeout=30s;
+  server my-programs-app-3:3000 max_fails=3 fail_timeout=30s;
+}
 
-   ```nginx
-   upstream email_service {
-     zone email_service 64k;
-     least_conn;
-     server email-microservice-1:3000;
-     server email-microservice-2:3000;
-   }
+server {
+  listen 8080;
+  server_name lb-frontend;
 
-   server {
-     listen 8080;
-     server_name lb-email;
+  include /etc/nginx/snippets/headers.conf;
 
-     include /etc/nginx/snippets/headers.conf;
+  location / {
+    proxy_pass http://frontend_apps;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+```
 
-     location /email/ {
-       proxy_pass http://email_service/;
-       proxy_set_header Host $host;
-       proxy_set_header X-Real-IP $remote_addr;
-       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-       proxy_set_header X-Forwarded-Proto $scheme;
-     }
-   }
-   ```
+### Email Load Balancer (3 instances)
 
-3. When using Docker Compose, declare the edge proxy, all three load balancers, and dependent services in the same network so hostnames resolve.
+Load balances traffic across 3 instances of email microservice:
 
-## Managing NGINX with Nx Targets
+```nginx
+upstream email_service {
+  zone email_service 64k;
+  least_conn;
+  
+  server my-nest-js-email-microservice-1:3000 max_fails=3 fail_timeout=30s;
+  server my-nest-js-email-microservice-2:3000 max_fails=3 fail_timeout=30s;
+  server my-nest-js-email-microservice-3:3000 max_fails=3 fail_timeout=30s;
+}
 
-Use `nx run-commands` to standardise NGINX workflows. Each node can have its own targets, and composite targets orchestrate the full topology.
+server {
+  listen 8080;
+  server_name lb-email;
+
+  include /etc/nginx/snippets/headers.conf;
+
+  location /email/ {
+    proxy_pass http://email_service/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+```
+
+## Nx Targets for MVP
+
+Essential Nx targets for the MVP:
 
 ```json
 {
   "targets": {
-    "nginx:generate-config": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "ts-node tools/nginx/scripts/render-config.ts",
-        "cwd": "tools/nginx"
-      }
-    },
     "nginx:docker-build-edge": {
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build -t my-org/nginx-edge -f tools/nginx/proxy-edge/Dockerfile ."
-      },
-      "dependsOn": ["nginx:generate-config"]
+      }
     },
     "nginx:docker-build-lb-frontend": {
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build -t my-org/nginx-lb-frontend -f tools/nginx/load-balancers/lb-frontend/Dockerfile ."
-      },
-      "dependsOn": ["nginx:generate-config"]
-    },
-    "nginx:docker-build-lb-api": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker build -t my-org/nginx-lb-api -f tools/nginx/load-balancers/lb-api/Dockerfile ."
-      },
-      "dependsOn": ["nginx:generate-config"]
+      }
     },
     "nginx:docker-build-lb-email": {
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build -t my-org/nginx-lb-email -f tools/nginx/load-balancers/lb-email/Dockerfile ."
-      },
-      "dependsOn": ["nginx:generate-config"]
+      }
     },
-    "nginx:serve": {
+    "nginx:up": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f tools/nginx/docker-compose.yaml up"
+        "command": "docker compose -f tools/nginx/docker-compose.yaml up -d"
       },
       "dependsOn": [
-        "nginx:generate-config",
         "nginx:docker-build-edge",
         "nginx:docker-build-lb-frontend",
-        "nginx:docker-build-lb-api",
         "nginx:docker-build-lb-email"
       ]
+    },
+    "nginx:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/nginx/docker-compose.yaml down"
+      }
+    },
+    "nginx:logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f tools/nginx/docker-compose.yaml logs -f"
+      }
     }
   }
 }
 ```
 
-These targets let you chain NGINX setup into CI (`nx run nginx:docker-build-edge`, `nx run nginx:docker-build-lb-api`, etc.) or run everything locally alongside other services (`nx run nginx:serve`).
+**Usage:**
+```bash
+# Build and start all services
+nx run nginx:up
 
-## Configuration Patterns at Scale
+# View logs
+nx run nginx:logs
 
-- **Environment segregation:** Mirror the structure of your Nx environment files (`apps/*/project.json` environments, `.env.{env}`) with matching NGINX overlays to keep deployment logic predictable.
-- **Testing:** Add Playwright or smoke tests that exercise endpoints via NGINX to catch misconfiguration early (`nx run my-programs-app-e2e` after `nx run nginx:serve`).
-- **Automation:** Use Nx affected commands to rebuild NGINX edge and load balancers when relevant configs change:
+# Stop all services
+nx run nginx:down
+```
 
-  ```bash
-  npx nx affected --target=nginx:docker-build-edge --files tools/nginx/proxy-edge/**/*
-  npx nx affected --target=nginx:docker-build-lb-api --files tools/nginx/load-balancers/lb-api/**/*
-  ```
+## Docker Compose MVP Setup
 
-- **Version control:** Treat NGINX configs the same as application code—peer review them, run linting (`nginx -t`) in CI, and store secrets outside the repo (use environment variables or secrets managers referenced in the configs).
+### Main docker-compose.yaml
 
-## Implementation and Operations Plan
+```yaml
+version: "3.8"
 
-### 1. Implement the NGINX Servers in the Nx Monorepo
+services:
+  # Edge Proxy - TLS termination and routing
+  proxy-edge:
+    image: my-org/nginx-edge:latest
+    container_name: nginx-proxy-edge
+    build:
+      context: ../..
+      dockerfile: tools/nginx/proxy-edge/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./secrets/tls:/etc/nginx/tls:ro
+    networks:
+      - nginx-internal
+      - app-network
+    depends_on:
+      - lb-frontend
+      - lb-email
+    restart: unless-stopped
 
-- Inventory target applications and assign them to load balancer nodes (frontend, API, email).
-- Scaffold the `tools/nginx/` directory structure and add base, snippets, and per-node configuration files.
-- Create Nx `project.json` entries or extend the root configuration with the targets shown above.
-- Write configuration rendering scripts (if needed) that compile overlays into `dist/tools/nginx/*`.
-- Add lint tasks (`nginx -t`) and unit tests for configuration templates where practical (e.g., using `bats` or `pytest` to validate rendered files).
+  # Frontend Load Balancer
+  lb-frontend:
+    image: my-org/nginx-lb-frontend:latest
+    container_name: nginx-lb-frontend
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-frontend/Dockerfile
+    expose:
+      - "8080"
+    networks:
+      - nginx-internal
+      - app-network
+    restart: unless-stopped
 
-### 2. Dockerize the NGINX Servers
+  # Email Load Balancer
+  lb-email:
+    image: my-org/nginx-lb-email:latest
+    container_name: nginx-lb-email
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-email/Dockerfile
+    expose:
+      - "8080"
+    networks:
+      - nginx-internal
+      - app-network
+    restart: unless-stopped
 
-- Author dedicated Dockerfiles for the edge proxy and each load balancer, inheriting from the official `nginx:alpine` image.
-- Copy the rendered configuration into `/etc/nginx/` and mount environment-specific secrets using Docker build args or runtime volumes.
-- Configure health-check endpoints (`HEALTHCHECK` directives) to monitor readiness of each container.
-- Extend `docker-compose.yaml` (or equivalent) to model the four containers, attach them to shared networks, and mount TLS certificates for the edge proxy.
+  # Frontend App - 3 instances
+  my-programs-app-1:
+    image: my-programs-app:latest
+    container_name: my-programs-app-1
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    restart: unless-stopped
 
-### 3. Deploy the NGINX Servers
+  my-programs-app-2:
+    image: my-programs-app:latest
+    container_name: my-programs-app-2
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    restart: unless-stopped
 
-#### Docker Compose Path (starting point)
+  my-programs-app-3:
+    image: my-programs-app:latest
+    container_name: my-programs-app-3
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    restart: unless-stopped
 
-- Author `tools/nginx/docker-compose.yaml` with services for the edge proxy and three load balancers, mounting rendered config directories and any TLS secrets.
-- Reference shared networks so backends (`my-programs-app`, `my-nest-js-email-microservice`) are reachable via container names. Example excerpt:
+  # Email Microservice - 3 instances
+  my-nest-js-email-microservice-1:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-1
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    restart: unless-stopped
 
-  ```yaml
-  services:
-    proxy-edge:
-      image: my-org/nginx-edge:latest
-      depends_on:
-        - lb-frontend
-        - lb-api
-        - lb-email
-      ports:
-        - "80:80"
-        - "443:443"
-      volumes:
-        - ./dist/tools/nginx/proxy-edge:/etc/nginx
-        - ./secrets/tls:/etc/nginx/tls:ro
-      networks:
-        - internal
+  my-nest-js-email-microservice-2:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-2
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    restart: unless-stopped
 
-    lb-frontend:
-      image: my-org/nginx-lb-frontend:latest
-      volumes:
-        - ./dist/tools/nginx/load-balancers/lb-frontend:/etc/nginx
-      networks:
-        - internal
+  my-nest-js-email-microservice-3:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-3
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    restart: unless-stopped
 
-  networks:
-    internal:
-      driver: bridge
-  ```
+networks:
+  nginx-internal:
+    driver: bridge
+    name: nginx-internal
+  app-network:
+    driver: bridge
+    name: app-network
+```
 
-- Create `nx` targets to run `docker compose up -d` and `docker compose down` for local development, ensuring `dependsOn` includes the docker builds.
-- Add Compose override files for local testing vs. CI (e.g., `docker-compose.ci.yaml` with headless mode). Use `.env` files for port overrides and secrets.
-- When ready, deploy to staging/production Compose clusters (e.g., Docker Swarm, ECS with Compose) using the same rendered configs.
+## TLS/HTTPS Setup with Certbot
 
-#### Kubernetes Path (future expansion)
+### Step 1: Install Certbot
 
-- Generate Kubernetes manifests (e.g., under `tools/nginx/k8s/`) that define one Deployment and one Service per NGINX role. Use ConfigMaps for non-secret configuration and Secrets for TLS materials.
-- Reference the same rendered configuration pipeline by having Nx scripts place files into `dist/tools/nginx/k8s/config/` for `kubectl apply` or Helm packaging.
-- Example module layout:
+Use the automated installer with OS detection:
 
-  ```text
-  tools/nginx/k8s/
-  ├─ proxy-edge/
-  │  ├─ deployment.yaml
-  │  ├─ service.yaml
-  │  └─ configmap.yaml
-  ├─ lb-frontend/
-  ├─ lb-api/
-  └─ lb-email/
-  ```
+```bash
+# Install certbot
+nx run certbot:install
 
-- Consider using Helm charts or Kustomize overlays to manage per-environment differences. Nx targets can call `helm upgrade --install` or `kubectl apply -k`.
-- Integrate with cluster ingress controllers by setting the edge proxy as either a standalone Deployment behind a Service of type `LoadBalancer`, or by configuring existing ingress resources to route into the load-balancer Services.
-- Implement readiness and liveness probes to ensure load balancers only receive traffic when backend pods are healthy. Capture logs with sidecar collectors or cluster logging solutions.
-- As infrastructure matures, add CI jobs that render Kubernetes manifests, run `kubeval`/`kubectl diff`, and deploy via GitOps tools (Argo CD, Flux) or direct Nx-driven commands.
+# Or manual installation
+cd tools/certbot
+./scripts/install-certbot.sh
+```
 
-### 4. Manage the NGINX Servers
+### Step 2: Setup Let's Encrypt Certificates
 
-- Implement monitoring (e.g., Prometheus exporter or NGINX Plus metrics) and log shipping (Fluent Bit/Filebeat) for each container.
-- Schedule periodic configuration reviews and automate `nx affected` checks to ensure changes rebuild the correct images.
-- Establish alerting thresholds for upstream failures, high latency, or error spikes.
-- Document operational runbooks detailing certificate rotation, configuration reloads (`docker compose exec <service> nginx -s reload`), and incident response steps.
+```bash
+# Setup Let's Encrypt with automatic configuration
+nx run certbot:setup-letsencrypt \
+  --domain yourdomain.com \
+  --email your@email.com
+
+# Or use the script directly
+cd tools/certbot
+./scripts/setup-letsencrypt.sh \
+  --domain yourdomain.com \
+  --email your@email.com \
+  --staging  # Use staging for testing
+```
+
+### Step 3: Configure NGINX for TLS
+
+Certificates will be placed in `tools/nginx/secrets/tls/`. The edge proxy is already configured to use:
+- `fullchain.pem` - Certificate chain
+- `privkey.pem` - Private key
+
+### Step 4: Setup Auto-Renewal
+
+Certbot automatically configures renewal. Verify with:
+
+```bash
+# Test renewal (dry run)
+certbot renew --dry-run
+
+# Check renewal timer
+systemctl status certbot.timer  # Linux
+```
+
+### Development TLS (Self-Signed)
+
+For local development, generate self-signed certificates:
+
+```bash
+nx run nginx:tls:generate-dev-certs
+
+# Certificates will be in tools/nginx/secrets/tls/
+```
 
 ## Further Reading
 
@@ -350,3 +468,98 @@ These targets let you chain NGINX setup into CI (`nx run nginx:docker-build-edge
 - [Nx and Docker Integration](https://nx.dev/recipes/docker) for tips on orchestrating container builds from Nx.
 
 With these patterns you can scale an Nx monorepo while keeping NGINX configuration organised, testable, and aligned with Nx’s task orchestration model.
+
+## MVP Deployment Steps
+
+### 1. Build Application Images
+
+```bash
+# Build frontend app
+nx run my-programs-app:docker-build
+
+# Build email microservice
+nx run my-nest-js-email-microservice:docker-build
+```
+
+### 2. Setup TLS Certificates
+
+```bash
+# For development (self-signed)
+nx run nginx:tls:generate-dev-certs
+
+# For production (Let's Encrypt)
+nx run certbot:setup-letsencrypt \
+  --domain yourdomain.com \
+  --email your@email.com
+```
+
+### 3. Build NGINX Images
+
+```bash
+# Build all NGINX images
+nx run nginx:docker-build-edge
+nx run nginx:docker-build-lb-frontend
+nx run nginx:docker-build-lb-email
+```
+
+### 4. Start All Services
+
+```bash
+# Start everything
+nx run nginx:up
+
+# Or use docker compose directly
+cd tools/nginx
+docker compose up -d
+```
+
+### 5. Verify Deployment
+
+```bash
+# Check service status
+docker compose -f tools/nginx/docker-compose.yaml ps
+
+# View logs
+nx run nginx:logs
+
+# Test HTTPS endpoint
+curl -k https://localhost
+
+# Test health endpoints
+curl http://localhost/health
+```
+
+### 6. Configure DNS
+
+Point your domain to the server:
+```
+yourdomain.com        → <server-ip>
+email.yourdomain.com  → <server-ip>
+```
+
+## Troubleshooting
+
+### Check Container Status
+```bash
+docker compose -f tools/nginx/docker-compose.yaml ps
+docker compose -f tools/nginx/docker-compose.yaml logs proxy-edge
+```
+
+### Validate NGINX Configuration
+```bash
+docker exec nginx-proxy-edge nginx -t
+docker exec nginx-lb-frontend nginx -t
+docker exec nginx-lb-email nginx -t
+```
+
+### Reload Configuration
+```bash
+docker exec nginx-proxy-edge nginx -s reload
+docker exec nginx-lb-frontend nginx -s reload
+docker exec nginx-lb-email nginx -s reload
+```
+
+### Check Certificate Status
+```bash
+nx run nginx:tls:validate-certs
+```

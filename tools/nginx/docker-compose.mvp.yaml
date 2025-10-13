@@ -1,0 +1,289 @@
+# =================================================================================================
+# Docker Compose Configuration - NGINX MVP
+# =================================================================================================
+#
+# Minimal Viable Product configuration for NGINX infrastructure:
+# - 1 Edge Proxy (reverse proxy and TLS termination)
+# - 2 Load Balancers (frontend, email)
+# - 6 Application Instances (3 per service)
+#
+# MVP Architecture:
+#   Internet → Edge Proxy (TLS) → 2 Load Balancers → 6 App Instances (3 each)
+#
+# Usage:
+#   Start: docker compose -f tools/nginx/docker-compose.mvp.yaml up -d
+#   Stop:  docker compose -f tools/nginx/docker-compose.mvp.yaml down
+#   Logs:  docker compose -f tools/nginx/docker-compose.mvp.yaml logs -f
+#
+# =================================================================================================
+
+version: "3.8"
+
+# =================================================================================================
+# Services
+# =================================================================================================
+
+services:
+  # -----------------------------------------------------------------------------------------------
+  # Edge Proxy - Entry point for all external traffic (MVP)
+  # -----------------------------------------------------------------------------------------------
+  proxy-edge:
+    image: my-org/nginx-edge:latest
+    container_name: nginx-proxy-edge
+    build:
+      context: ../..
+      dockerfile: tools/nginx/proxy-edge/Dockerfile
+
+    # Port mapping
+    ports:
+      - "80:80"      # HTTP (redirects to HTTPS)
+      - "443:443"    # HTTPS (TLS termination)
+
+    # Volume mounts
+    volumes:
+      - ./secrets/tls:/etc/nginx/tls:ro
+
+    # Network configuration
+    networks:
+      - nginx-internal
+      - app-network
+
+    # Dependencies - 2 load balancers only (MVP)
+    depends_on:
+      - lb-frontend
+      - lb-email
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Frontend Load Balancer - Distributes traffic to my-programs-app (MVP)
+  # -----------------------------------------------------------------------------------------------
+  lb-frontend:
+    image: my-org/nginx-lb-frontend:latest
+    container_name: nginx-lb-frontend
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-frontend/Dockerfile
+
+    # Internal port only (accessed through edge proxy)
+    expose:
+      - "8080"
+
+    networks:
+      - nginx-internal
+      - app-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Email Load Balancer - Distributes traffic to email microservice (MVP)
+  # -----------------------------------------------------------------------------------------------
+  lb-email:
+    image: my-org/nginx-lb-email:latest
+    container_name: nginx-lb-email
+    build:
+      context: ../..
+      dockerfile: tools/nginx/load-balancers/lb-email/Dockerfile
+
+    expose:
+      - "8080"
+
+    networks:
+      - nginx-internal
+      - app-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Frontend Application - 3 Instances (MVP Requirement)
+  # -----------------------------------------------------------------------------------------------
+  
+  my-programs-app-1:
+    image: my-programs-app:latest
+    container_name: my-programs-app-1
+    build:
+      context: ../..
+      dockerfile: apps/my-programs-app/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=1
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  my-programs-app-2:
+    image: my-programs-app:latest
+    container_name: my-programs-app-2
+    build:
+      context: ../..
+      dockerfile: apps/my-programs-app/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=2
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  my-programs-app-3:
+    image: my-programs-app:latest
+    container_name: my-programs-app-3
+    build:
+      context: ../..
+      dockerfile: apps/my-programs-app/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=3
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Email Microservice - 3 Instances (MVP Requirement)
+  # -----------------------------------------------------------------------------------------------
+  
+  my-nest-js-email-microservice-1:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-1
+    build:
+      context: ../..
+      dockerfile: services/my-nest-js-email-microservice/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=1
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  my-nest-js-email-microservice-2:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-2
+    build:
+      context: ../..
+      dockerfile: services/my-nest-js-email-microservice/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=2
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  my-nest-js-email-microservice-3:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-3
+    build:
+      context: ../..
+      dockerfile: services/my-nest-js-email-microservice/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=3
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+# =================================================================================================
+# Networks
+# =================================================================================================
+
+networks:
+  # Internal network for NGINX communication
+  # Edge proxy talks to load balancers on this network
+  nginx-internal:
+    driver: bridge
+    name: nginx-internal-mvp
+
+  # Application network
+  # Load balancers talk to application services on this network
+  app-network:
+    driver: bridge
+    name: app-network-mvp
+
+# =================================================================================================
+# MVP Service Summary
+# =================================================================================================
+#
+# Total Containers: 9
+# - 1 Edge Proxy (NGINX)
+# - 2 Load Balancers (NGINX)
+# - 3 Frontend App Instances (my-programs-app)
+# - 3 Email Service Instances (my-nest-js-email-microservice)
+#
+# Network Flow:
+# Internet → proxy-edge:443 → lb-frontend:8080 → [app-1, app-2, app-3]:3000
+#                           → lb-email:8080 → [email-1, email-2, email-3]:3000
+#
+# Load Balancing:
+# - Frontend: least_conn across 3 instances
+# - Email: least_conn across 3 instances
+#
+# TLS:
+# - Termination at edge proxy
+# - Certificates in tools/nginx/secrets/tls/
+#
+# =================================================================================================
