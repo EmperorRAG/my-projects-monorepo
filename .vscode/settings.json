@@ -117,6 +117,6 @@
 	"workbench.editor.showTabIndex": true,
 	"workbench.editor.limit.enabled": true,
 	"[css]": {
-		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	}
 }
