@@ -80,6 +80,27 @@
         "command": "bash scripts/health-check.sh",
         "cwd": "tools/postgresql"
       }
+    },
+    "validate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash scripts/validate-setup.sh",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash scripts/test-workflow.sh",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "smoke-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash scripts/smoke-test.sh",
+        "cwd": "tools/postgresql"
+      }
     }
   },
   "tags": ["type:tool", "scope:database", "stack:postgresql"]
