@@ -43,46 +43,40 @@ graph TB
 
 **Location**: `apps/`
 
-- **Next.js Applications**: Server-side rendered React applications
-- **Client Apps**: Browser-based user interfaces
-- **Static Assets**: Public files and resources
+- **Next.js Applications**: Server-side rendered React applications (my-programs-app)
+- **3 Instances**: High availability with load balancing
 
 **Key Features**:
 - Server-side rendering (SSR)
 - Static generation (SSG)
-- API routes
 - TypeScript support
 
-### 2. Gateway Layer
+### 2. Gateway Layer (MVP)
 
 **Location**: `tools/nginx/`
 
-- **Edge Proxy**: Main entry point for all traffic
-- **Load Balancers**: Traffic distribution
-  - Frontend LB
-  - API LB
-  - Email LB
+- **Edge Proxy**: Main entry point for all traffic with TLS termination
+- **2 Load Balancers**: Traffic distribution
+  - Frontend LB (my-programs-app)
+  - Email LB (my-nest-js-email-microservice)
 
 **Key Features**:
-- TLS termination
+- TLS/HTTPS termination
 - Request routing
-- Load balancing
+- Load balancing (3 instances per service)
 - Health checks
-- Rate limiting
 
 ### 3. Service Layer
 
 **Location**: `services/`
 
-- **Microservices**: Independent, deployable services
-- **Email Service**: NestJS-based email microservice
-- **API Services**: RESTful and GraphQL APIs
+- **Email Service**: NestJS-based email microservice (my-nest-js-email-microservice)
+- **3 Instances**: High availability with load balancing
 
 **Key Features**:
 - Independent deployment
 - Service isolation
 - API contracts
-- Health monitoring
 
 ### 4. Shared Layer
 
