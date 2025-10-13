@@ -1,14 +1,15 @@
 # =================================================================================================
-# Docker Compose Configuration - NGINX Infrastructure
+# Docker Compose Configuration - NGINX Infrastructure (MVP)
 # =================================================================================================
 #
-# This Docker Compose file defines the complete NGINX infrastructure for the Nx monorepo.
+# This Docker Compose file defines the MVP NGINX infrastructure for the Nx monorepo.
 # It includes:
 # - 1 Edge Proxy (reverse proxy and TLS termination)
-# - 3 Load Balancers (frontend, API, email)
+# - 2 Load Balancers (frontend, email)
+# - 6 Application Instances (3 per service)
 #
-# Architecture:
-#   Internet → Edge Proxy → Load Balancers → Application Services
+# Architecture (MVP):
+#   Internet → Edge Proxy → 2 Load Balancers → 6 Application Instances
 #
 # Usage:
 #   Development: docker compose -f tools/nginx/docker-compose.yaml up
@@ -58,10 +59,9 @@ services:
     extra_hosts:
       - "my-programs-app:host-gateway"
 
-    # Dependencies
+    # Dependencies - MVP: 2 load balancers only
     depends_on:
       - lb-frontend
-      - lb-api
       - lb-email
 
     # Health check
@@ -132,51 +132,7 @@ services:
     restart: unless-stopped
 
   # -----------------------------------------------------------------------------------------------
-  # API Load Balancer - Distributes traffic to API services
-  # -----------------------------------------------------------------------------------------------
-  lb-api:
-    image: my-org/nginx-lb-api:latest
-    container_name: nginx-lb-api
-    build:
-      context: ../..
-      dockerfile: tools/nginx/load-balancers/lb-api/Dockerfile
-
-    environment:
-      - NGINX_ENV=development
-
-    expose:
-      - "8080"
-
-    # Optional: expose for direct testing
-    # ports:
-    #   - "8081:8080"
-
-    networks:
-      - nginx-internal
-      - app-network
-    extra_hosts:
-      - "my-nest-js-email-microservice:host-gateway"
-
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
-
-    deploy:
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 256M
-        reservations:
-          cpus: "0.25"
-          memory: 128M
-
-    restart: unless-stopped
-
-  # -----------------------------------------------------------------------------------------------
-  # Email Load Balancer - Distributes traffic to email microservice
+  # Email Load Balancer - Distributes traffic to email microservice (MVP)
   # -----------------------------------------------------------------------------------------------
   lb-email:
     image: my-org/nginx-lb-email:latest
@@ -220,38 +176,138 @@ services:
     restart: unless-stopped
 
   # -----------------------------------------------------------------------------------------------
-  # Application Services (commented out - uncomment to run with NGINX)
+  # Frontend Application - 3 Instances (MVP Requirement)
   # -----------------------------------------------------------------------------------------------
+  
+  my-programs-app-1:
+    image: my-programs-app:latest
+    container_name: my-programs-app-1
+    build:
+      context: ../..
+      dockerfile: apps/my-programs-app/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=1
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
 
-  # Frontend Application - Next.js
-  # my-programs-app:
-  #   image: my-programs-app:latest
-  #   container_name: my-programs-app
-  #   build:
-  #     context: ../..
-  #     dockerfile: apps/my-programs-app/Dockerfile
-  #   environment:
-  #     - NODE_ENV=development
-  #   expose:
-  #     - "3000"
-  #   networks:
-  #     - app-network
-  #   restart: unless-stopped
+  my-programs-app-2:
+    image: my-programs-app:latest
+    container_name: my-programs-app-2
+    build:
+      context: ../..
+      dockerfile: apps/my-programs-app/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=2
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
 
-  # Email Microservice - NestJS
-  # my-nest-js-email-microservice:
-  #   image: my-nest-js-email-microservice:latest
-  #   container_name: my-nest-js-email-microservice
-  #   build:
-  #     context: ../..
-  #     dockerfile: services/my-nest-js-email-microservice/Dockerfile
-  #   environment:
-  #     - NODE_ENV=development
-  #   expose:
-  #     - "3000"
-  #   networks:
-  #     - app-network
-  #   restart: unless-stopped
+  my-programs-app-3:
+    image: my-programs-app:latest
+    container_name: my-programs-app-3
+    build:
+      context: ../..
+      dockerfile: apps/my-programs-app/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=3
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # -----------------------------------------------------------------------------------------------
+  # Email Microservice - 3 Instances (MVP Requirement)
+  # -----------------------------------------------------------------------------------------------
+  
+  my-nest-js-email-microservice-1:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-1
+    build:
+      context: ../..
+      dockerfile: services/my-nest-js-email-microservice/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=1
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  my-nest-js-email-microservice-2:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-2
+    build:
+      context: ../..
+      dockerfile: services/my-nest-js-email-microservice/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=2
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  my-nest-js-email-microservice-3:
+    image: my-nest-js-email-microservice:latest
+    container_name: my-nest-js-email-microservice-3
+    build:
+      context: ../..
+      dockerfile: services/my-nest-js-email-microservice/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - INSTANCE_ID=3
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
 
 # =================================================================================================
 # Networks
