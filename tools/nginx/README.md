@@ -1,5 +1,49 @@
 # NGINX Infrastructure for Nx Monorepo
 
+> **🎯 Looking for MVP Setup?** See the [MVP Documentation](#mvp-minimal-viable-product) below for a streamlined 10-minute setup with only essential features.
+
+---
+
+## MVP (Minimal Viable Product)
+
+**Quick Start for MVP (10 minutes):**
+
+The MVP provides:
+- ✅ 1 NGINX reverse proxy (TLS termination)
+- ✅ 2 NGINX load balancers (frontend + email)
+- ✅ 3 instances per service (6 total)
+- ✅ TLS/HTTPS with Certbot
+- ✅ Nx integration
+- ✅ Docker Compose deployment
+
+**MVP Documentation:**
+1. **[📖 MVP Index](../../docs/tools/nginx/MVP-INDEX.md)** - Start here for MVP implementation
+2. **[⚡ MVP Quick Start](../../docs/tools/nginx/MVP-QUICKSTART.md)** - 10-minute setup guide
+3. **[📚 MVP README](../../docs/tools/nginx/MVP-README.md)** - Complete MVP reference
+4. **[📋 Stripping Summary](../../docs/tools/nginx/MVP-STRIPPING-SUMMARY.md)** - What was stripped for MVP
+
+**MVP Commands:**
+```bash
+# Quick start
+nx run certbot:install                  # Install Certbot
+nx run nginx:tls:generate-dev-certs     # Generate dev certificates
+nx run nginx:up                         # Start all services (MVP)
+
+# Use MVP Docker Compose
+docker compose -f tools/nginx/docker-compose.mvp.yaml up -d
+```
+
+---
+
+## Full/Advanced Documentation
+
+The sections below contain the comprehensive NGINX infrastructure documentation with all features (including non-MVP advanced features like the 3rd load balancer, Kubernetes deployment, advanced monitoring, etc.).
+
+**For MVP, use the links above instead.**
+
+---
+
+
 This directory contains the complete NGINX infrastructure setup for the Nx monorepo, implementing a scalable reverse proxy and load balancing architecture.
 
 ## 📋 Table of Contents
