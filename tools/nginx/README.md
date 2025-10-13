@@ -63,13 +63,22 @@ This directory contains the complete NGINX infrastructure setup for the Nx monor
 
 ## Overview
 
+**Note:** The overview below describes the full/comprehensive architecture with 3 load balancers. For the MVP (2 load balancers), see the [MVP Documentation](#mvp-minimal-viable-product) above.
+
 The NGINX infrastructure consists of:
 
+### Full Configuration (Non-MVP)
 - **1 Edge Proxy**: Entry point for all external traffic, handling TLS termination and routing
 - **3 Load Balancers**: Distribute traffic to application services
   - `lb-frontend`: Next.js application traffic
   - `lb-api`: API service traffic
   - `lb-email`: Email microservice traffic
+
+### MVP Configuration (Recommended)
+- **1 Edge Proxy**: Entry point for all external traffic, handling TLS termination and routing
+- **2 Load Balancers**: Distribute traffic to application services
+  - `lb-frontend`: Next.js application traffic (3 instances)
+  - `lb-email`: Email microservice traffic (3 instances)
 
 ### Key Features
 
@@ -80,6 +89,8 @@ The NGINX infrastructure consists of:
 - 🛠️ **Developer Experience**: Easy local development with hot reload support
 
 ## Architecture
+
+**Full/Comprehensive Architecture (with 3 load balancers - Non-MVP):**
 
 ```
                     ┌──────────────┐
