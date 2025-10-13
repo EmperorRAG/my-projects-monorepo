@@ -1,6 +1,8 @@
 # PostgreSQL Quick Reference
 
-## Status: Phase 1 Complete ✅
+## Status: Phase 2 Complete ✅
+
+Prisma ORM configured and integrated with PostgreSQL database.
 
 ## Quick Commands
 
@@ -44,10 +46,22 @@ postgresql://better_auth_user:better_auth_password@localhost:5432/better_auth_db
 
 ### Prisma Commands (Phase 2+)
 
+From `tools/postgresql/better-auth-db/` directory:
+
+```bash
+pnpm run prisma:generate          # Generate Prisma Client
+pnpm run prisma:migrate           # Create and apply migration
+pnpm run prisma:studio            # Open Prisma Studio (http://localhost:5555)
+pnpm run prisma:validate          # Validate schema
+pnpm run prisma:push              # Push schema without migration
+```
+
+Or via Nx from monorepo root:
+
 ```bash
 npx nx prisma:generate postgresql   # Generate Prisma Client
 npx nx prisma:migrate postgresql    # Run migrations
-npx nx prisma:studio postgresql     # Open Prisma Studio (http://localhost:5555)
+npx nx prisma:studio postgresql     # Open Prisma Studio
 ```
 
 ### Better Auth Commands (Phase 3+)
@@ -74,10 +88,17 @@ tools/postgresql/
 ├── project.json                  # Nx configuration
 ├── README.md                     # Full documentation
 ├── PHASE1-COMPLETE.md            # Phase 1 summary
+├── PHASE2-COMPLETE.md            # Phase 2 summary
 ├── init-scripts/
 │   └── 01-create-databases.sql   # DB initialization script
-└── better-auth-db/               # Ready for Phase 2
-    └── prisma/                   # Prisma setup (Phase 2)
+└── better-auth-db/               # Prisma + Better Auth setup
+    ├── package.json              # Prisma npm scripts
+    ├── README.md                 # Better Auth DB docs
+    ├── .env                      # Database connection (DO NOT COMMIT)
+    └── prisma/
+        ├── schema.prisma         # Prisma schema
+        ├── generated/            # Generated Prisma Client
+        └── migrations/           # Prisma migrations
 ```
 
 ## Current Status
@@ -90,13 +111,25 @@ tools/postgresql/
 - Extensions: uuid-ossp, pgcrypto installed
 - Nx integration: 10 targets available
 
-🔄 **Next**: Phase 2 - Prisma Setup
+✅ **Completed**: Phase 2 - Prisma Setup
 
-- Create better-auth-db/package.json
-- Install Prisma dependencies
-- Create schema.prisma
-- Generate Prisma Client
-- Create initial migration
+- Prisma dependencies installed at root
+- Prisma schema created with Better Auth models
+- Prisma Client generated
+- Initial migration applied
+- Database tables: user, account, session, verification
+- Prisma Studio operational
+- User: better_auth_user configured
+- Extensions: uuid-ossp, pgcrypto installed
+- Nx integration: 10 targets available
+
+🔄 **Next**: Phase 3 - Better Auth Integration
+
+- Install Better Auth CLI
+- Create auth service (if not exists)
+- Configure Better Auth with Prisma adapter
+- Generate Better Auth schema
+- Apply Better Auth migrations
 
 ⚠️ **Known Issues**: pgAdmin restarting (non-blocking)
 

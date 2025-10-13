@@ -1,8 +1,8 @@
 -- Create Better Auth Database
 CREATE DATABASE better_auth_db;
 
--- Create dedicated user for Better Auth
-CREATE USER better_auth_user WITH PASSWORD 'better_auth_password';
+-- Create dedicated user for Better Auth with CREATEDB permission (needed for Prisma shadow database)
+CREATE USER better_auth_user WITH PASSWORD 'better_auth_password' CREATEDB;
 
 -- Grant privileges
 GRANT ALL PRIVILEGES ON DATABASE better_auth_db TO better_auth_user;
