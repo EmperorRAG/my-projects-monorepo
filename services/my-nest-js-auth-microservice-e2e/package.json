@@ -1,0 +1,27 @@
+{
+  "name": "@my-projects-monorepo/my-nest-js-auth-microservice-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "my-nest-js-auth-microservice-e2e",
+    "implicitDependencies": [
+      "my-nest-js-auth-microservice"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "services/my-nest-js-auth-microservice-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "my-nest-js-auth-microservice:build",
+          "my-nest-js-auth-microservice:serve"
+        ]
+      }
+    }
+  }
+}
