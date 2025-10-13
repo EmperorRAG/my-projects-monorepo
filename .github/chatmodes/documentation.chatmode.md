@@ -6,7 +6,6 @@ tools:
     - 'edit/editFiles'
     - 'search'
     - 'runCommands'
-    - 'runTasks'
     - 'Codacy MCP Server/*'
     - 'Nx Mcp Server/*'
     - 'context7/*'

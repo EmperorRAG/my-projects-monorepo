@@ -115,5 +115,8 @@
 	"workbench.editor.pinnedTabsOnSeparateRow": true,
 	"workbench.editor.wrapTabs": true,
 	"workbench.editor.showTabIndex": true,
-	"workbench.editor.limit.enabled": true
+	"workbench.editor.limit.enabled": true,
+	"[css]": {
+		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+	}
 }

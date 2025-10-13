@@ -13,7 +13,8 @@
 			"!{projectRoot}/jest.config.[jt]s",
 			"!{projectRoot}/src/test-setup.[jt]s",
 			"!{projectRoot}/test-setup.[jt]s",
-			"!{projectRoot}/.devcontainer"
+			"!{projectRoot}/.devcontainer",
+			"!{projectRoot}/.stylelintrc(.(json|yml|yaml|js))?"
 		],
 		"sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
 	},
@@ -88,11 +89,25 @@
 				"buildTarget": "docker:build",
 				"runTarget": "docker:run"
 			}
+		},
+		{
+			"plugin": "nx-stylelint/plugin",
+			"options": {
+				"targetName": "stylelint",
+				"extensions": ["css"]
+			}
 		}
 	],
 	"targetDefaults": {
 		"test": {
 			"dependsOn": ["^build"]
+		},
+		"stylelint": {
+			"options": {
+				"args": ["--allow-empty-input"]
+			},
+			"inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
+			"cache": true
 		}
 	},
 	"generators": {
