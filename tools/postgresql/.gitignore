@@ -1,0 +1,24 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Database data (handled by Docker volumes)
+data/
+pgdata/
+
+# Backups (too large for git)
+backups/*.sql
+backups/*.dump
+
+# Prisma
+better-auth-db/prisma/generated/
+better-auth-db/node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db

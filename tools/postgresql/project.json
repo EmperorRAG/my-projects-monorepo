@@ -1,0 +1,79 @@
+{
+  "name": "postgresql",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "tools/postgresql",
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "stop": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose down",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "restart": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose restart",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose logs -f postgres",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "prisma:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run prisma:generate",
+        "cwd": "tools/postgresql/better-auth-db"
+      }
+    },
+    "prisma:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run prisma:migrate",
+        "cwd": "tools/postgresql/better-auth-db"
+      }
+    },
+    "prisma:studio": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run prisma:studio",
+        "cwd": "tools/postgresql/better-auth-db"
+      }
+    },
+    "better-auth:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run better-auth:generate",
+        "cwd": "tools/postgresql/better-auth-db"
+      }
+    },
+    "backup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash scripts/backup-db.sh",
+        "cwd": "tools/postgresql"
+      }
+    },
+    "restore": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash scripts/restore-db.sh",
+        "cwd": "tools/postgresql"
+      }
+    }
+  },
+  "tags": ["type:tool", "scope:database", "stack:postgresql"]
+}

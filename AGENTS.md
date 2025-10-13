@@ -104,7 +104,8 @@ For epics and features specific to apps, services, libraries, or tools:
 Where `{project-type}` is one of: `apps`, `services`, `libs`, `tools`
 
 **Example for a service-specific epic:**
-```
+
+```plaintext
 /docs/services/my-nest-js-email-microservice/epics/email-notifications/epic.md
 /docs/services/my-nest-js-email-microservice/epics/email-notifications/arch.md
 /docs/services/my-nest-js-email-microservice/features/send-email/prd.md
@@ -148,6 +149,7 @@ The documentation creation process follows a strict dependency chain. Each docum
 ### Document Types and Their Purposes
 
 #### Epic PRD (Product Requirements Document)
+
 - **Purpose**: Define the business case, user needs, and high-level requirements for a major initiative
 - **Use Chatmode**: `documentation` (`.github/chatmodes/documentation.chatmode.md`)
 - **Use Prompt**: `.github/prompts/breakdown-epic-pm.prompt.md`
@@ -155,6 +157,7 @@ The documentation creation process follows a strict dependency chain. Each docum
 - **Key Sections**: Epic Name, Goal (Problem/Solution/Impact), User Personas, User Journeys, Business Requirements, Success Metrics, Out of Scope, Business Value
 
 #### Epic Architecture Specification
+
 - **Purpose**: Define the technical approach and system architecture for an epic
 - **Use Chatmode**: `documentation` (`.github/chatmodes/documentation.chatmode.md`)
 - **Use Prompt**: `.github/prompts/breakdown-epic-arch-restricted.prompt.md`
@@ -162,6 +165,7 @@ The documentation creation process follows a strict dependency chain. Each docum
 - **Key Sections**: Architecture Overview, System Diagram (Mermaid with 5 layers), Features & Enablers, Technology Stack, Technical Value, T-Shirt Size
 
 #### Feature PRD
+
 - **Purpose**: Detailed product requirements for a specific feature within an epic
 - **Use Chatmode**: `documentation` (`.github/chatmodes/documentation.chatmode.md`)
 - **Use Prompt**: `.github/prompts/breakdown-feature-prd.prompt.md`
@@ -169,6 +173,7 @@ The documentation creation process follows a strict dependency chain. Each docum
 - **Key Sections**: Feature Name, Epic Links, Goal (Problem/Solution/Impact), User Personas, User Stories, Requirements (Functional/Non-Functional), Acceptance Criteria, Out of Scope
 
 #### Feature Implementation Plan
+
 - **Purpose**: Technical implementation details for a feature
 - **Use Chatmode**: `documentation` (`.github/chatmodes/documentation.chatmode.md`)
 - **Use Prompt**: `.github/prompts/breakdown-feature-implementation.prompt.md`
@@ -176,6 +181,7 @@ The documentation creation process follows a strict dependency chain. Each docum
 - **Key Sections**: Goal, Requirements, Technical Considerations (Architecture, Database Schema, API Design, Frontend Architecture, Security & Performance)
 
 #### Architectural Decision Record (ADR)
+
 - **Purpose**: Document significant architectural decisions with context and rationale
 - **Use Chatmode**: `documentation` (`.github/chatmodes/documentation.chatmode.md`)
 - **Use Prompt**: `.github/prompts/create-architectural-decision-record.prompt.md`
@@ -200,6 +206,7 @@ If dependencies are missing, inform the user and offer to create them first.
 #### 2. Use the Documentation Chatmode
 
 All documentation creation MUST use the `documentation` chatmode defined in `.github/chatmodes/documentation.chatmode.md`. This chatmode:
+
 - Manages the documentation workflow
 - Ensures dependencies are met
 - Guides users through the creation process
@@ -208,6 +215,7 @@ All documentation creation MUST use the `documentation` chatmode defined in `.gi
 #### 3. Determine Correct Directory Path
 
 Always ask the user to clarify the scope of the documentation:
+
 - Is this monorepo-level or project-specific?
 - If project-specific, what is the project type (apps/services/libs/tools) and name?
 - Construct the full path following the directory structure rules
@@ -215,6 +223,7 @@ Always ask the user to clarify the scope of the documentation:
 #### 4. Follow the Dependency Chain
 
 When a user requests documentation that requires prerequisites:
+
 1. Identify all missing prerequisite documents
 2. Notify the user clearly about what's missing
 3. Offer to create the missing documents first
@@ -225,6 +234,7 @@ When a user requests documentation that requires prerequisites:
 #### 5. Use Appropriate Prompts and Instructions
 
 Each document type has:
+
 - A specific prompt template in `.github/prompts/`
 - Specific instruction guidelines in `.github/instructions/docs/`
 
@@ -242,6 +252,7 @@ After creating any document, determine what comes next in the documentation work
 #### 7. Validate Documentation Quality
 
 Before finalizing any document, ensure:
+
 - All required sections from the template are present and complete
 - File is saved in the correct directory with proper naming
 - Dependencies are properly documented (links to parent documents)
@@ -252,6 +263,7 @@ Before finalizing any document, ensure:
 #### 8. Never Place Documentation in Wrong Directories
 
 **CRITICAL**: Documentation MUST NOT be placed in:
+
 - `/docs/ways-of-work/plan/` (old structure, no longer used)
 - Random locations without following the structure
 - Project root directories (unless it's README.md or AGENTS.md)
@@ -263,6 +275,7 @@ Always use the correct paths as defined in the Documentation Directory Structure
 **Scenario**: User wants to create a feature implementation plan for "email templates" in the email microservice
 
 **AI Actions**:
+
 1. Recognize this requires dependencies: Feature PRD → Epic Architecture → Epic PRD
 2. Check for Feature PRD at `/docs/services/my-nest-js-email-microservice/features/email-templates/prd.md` → Missing
 3. Check for Epic Architecture → Need to identify parent epic first
@@ -287,6 +300,7 @@ Follow these naming rules strictly:
 ### Documentation Quality Standards
 
 All documentation must:
+
 - Be written in clear, professional Markdown
 - Include all required sections from the appropriate template
 - Contain properly formatted Mermaid diagrams where specified
@@ -294,11 +308,10 @@ All documentation must:
 - Follow the instruction module guidelines in `.github/instructions/docs/`
 - Be reviewed for completeness before considering it final
 
-
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
-# General Guidelines for working with Nx
+## General Guidelines for working with Nx
 
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
 - You have access to the Nx MCP server and its tools, use them to help the user
@@ -307,13 +320,13 @@ All documentation must:
 - For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
 - If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
 
-# CI Error Guidelines
+## CI Error Guidelines
 
 If the user wants help with fixing an error in their CI pipeline, use the following flow:
+
 - Retrieve the list of current CI Pipeline Executions (CIPEs) using the `nx_cloud_cipe_details` tool
 - If there are any errors, use the `nx_cloud_fix_cipe_failure` tool to retrieve the logs for a specific task
 - Use the task logs to see what's wrong and help the user fix their problem. Use the appropriate tools if necessary
 - Make sure that the problem is fixed by running the task that you passed into the `nx_cloud_fix_cipe_failure` tool
-
 
 <!-- nx configuration end-->
