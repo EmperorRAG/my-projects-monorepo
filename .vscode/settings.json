@@ -97,7 +97,7 @@
   "terminal.integrated.fontFamily": "Fira Code, monospace",
   "terminal.integrated.fontLigatures.enabled": true,
   "terminal.integrated.shellIntegration.enabled": true,
-  "cSpell.words": ["Chatmode", "chatmodes", "Codacy", "commitlint", "dtos", "emperorrag", "mermaidchart", "runbook"],
+  "cSpell.words": ["Chatmode", "chatmodes", "Codacy", "commitlint", "dotenv", "dtos", "emperorrag", "llms", "mermaidchart", "runbook", "runbooks"],
   "inlineChat.enableV2": true,
   "chat.useCloudButtonV2": true,
   "github.copilot.chat.scopeSelection": true,
@@ -126,5 +126,25 @@
   "editor.quickSuggestions": {
     "comments": "inline",
     "strings": "inline"
+  },
+  "todo-tree.tree.showBadges": true,
+  "todo-tree.tree.disableCompactFolders": true,
+  "todo-tree.tree.showCountsInTree": true,
+  "files.exclude": {
+    ".copilot-tracking": true,
+    ".nx/cache": true,
+    ".nx/workspace-data": true,
+    "**/.pnpm-store": true,
+    "**/dist": true,
+    "tmp": true
+  },
+  "todo-tree.filtering.useBuiltInExcludes": "file and search excludes",
+  "files.readonlyFromPermissions": true,
+  "files.readonlyInclude": {
+    "=": true
+  },
+  "tsimporter.filesToExclude": [],
+  "files.watcherExclude": {
+    " ": true
   }
 }
