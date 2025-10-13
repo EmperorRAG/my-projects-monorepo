@@ -1,9 +1,9 @@
 {
 	"singleQuote": true,
 	"trailingComma": "es5",
-	"tabWidth": 4,
+	"tabWidth": 2,
 	"semi": true,
-	"useTabs": true,
+	"useTabs": false,
 	"endOfLine": "lf",
 	"printWidth": 160,
 	"insertFinalNewline": true,
@@ -15,9 +15,9 @@
 				"printWidth": 0,
 				"trimTrailingWhitespace": true,
 				"insertFinalNewline": true,
-				"tabWidth": 4,
+				"tabWidth": 2,
 				"semi": true,
-				"useTabs": true,
+				"useTabs": false,
 				"endOfLine": "lf",
 				"singleQuote": true
 			}

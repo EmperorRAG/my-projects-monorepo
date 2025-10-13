@@ -1,0 +1,12 @@
+openapi: "3.0.3"
+info:
+    title: my-next-js-email-microservice
+    version: "1.0"
+servers:
+    - url: http://localhost:3000/api/v1
+paths:
+    /test:
+        get:
+            responses:
+                "200":
+                    description: OK
