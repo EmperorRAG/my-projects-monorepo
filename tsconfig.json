@@ -23,6 +23,9 @@
     },
     {
       "path": "./services/my-nest-js-auth-microservice"
+    },
+    {
+      "path": "./libs/better-auth-utilities"
     }
   ]
 }

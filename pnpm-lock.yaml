@@ -309,6 +309,8 @@ importers:
 
   apps/my-programs-app-e2e: {}
 
+  libs/better-auth-utilities: {}
+
   libs/utilities:
     dependencies:
       '@jest/globals':
@@ -317,6 +319,10 @@ importers:
       effect:
         specifier: ^3.5.4
         version: 3.18.4
+
+  services/my-nest-js-auth-microservice: {}
+
+  services/my-nest-js-auth-microservice-e2e: {}
 
   services/my-nest-js-email-microservice: {}
 
