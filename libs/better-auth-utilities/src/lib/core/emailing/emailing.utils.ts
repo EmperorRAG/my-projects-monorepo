@@ -4,7 +4,7 @@
  * These functions are designed using the Effect-TS functional programming paradigm.
  */
 
-import { Effect, pipe } from 'effect';
+import { Context, Effect, pipe } from 'effect';
 
 /**
  * Error type for email service failures.
@@ -38,9 +38,12 @@ export interface EmailService {
 }
 
 /**
- * Tag for the EmailService.
+ * Tag for the EmailService using Context.Tag pattern.
  */
-export const EmailService = Effect.Tag<EmailService>('EmailService');
+export class EmailServiceTag extends Context.Tag('EmailService')<
+  EmailServiceTag,
+  EmailService
+>() {}
 
 /**
  * User type for email operations.
@@ -73,24 +76,22 @@ export interface VerificationEmailData {
 export const validateUserEmail = (
   user: User
 ): Effect.Effect<User, InvalidEmailDataError, never> =>
-  Effect.sync(() => {
-    if (!user.email || typeof user.email !== 'string') {
-      throw new InvalidEmailDataError('User email is required and must be a string');
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(user.email)) {
-      throw new InvalidEmailDataError('Invalid email format');
-    }
-    return user;
-  }).pipe(
-    Effect.catchAll((error) =>
-      Effect.fail(
-        error instanceof InvalidEmailDataError
-          ? error
-          : new InvalidEmailDataError('Unknown validation error')
-      )
-    )
-  );
+  Effect.try({
+    try: () => {
+      if (!user.email || typeof user.email !== 'string') {
+        throw new InvalidEmailDataError('User email is required and must be a string');
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(user.email)) {
+        throw new InvalidEmailDataError('Invalid email format');
+      }
+      return user;
+    },
+    catch: (error) =>
+      error instanceof InvalidEmailDataError
+        ? error
+        : new InvalidEmailDataError('Unknown validation error'),
+  });
 
 /**
  * Constructs the verification URL from the base URL and token.
@@ -221,24 +222,22 @@ If you didn't create an account, you can safely ignore this email.`;
  */
 export const sendVerificationEmail = (
   data: VerificationEmailData
-): Effect.Effect<void, EmailServiceError | InvalidEmailDataError, EmailService> =>
+): Effect.Effect<void, EmailServiceError | InvalidEmailDataError, EmailServiceTag> =>
   pipe(
     validateUserEmail(data.user),
     Effect.flatMap((validatedUser) =>
-      pipe(
-        EmailService,
-        Effect.flatMap((emailService) => {
-          const verificationUrl = buildVerificationUrl(data.url, data.token);
-          const htmlContent = buildVerificationEmailHtml(validatedUser.name, verificationUrl);
-          const textContent = buildVerificationEmailText(validatedUser.name, verificationUrl);
+      Effect.gen(function* () {
+        const emailService = yield* EmailServiceTag;
+        const verificationUrl = buildVerificationUrl(data.url, data.token);
+        const htmlContent = buildVerificationEmailHtml(validatedUser.name, verificationUrl);
+        const textContent = buildVerificationEmailText(validatedUser.name, verificationUrl);
 
-          return emailService.sendEmail({
-            to: validatedUser.email,
-            subject: 'Verify Your Email Address',
-            html: htmlContent,
-            text: textContent,
-          });
-        })
-      )
+        return yield* emailService.sendEmail({
+          to: validatedUser.email,
+          subject: 'Verify Your Email Address',
+          html: htmlContent,
+          text: textContent,
+        });
+      })
     )
   );
