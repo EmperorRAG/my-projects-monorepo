@@ -170,5 +170,8 @@
   "tsimporter.filesToExclude": [],
   "files.watcherExclude": {
     " ": true
+  },
+  "chat.promptFilesLocations": {
+    ".github/prompts/personal": true
   }
 }
