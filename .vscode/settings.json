@@ -173,5 +173,8 @@
   },
   "chat.promptFilesLocations": {
     ".github/prompts/personal": true
+  },
+  "chat.instructionsFilesLocations": {
+    ".github/instructions/continuous-improvement": true
   }
 }
