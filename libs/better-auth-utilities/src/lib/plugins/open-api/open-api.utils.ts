@@ -4,25 +4,201 @@
  * These functions are designed using the Effect-TS functional programming paradigm.
  */
 
-// AI-GENERATED FILE - DO NOT EDIT
+import { Effect } from 'effect';
 
-// @ai-prompt
-// Implement a utility function `getOpenApiSpecification` using Effect-TS.
-// 1.  The function should not accept any arguments.
-// 2.  It should make a request to the endpoint exposed by the `better-auth` OpenAPI plugin (e.g., `/api/auth/openapi.json`).
-// 3.  This is an effectful operation (network request).
-// 4.  The `Effect` should succeed with the OpenAPI specification object.
-// 5.  It should fail with a `NetworkError` or `ApiError`.
-// 6.  Follow the JSDoc template for effectful functions.
+/**
+ * Custom error class for OpenAPI-related failures.
+ *
+ * @class OpenApiError
+ * @extends {Error}
+ */
+export class OpenApiError extends Error {
+  readonly _tag = 'OpenApiError';
+  override readonly cause?: unknown;
+
+  constructor(message: string, cause?: unknown) {
+    super(message);
+    this.name = 'OpenApiError';
+    this.cause = cause;
+  }
+}
+
+/**
+ * Type representing an OpenAPI specification object.
+ * This is a minimal type definition to avoid unnecessary dependencies.
+ */
+export interface OpenApiSpec {
+  readonly openapi: string;
+  readonly info: {
+    readonly title: string;
+    readonly version: string;
+    readonly description?: string;
+  };
+  readonly paths: Record<string, unknown>;
+  readonly components?: {
+    readonly schemas?: Record<string, unknown>;
+    readonly securitySchemes?: Record<string, unknown>;
+  };
+  readonly servers?: ReadonlyArray<{
+    readonly url: string;
+    readonly description?: string;
+  }>;
+}
+
+/**
+ * Configuration for fetching the OpenAPI specification.
+ */
+export interface OpenApiConfig {
+  /**
+   * Base URL of the better-auth server.
+   * Defaults to '/api/auth' if not provided.
+   */
+  readonly baseUrl?: string;
+
+  /**
+   * Path to the OpenAPI schema generation endpoint.
+   * Defaults to '/open-api/generate-schema' if not provided.
+   */
+  readonly schemaPath?: string;
+}
+
+/**
+ * Builds the full URL for the OpenAPI schema endpoint.
+ *
+ * @pure
+ * @description Constructs the complete URL by combining base URL and schema path.
+ *
+ * @fp-pattern Pure function
+ *
+ * @param config - Configuration with optional baseUrl and schemaPath
+ * @returns {string} The complete URL for the OpenAPI schema endpoint
+ *
+ * @example
+ * const url = buildOpenApiUrl({});
+ * // => '/api/auth/open-api/generate-schema'
+ *
+ * const customUrl = buildOpenApiUrl({ baseUrl: 'https://example.com', schemaPath: '/openapi' });
+ * // => 'https://example.com/openapi'
+ */
+export const buildOpenApiUrl = (config: OpenApiConfig = {}): string => {
+  const baseUrl = config.baseUrl ?? '/api/auth';
+  const schemaPath = config.schemaPath ?? '/open-api/generate-schema';
+
+  // Ensure proper path concatenation
+  const normalizedBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const normalizedPath = schemaPath.startsWith('/') ? schemaPath : `/${schemaPath}`;
+
+  return `${normalizedBase}${normalizedPath}`;
+};
+
+/**
+ * Validates that the response is a valid OpenAPI specification.
+ *
+ * @description Checks if the response object has the required OpenAPI fields.
+ *
+ * @param data - The data to validate
+ * @returns {Effect.Effect<OpenApiSpec, OpenApiError>} An Effect that succeeds with the validated spec or fails with OpenApiError
+ *
+ * @example
+ * const result = validateOpenApiSpec({ openapi: '3.0.0', info: { title: 'API', version: '1.0.0' }, paths: {} });
+ * // => Effect.succeed({ openapi: '3.0.0', info: { title: 'API', version: '1.0.0' }, paths: {} })
+ */
+export const validateOpenApiSpec = (data: unknown): Effect.Effect<OpenApiSpec, OpenApiError> =>
+  Effect.try({
+    try: () => {
+      if (typeof data !== 'object' || data === null) {
+        throw new OpenApiError('Response is not an object');
+      }
+
+      const spec = data as Record<string, unknown>;
+
+      if (typeof spec.openapi !== 'string') {
+        throw new OpenApiError('Missing or invalid "openapi" field');
+      }
+
+      if (typeof spec.info !== 'object' || spec.info === null) {
+        throw new OpenApiError('Missing or invalid "info" field');
+      }
+
+      const info = spec.info as Record<string, unknown>;
+      if (typeof info.title !== 'string' || typeof info.version !== 'string') {
+        throw new OpenApiError('Missing or invalid "info.title" or "info.version"');
+      }
+
+      if (typeof spec.paths !== 'object' || spec.paths === null) {
+        throw new OpenApiError('Missing or invalid "paths" field');
+      }
+
+      // Return as unknown first to satisfy TypeScript
+      return data as unknown as OpenApiSpec;
+    },
+    catch: (error) => {
+      if (error instanceof OpenApiError) {
+        return error;
+      }
+      return new OpenApiError('Failed to validate OpenAPI specification', error);
+    },
+  });
+
 /**
  * Fetches the OpenAPI specification from the `better-auth` server.
  *
  * @description This function performs a network request to retrieve the OpenAPI JSON specification
- * generated by the `better-auth` OpenAPI plugin. The operation is wrapped in an `Effect`.
+ * generated by the `better-auth` OpenAPI plugin. The operation is wrapped in an `Effect` and uses
+ * the native fetch API. This avoids the dependency on @effect/platform.
  *
- * @returns {Effect.Effect<OpenApiSpec, NetworkError | ApiError, HttpClient>} An `Effect` that resolves with the
- * OpenAPI specification object or fails with a network or API error. Requires an `HttpClient` in its context.
+ * @param config - Optional configuration for the request
+ * @returns {Effect.Effect<OpenApiSpec, OpenApiError>} An `Effect` that resolves with the
+ * OpenAPI specification object or fails with OpenApiError.
+ *
+ * @example
+ * // Basic usage with default configuration
+ * const program = pipe(
+ *   getOpenApiSpecification(),
+ *   Effect.tap((spec) => Console.log('OpenAPI version:', spec.openapi))
+ * );
+ *
+ * // Usage with custom configuration
+ * const customProgram = pipe(
+ *   getOpenApiSpecification({ baseUrl: 'https://api.example.com', schemaPath: '/openapi.json' }),
+ *   Effect.map((spec) => spec.info.title)
+ * );
  */
-export const getOpenApiSpecification = () => {
-  // AI, implement the function here.
-};
+export const getOpenApiSpecification = (
+  config: OpenApiConfig = {}
+): Effect.Effect<OpenApiSpec, OpenApiError> =>
+  Effect.gen(function* () {
+    // Build the URL for the OpenAPI schema endpoint
+    const url = buildOpenApiUrl(config);
+
+    // Make the GET request to the OpenAPI endpoint using fetch
+    const response = yield* Effect.tryPromise({
+      try: async () => {
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (!res.ok) {
+          throw new OpenApiError(
+            `Failed to fetch OpenAPI specification: ${res.status} ${res.statusText}`
+          );
+        }
+
+        return await res.json();
+      },
+      catch: (error) => {
+        if (error instanceof OpenApiError) {
+          return error;
+        }
+        return new OpenApiError('Failed to fetch OpenAPI specification', error);
+      },
+    });
+
+    // Validate the response
+    const spec = yield* validateOpenApiSpec(response);
+
+    return spec;
+  });
