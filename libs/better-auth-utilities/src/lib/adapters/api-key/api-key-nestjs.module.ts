@@ -36,12 +36,12 @@ export interface APIKeyModuleAsyncOptions {
   /**
    * Factory function to create configuration.
    */
-  useFactory: (...args: unknown[]) => Promise<APIKeyModuleOptions> | APIKeyModuleOptions;
+  useFactory: (...args: any[]) => Promise<APIKeyModuleOptions> | APIKeyModuleOptions;
 
   /**
    * Dependencies to inject into factory.
    */
-  inject?: unknown[];
+  inject?: any[];
 
   /**
    * Make module global.

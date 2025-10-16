@@ -15,8 +15,8 @@ export interface AdminModuleOptions {
 }
 
 export interface AdminModuleAsyncOptions {
-  useFactory: (...args: unknown[]) => Promise<AdminModuleOptions> | AdminModuleOptions;
-  inject?: unknown[];
+  useFactory: (...args: any[]) => Promise<AdminModuleOptions> | AdminModuleOptions;
+  inject?: any[];
   isGlobal?: boolean;
 }
 

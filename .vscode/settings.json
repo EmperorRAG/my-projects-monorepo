@@ -119,7 +119,8 @@
     "psql",
     "runbook",
     "runbooks",
-    "sslmode"
+    "sslmode",
+    "unban"
   ],
   "inlineChat.enableV2": true,
   "chat.useCloudButtonV2": true,
