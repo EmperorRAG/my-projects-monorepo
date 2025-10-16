@@ -158,14 +158,6 @@
   "todo-tree.tree.showBadges": true,
   "todo-tree.tree.disableCompactFolders": true,
   "todo-tree.tree.showCountsInTree": true,
-  "files.exclude": {
-    ".copilot-tracking": true,
-    ".editorconfig": true,
-    ".nx/cache": true,
-    ".nx/workspace-data": true,
-    "**/.pnpm-store": true,
-    "tmp": true
-  },
   "todo-tree.filtering.useBuiltInExcludes": "file and search excludes",
   "files.readonlyFromPermissions": true,
   "files.readonlyInclude": {
