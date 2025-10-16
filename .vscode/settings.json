@@ -112,6 +112,7 @@
     "isready",
     "llms",
     "mermaidchart",
+    "nodenext",
     "ossp",
     "pgadmin",
     "pgcrypto",
@@ -120,7 +121,9 @@
     "runbook",
     "runbooks",
     "sslmode",
+    "swcrc",
     "thallesp",
+    "TOTP",
     "unban"
   ],
   "inlineChat.enableV2": true,
@@ -161,7 +164,6 @@
     ".nx/cache": true,
     ".nx/workspace-data": true,
     "**/.pnpm-store": true,
-    "**/dist": true,
     "tmp": true
   },
   "todo-tree.filtering.useBuiltInExcludes": "file and search excludes",

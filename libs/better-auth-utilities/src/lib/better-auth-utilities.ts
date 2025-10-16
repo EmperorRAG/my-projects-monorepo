@@ -4,13 +4,16 @@
  */
 
 // Export configuration utilities
-export * from './config';
+export { defineConfig, createClientConfig, createServerConfig} from './config';
+export type { AuthProvider, AvailablePlugins, BetterAuthConfig, ClientConfig, DEFAULT_CLIENT_CONFIG, DEFAULT_SERVER_CONFIG, OAuthProviderId, PluginConfigRegistry, ServerConfig } from './config';
 
 // Export server instance creation
-export * from './server';
+export { createAuthServer} from './server';
+export type { InferAuthServer, InferSession} from './server';
 
 // Export client instance creation
-export * from './client';
+export { createBetterAuthClient} from './client';
+export type { InferAuthClient } from './client';
 
 // Export NestJS adapter modules and services
 // (Adapters are not exported to avoid naming conflicts)

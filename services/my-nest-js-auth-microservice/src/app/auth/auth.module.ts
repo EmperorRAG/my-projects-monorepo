@@ -41,7 +41,7 @@ import { AuthController } from './auth.controller';
 @Module({
   imports: [
     // Core Better Auth integration
-    BetterAuthModule.forRoot(auth),
+    BetterAuthModule.forRoot({auth}),
 
     // Better-auth-utilities adapter modules
     AdminModule.forRoot({ auth, isGlobal: false }),

@@ -20,6 +20,7 @@
     "customConditions": ["@my-projects-monorepo/source"],
     "baseUrl": ".",
     "paths": {
+      "@emperorrag/better-auth-utilities": ["libs/better-auth-utilities/src/index.ts"],
       "@my-projects-monorepo/prisma-client": ["tools/postgresql/better-auth-db/prisma/generated/client"]
     }
   }
