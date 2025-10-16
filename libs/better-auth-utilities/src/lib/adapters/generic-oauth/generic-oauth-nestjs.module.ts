@@ -3,7 +3,7 @@
  * @description NestJS dynamic module for Generic OAuth adapter integration.
  */
 
-import { DynamicModule, Module, type Provider } from '@nestjs/common';
+import { DynamicModule, Module, type Provider, type Type } from '@nestjs/common';
 import type { AdapterConfig } from '../base/plugin-adapter.interface';
 import { GenericOAuthAdapter } from './generic-oauth.adapter';
 import { GenericOAuthService } from './generic-oauth-nestjs.service';
@@ -14,9 +14,9 @@ export interface GenericOAuthModuleOptions {
 }
 
 export interface GenericOAuthModuleAsyncOptions {
-  imports?: unknown[];
-  useFactory: (...args: unknown[]) => Promise<GenericOAuthModuleOptions> | GenericOAuthModuleOptions;
-  inject?: unknown[];
+  imports?: (Type<any> | DynamicModule | Promise<DynamicModule>)[];
+  useFactory: (...args: any[]) => Promise<GenericOAuthModuleOptions> | GenericOAuthModuleOptions;
+  inject?: any[];
 }
 
 @Module({})

@@ -3,7 +3,7 @@
  * @description NestJS dynamic module for Email OTP adapter integration.
  */
 
-import { DynamicModule, Module, type Provider } from '@nestjs/common';
+import { DynamicModule, Module, type Provider, type Type } from '@nestjs/common';
 import type { AdapterConfig } from '../base/plugin-adapter.interface';
 import { EmailOTPAdapter } from './email-otp.adapter';
 import { EmailOTPService } from './email-otp-nestjs.service';
@@ -14,9 +14,9 @@ export interface EmailOTPModuleOptions {
 }
 
 export interface EmailOTPModuleAsyncOptions {
-  imports?: unknown[];
-  useFactory: (...args: unknown[]) => Promise<EmailOTPModuleOptions> | EmailOTPModuleOptions;
-  inject?: unknown[];
+  imports?: (Type<any> | DynamicModule | Promise<DynamicModule>)[];
+  useFactory: (...args: any[]) => Promise<EmailOTPModuleOptions> | EmailOTPModuleOptions;
+  inject?: any[];
 }
 
 @Module({})

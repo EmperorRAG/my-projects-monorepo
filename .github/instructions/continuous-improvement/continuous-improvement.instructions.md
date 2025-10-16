@@ -29,6 +29,9 @@ When AI models encounter new patterns or requirements that should be documented:
 1. When implementing code, documentation must always be contained within the code's JSDoc comment unless it has either been conveyed implicitly or explicitly that the AI model may ignore this instruction when prompted.
 2. When implementing code, you must never include examples outside of the code's JSDoc comment unless it has either been conveyed implicitly or explicitly that the AI model may ignore this instruction when prompted.
 3. When implementing tests for code, you must never change the code you are making tests for.
+4. When implementing tests for code, you must always ensure that the tests you write do not modify the code you are making tests for.
+5. When implementing TypeScript code, you must never use the `any` type and use `unknown` instead unless it has either been conveyed implicitly or explicitly that the AI model may ignore this instruction when prompted.
+6. When implementing TypeScript code, you must always use `Shorthand Syntax` instead of `Generic Syntax` unless it is impossible to implement the TypeScript code without using `Generic Syntax`.
 
 ### Testing Pattern for >90% Coverage (Added: 2025-10-16)
 

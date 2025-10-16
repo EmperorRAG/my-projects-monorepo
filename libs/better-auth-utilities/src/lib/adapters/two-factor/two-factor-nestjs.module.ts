@@ -3,7 +3,7 @@
  * @description NestJS dynamic module for Two-Factor Authentication adapter integration.
  */
 
-import { DynamicModule, Module, type Provider } from '@nestjs/common';
+import { DynamicModule, Module, type Provider, type Type } from '@nestjs/common';
 import type { AdapterConfig } from '../base/plugin-adapter.interface';
 import { TwoFactorAdapter } from './two-factor.adapter';
 import { TwoFactorService } from './two-factor-nestjs.service';
@@ -14,9 +14,9 @@ export interface TwoFactorModuleOptions {
 }
 
 export interface TwoFactorModuleAsyncOptions {
-  imports?: unknown[];
-  useFactory: (...args: unknown[]) => Promise<TwoFactorModuleOptions> | TwoFactorModuleOptions;
-  inject?: unknown[];
+  imports?: (Type<any> | DynamicModule | Promise<DynamicModule>)[];
+  useFactory: (...args: any[]) => Promise<TwoFactorModuleOptions> | TwoFactorModuleOptions;
+  inject?: any[];
 }
 
 @Module({})
