@@ -13,7 +13,6 @@
     "github.copilot",
     "github.copilot-chat",
     "github.remotehub",
-    "github.vscode-github-actions",
     "github.vscode-pull-request-github",
     "gregorbiswanger.json2ts",
     "monokai.theme-monokai-pro-vscode",
@@ -40,6 +39,12 @@
     "wallabyjs.console-ninja",
     "wix.vscode-import-cost",
     "yoavbls.pretty-ts-errors",
-    "yzhang.markdown-all-in-one"
+    "yzhang.markdown-all-in-one",
+    "streetsidesoftware.code-spell-checker",
+    "stylelint.vscode-stylelint",
+    "gruntfuggly.todo-tree",
+    "redhat.vscode-xml",
+    "wallabyjs.wallaby-extension-pack",
+    "humao.rest-client"
   ]
 }

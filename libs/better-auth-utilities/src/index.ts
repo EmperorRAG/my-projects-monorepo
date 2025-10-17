@@ -4,14 +4,12 @@
  */
 
 export {
-  // Config and instances
   createAuthServer,
   createClientConfig,
   createServerConfig,
   defineConfig,
   createBetterAuthClient,
 
-  // NestJS Modules
   AdminModule,
   APIKeyModule,
   BearerModule,
@@ -22,7 +20,6 @@ export {
   TwoFactorModule,
   UsernameModule,
 
-  // NestJS Services
   AdminService,
   APIKeyService,
   BearerService,
@@ -35,7 +32,6 @@ export {
 } from './lib/better-auth-utilities';
 
 export type {
-  // Interfaces and Types
   AdapterContext,
   AdapterResponse,
   AuthProvider,
