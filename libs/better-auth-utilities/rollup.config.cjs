@@ -7,6 +7,7 @@ module.exports = withNx(
     tsConfig: './tsconfig.lib.json',
     compiler: 'swc',
     format: ['esm'],
+    useLegacyTypescriptPlugin: false,
   },
   {
     // Provide additional rollup configuration here. See: https://rollupjs.org/configuration-options
